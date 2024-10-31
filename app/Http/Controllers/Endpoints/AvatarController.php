@@ -1,0 +1,131 @@
+<?php
+
+namespace App\Http\Controllers\Endpoints;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Inventory;
+use App\Models\Item;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use App\Models\Avatar;
+use Mockery\Matcher\Any;
+use App\Models\User;
+use App\Jobs\UserRenderer;
+use Illuminate\Http\JsonResponse;
+
+class AvatarController extends Controller
+{
+    public function getItemsByCategory($category): JsonResponse
+    {
+        // Select only item IDs from inventory with matching category
+        $itemIds = Inventory::where('user_id', Auth::id())
+            ->whereHas('item', function ($query) use ($category) {
+                $query->where('item_type', '=', $category);
+            })
+            ->pluck('item_id');
+
+        // Now return Items
+        $items = Item::whereIn('id', $itemIds)->orderBy('created_at', 'asc')->paginate(12)->through(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'type' => $item->item_type,
+                    'thumbnail' => $item->thumbnail(),
+                ];
+            });
+
+        return response()->json($items);
+    }
+
+    private function regenerate(): void
+    {
+        UserRenderer::dispatch(Auth::user()->id)->onQueue('user-render');
+    }
+
+    public function WearItem(int $itemId, int | string $slot)
+    {
+        // Fetch the avatar and item record
+        /** @var \App\Models\User $user **/
+        $user = Auth::user();
+        $avatar = $user->avatar();
+        $newVrcInstance = new RenderController();
+        $vrs = $newVrcInstance;
+        $item = Item::where('id', '=', $itemId)->first();
+
+        // Check if avatar record exists
+        if (!$avatar) {
+            return response()->json([
+                "message" => "Avatar record not found",
+                "type" => "error",
+            ], 404);
+        }
+
+        // Validate slot number (1-6)
+        if ($item->item_type == "hat" && $slot != 'none' && $slot != null) {
+            $hatSlot = "hat_" . $slot; // Define $hatSlot here within the if block
+        }
+
+
+        if ($item->item_type == "hat" && !in_array($slot, range(1, 6)) && $slot != 'none') {
+            return response()->json([
+                "message" => "Invalid hat slot. Please choose between 1 and 6.",
+                "type" => "error",
+            ], 400); // Bad request status code
+        }
+
+        // Update the specific item based on type and id
+        if ($item->item_type == "hat" && $slot != 'none' && $slot != null) {
+            $avatar->setAttribute($hatSlot, $itemId);
+        } else {
+            $avatar->setAttribute($item->item_type, $itemId);
+        }
+
+
+        // Save the updated avatar record
+        $avatar->save();
+
+        $this->regenerate();
+
+        return response()->json([
+            $vrs->getAvatarRenderHash($avatar->id),
+            "message" => "You have worn this item",
+            "type" => "success",
+        ], 200);
+    }
+
+    public function getWearingItems()
+    {
+        // Return Wearing Items
+        $items = Auth::user()->avatar()->WearingItems();
+
+        return response()->json($items); // Add this line to return the data
+    }
+
+    public function getWearingHats(Request $request)
+    {
+        // Return Wearing Hats
+        $cacheKey = 'wearing_items_hats'; // Use a specific cache key for hat searches
+
+        $items = Cache::remember($cacheKey, now()->addMinutes(5), function () {
+            return Avatar::where(function ($query) {
+                $hatColumns = ['hat_1', 'hat_2', 'hat_3', 'hat_4', 'hat_5', 'hat_6']; // Hat database columns
+
+                // Constrain the query using OR clauses for each hat column
+                foreach ($hatColumns as $column) {
+                    $query->orWhere($column, '!=', null); // Filter for non-null values
+                }
+            })->where('user_id', '=', Auth::id())
+                ->through(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'type' => $item->item_type,
+                        'name' => $item->name,
+                        'thumbnail' => $item->thumbnail(),
+                    ];
+                });
+        });
+
+        return response()->json($items);
+    }
+}
