@@ -45,6 +45,9 @@ const { props } = usePage<any>();
           <div v-if="showError" class="text-xs text-danger fw-semibold">
             {{ errorMsg }}
           </div>
+          <div  class="text-xs text-muted fw-semibold">
+            {{ usePage<any>().props.disclaimer }}
+          </div>
         </div>
         <div
           class="flex-wrap gap-2 flex-container justify-content-end section-borderless"
@@ -191,4 +194,5 @@ export default {
     },
   },
 };
+
 </script>

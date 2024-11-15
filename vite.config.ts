@@ -9,16 +9,15 @@ import { obfuscator } from "rollup-obfuscator";
 //import basicSsl from '@vitejs/plugin-basic-ssl'
 import { viteObfuscateFile } from "vite-plugin-obfuscator";
 import { VitePWA } from "vite-plugin-pwa";
-import fs from "fs";
+import { templateCompilerOptions } from '@tresjs/core'
 
 export default defineConfig({
     root: "", // Specify the root directory for development
     base: "/",
+    optimizeDeps: {
+        exclude: ["brotli-wasm", "brotli-wasm/pkg.bundler/brotli_wasm_bg.wasm"],
+    },
     server: {
-	https: {
-		key: fs.readFileSync('./penguin.linux.test-key.pem'),
-		cert: fs.readFileSync('./penguin.linux.test.pem'),
-    	},
         hmr: {
             host: 'localhost',
         }
@@ -117,6 +116,7 @@ export default defineConfig({
             ],*/
         }),
         vue({
+            ...templateCompilerOptions,
             template: {
                 transformAssetUrls: {
                     // The Vue plugin will re-write asset URLs, when referenced

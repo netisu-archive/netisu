@@ -11,8 +11,10 @@ class MaintenanceController extends Controller
         if (Session::has('maintenance_password')) {
             return redirect()->route('Welcome')->with(['success' => 'Already authenticated.']);
         }
-        
-        return inertia('Maintenance/Index');
+
+        return inertia('Maintenance/Index',[
+            'disclaimer' => app()->environment() === 'local' ? "The Maintenance Password is " . env('MAINTENANCE_PASSWORD') : "Contact a developer for access.",
+        ]);
     }
 
     public function authenticate(Request $request)
@@ -35,7 +37,7 @@ class MaintenanceController extends Controller
 
         Session::put('maintenance_password', $password);
 
-        return inertia()->to('Welcome');
+        return redirect()->route('Welcome');
     }
     public function Exit()
     {

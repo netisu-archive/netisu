@@ -90,11 +90,18 @@ class GrabController extends Controller
         $user = Auth::user();
 
         return inertia('Customize/Index', [
-            'avatar' => $user->avatar(),
-            'avatar.current_face' => env('STORAGE_URL') . (
+            'avatar' => [
+                'color_head' => $user->avatar()->color_head,
+                'color_left_arm' => $user->avatar()->color_left_arm,
+                'color_torso' => $user->avatar()->color_torso,
+                'color_right_arm' => $user->avatar()->color_right_arm,
+                'color_left_leg' => $user->avatar()->color_left_leg,
+                'color_right_leg' => $user->avatar()->color_right_leg,
+                'thumbnail' => $user->thumbnail(),
+                'current_face' => env('STORAGE_URL') . (
                 $user->avatar()->face ? '/uploads/' . getItemHash($user->avatar()->face) . ".png" : '/assets/default.png'
             ),
-            'avatar.thumbnail' => $user->thumbnail(),
+        ],
             'colors' => $colors,
             'categories' => $categories,
         ]);

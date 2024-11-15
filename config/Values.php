@@ -21,10 +21,10 @@ return [
 
     'production' => [
         'domains' => [
-            'main' => 'http://100.115.92.195',
-            'storage' => 'http://cdn.100.115.92.195/',
-            'api' => 'http://100.115.92.195/api',
-            'careers' => 'http://careers.100.115.92.195',
+            'main' => 'https://100.115.92.195',
+            'storage' => 'https://cdn.100.115.92.195/',
+            'api' => 'https://100.115.92.195/api',
+            'careers' => 'https://careers.100.115.92.195',
             'support' => 'support@100.115.92.195'
         ],
     ],

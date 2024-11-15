@@ -12,9 +12,9 @@ class MembershipController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function MembershipIndex()
     {
-        return view('test');
+        return inertia('Memberships/Index', []);
     }
 
     /**

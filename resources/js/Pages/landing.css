@@ -1,14 +1,19 @@
 header.masthead-landing {
-    background-image: url('/assets/img/site-banners/landing-melody.png'), linear-gradient(to bottom, var(--section-bg), var(--section-bg));
-    padding-top: 6rem !important;
-    padding-bottom: 6rem !important;
-    background-attachment: fixed;
+    z-index: 2;
     position: relative;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    width: 100%;
-    box-sizing: border-box;
+    background-color: var(--info-600);
+    height:auto;
+    /* soon background-image: linear-gradient(to top, var(--info-400), var(--info-600)); */
+
+}
+header.masthead-landing img {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background-color: var(--info-600);
+    height: 100%;
+    width: inherit;
+
 }
 header img {
     width: auto;

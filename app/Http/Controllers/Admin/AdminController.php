@@ -23,17 +23,9 @@ use Illuminate\Support\Facades\Cache;
 class AdminController extends Controller
 {
     private $admin;
-    private $authenticatedUserModel;
 
     public function __construct()
     {
-        /** @var \App\Models\User $user **/
-        $this->authenticatedUserModel = Auth::user();
-
-        if (!$this->authenticatedUserModel->isStaff()) {
-            abort(404); // Immediately return a 403 for unauthorized users
-        }
-
         $this->admin = Admin::where('user_id', Auth::id())->first();
     }
 
@@ -53,7 +45,12 @@ class AdminController extends Controller
             ],
         ]);
     }
+    public function messagingIndex()
+    {
+        return inertia('Admin/Messaging/Index', [
 
+        ]);
+    }
     public function UserIndex()
     {
         // Define a cache key for this query result
@@ -64,6 +61,7 @@ class AdminController extends Controller
                     'id' => $user->id,
                     'isBanned' => $user->hasActiveBan(),
                     'isStaff' => $user->isStaff(),
+                    'position' => $user->CurrentPosition(),
                     'username' => $user->username,
                     'display_name' => $user->display_name,
                     'email' => $user->email,
@@ -112,7 +110,8 @@ class AdminController extends Controller
         $item->name = $request->name;
         $item->description = $request->description;
 
-        if ($this->authenticatedUserModel->isStaff() && $request->hasFile('modal') && $request->type === 'hat' || $request->type === 'addon' || $request->type === 'tool') {
+
+        if (Auth::user()->isStaff() && $request->hasFile('modal') && $request->type === 'hat' || $request->type === 'addon' || $request->type === 'tool') {
             // Upload OBJ only if item type deals with models
             $this->uploadOBJ($request->file('modal'), $itemHashName);
             $this->uploadImage($request->file('image'), $itemHashName);
@@ -176,12 +175,13 @@ class AdminController extends Controller
     private function validateRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:30',
-            'description' => 'required|string|max:255',
+            'name' => 'required|string|max:50',
+            'description' => 'string|max:255',
             'type' => 'required|string|in:hat,addon,tool,face', // Allowed item types
-            'image' => 'required|image|mimes:png', // Validate PNG image
-            'modal' => 'file|mimes:obj', // Validate Object
+            'image' => 'required|image|mimes:png|max:2048', // Validate PNG image
+            'modal' => 'required|file|mimes:text/plain|max:2048', // Validate Object
         ]);
+
         if ($validator->fails()) { // Use Validator object's fails method on $validator
             return ValidationException::withMessages([$validator->errors()]);
         }
@@ -192,8 +192,7 @@ class AdminController extends Controller
         // Define a cache key for this query result
         $cacheKey = 'users_manage_' . $id;
         $user = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($id) {
-            //->load(['settings'])
-            return User::where(['id' => $id])->first();
+            return User::where(['id' => $id])->first()->load(['settings']);
         });
 
         if (!$user) {
@@ -213,6 +212,7 @@ class AdminController extends Controller
                 'thumbnail' => $user->thumbnail(),
                 'bucks' => $user->bucks,
                 'coins' => $user->coins,
+                'DateHum' => $user->date_hum,
                 'joined' => $joindate,
             ],
             'permissions' => [

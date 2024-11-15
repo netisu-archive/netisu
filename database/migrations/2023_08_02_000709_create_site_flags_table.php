@@ -27,7 +27,7 @@ return new class extends Migration
             $table->boolean('site_maintenance')->default(true);
             $table->boolean('site_roadmap_maintenance')->default(false);
             $table->boolean('announcement_enabled')->default(true);
-            $table->string('announcement_message')->default("Welcome to {$sitename}!" . $randomMessages[array_rand($randomMessages)])->nullable();
+            $table->string('announcement_message')->default("Welcome to {$sitename}! " . $randomMessages[array_rand($randomMessages)])->nullable();
             $table->boolean('market_purchases_enabled')->default(true);
             $table->boolean('market_enabled')->default(true);
             $table->boolean('discussion_enabled')->default(true);

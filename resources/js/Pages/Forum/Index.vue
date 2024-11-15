@@ -91,11 +91,46 @@ const submit = () => {
                 :section_three="section_three" />
         </div>
         <div class="cell large-10">
-            <div class="mb-2 text-sm fw-semibold">{{ usePage<any>().props.topic.name }} &bullet; {{ usePage<any>().props.topic.description }}</div>
+            <div class="mb-2 align-right grid-x">
+
+                <div class="cell large-7" v-if="usePage<any>().props.auth.user">
+                    <div class="gap-2 align-middle flex-container-lg">
+                        <input type="text" class="flex-container mb-2 form form-xs form-has-section-color"
+                            placeholder="Search..." name="search" v-model="search" @input="performSearch" />
+
+                        <div class="mb-2 flex-container flex-child-grow">
+                            <button href="#" class="text-center btn btn-info btn-xs flex-child-grow"><i
+                                    class="fad fa-star-circle"></i>&nbsp; Your Posts</button>
+                        </div>
+                        <div class="mb-2 flex-container flex-child-grow">
+                            <button @click="showModal('forum-modal')"
+                                :class="(usePage<any>().props.auth.user.staff ? 'btn-danger' : 'btn-success')"
+                                class="text-center btn btn-xs flex-child-grow"><i class="fad fa-hexagon-plus"></i>&nbsp;
+                                Create Post</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav class="alert alert-info py-1 alert-landing">
+                <div class="text-center fw-semibold">
+                    <div class="gap-2 flex-container">
+                        <div>
+                            <div class="gap-2 align-middle flex-container">
+                                <div class="text-start">
+
+                                    <div class="text-md fw-semibold">{{ usePage<any>().props.topic.name }}</div>
+                                    <div class="text-xs fw-semibold">{{ usePage<any>().props.topic.description }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
             <div class="card">
                 <div class="pb-0 card-body">
-                    <div class="gap-3 text-center flex-container flex-dir-column" v-if="!usePage<any>().props.posts.data.length">
-                        <i class="text-5xl fas fa-message-xmark text-muted"></i>
+                    <div class="gap-3 text-center flex-container flex-dir-column"
+                        v-if="!usePage<any>().props.posts.data.length">
+                        <i class="text-5xl fad fa-message-xmark text-muted"></i>
                         <div style="line-height: 16px">
                             <div class="text-xs fw-bold text-muted text-uppercase">
                                 No Forum Posts
@@ -117,7 +152,9 @@ const submit = () => {
                                 style="flex-direction: column">
                                 <div class="text-start">
                                     <Link :href="route('forum.post', { id: post.id, slug: post.seo })" class="text-md">
-                                    {{ post.name }} <span v-if="post.pinned"><i class="text-success fas fa-thumbtack"></i></span> <span v-if="post.locked"><i class="text-warning fas fa-lock"></i></span>
+                                    {{ post.name }} <span v-if="post.pinned"><i
+                                            class="text-danger fas fa-thumbtack"></i></span> <span v-if="post.locked"><i
+                                            class="text-warning fas fa-lock"></i></span>
                                     </Link>
                                     <div></div>
                                     <Link :href="route('user.profile', { username: post.username })"

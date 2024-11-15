@@ -24,7 +24,7 @@ return [
         ],
 
         'discord' => [
-            'name' => 'Familiar Purple',
+            'name' => 'Purple',
             'lowercase' => 'discord',
             'file' => '/css/themes/variables-discord.css',
             'available' => true
@@ -34,7 +34,7 @@ return [
             'name' => 'Halloween',
             'lowercase' => 'halloween',
             'file' => '/css/themes/variables-halloween.css',
-            'available' => true
+            'available' => false
         ],
 
         'holiday' => [

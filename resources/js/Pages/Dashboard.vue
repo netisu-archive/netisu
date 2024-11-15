@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { route, current } from 'momentum-trail';
+import { route } from 'momentum-trail';
 import { useForm, usePage } from '@inertiajs/vue3';
-import AeoPagination from '@/Components/Pagination.vue';
 import Navbar from '@/Components/LayoutParts/Navbar.vue';
 import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
 import AppHead from '@/Components/AppHead.vue';
@@ -61,14 +60,22 @@ onMounted(() => {
         :url="route('auth.login.page')" />
     <Navbar />
     <Sidebar>
-        <div class="mb-4 cell medium-12">
+        <div class="mb-4 cell medium-11">
 
-        <div class="gap-4 align-middle flex-container">
-            <a href="https://netisu11.test/user/@aeo">
-                <img src="https://cdn.test/thumbnails/6f99836f608dc0e6c10a383c37d0f65ad7e47238fb41_headshot.png" width="120" class="border headshot flex-child-shrink img-fluid rounded-circle border-secondary bg-dark v-lazy-image v-lazy-image-loaded" alt="Avatar"></a><div class="flex-wrap col-md-4 d-flex justify-content-center align-content-start" style="flex-direction: column;">
+        <div class="gap-3 align-middle flex-container">
+            <Link :href="route(`user.profile`, {username: usePage<any>().props.auth.user.username})">
+                <v-lazy-image :src="usePage<any>().props.auth.user.headshot" width="100" class="border headshot flex-child-shrink img-fluid rounded-circle border-secondary bg-dark v-lazy-image v-lazy-image-loaded flex-wrap col-md-4 d-flex justify-content-center align-content-start" style="flex-direction: column;" alt="Avatar"
+                    src-placeholder="/assets/img/dummy_headshot.png" />
+                    </Link>
+                    <div class="flex-wrap col-md-4 d-flex justify-content-center align-content-start" style="flex-direction: column;">
                     <div class="text-start">
-                        <span class="text-2xl fw-semibold" href="https://netisu11.test/discuss/post/3/test3">{{ "@" + usePage<any>().props.auth.user.username }}</span>
+                        <span class="text-base text-2xl fw-semibold">
+                            Welcome Back
+                        </span>
                         <div></div>
+                        <Link class="text-base text-2xl fw-semibold" :href="route(`user.profile`, {username: usePage<any>().props.auth.user.username})">
+                            {{ "@" + usePage<any>().props.auth.user.username }}
+                        </Link>
             </div>
         </div>
     </div>

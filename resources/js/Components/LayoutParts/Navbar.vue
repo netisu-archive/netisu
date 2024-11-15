@@ -172,6 +172,7 @@ withDefaults(defineProps<Props>(), {
                 props.auth?.user?.settings.calling_card_enabled
                   ? {
                       margin: '0',
+                      border: '0',
                       'background-image':
                         'url(' +
                         props.auth?.user?.settings.calling_card_url +

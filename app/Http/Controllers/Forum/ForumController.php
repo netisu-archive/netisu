@@ -22,38 +22,48 @@ class ForumController extends Controller
     public function ForumIndex($id)
     {
         // Define the sections
-        $sectionFilters = [
+        $sectionCorresponds = [
             1 => ['section_id' => 1],
             2 => ['section_id' => 2],
             3 => ['section_id' => 3],
         ];
 
-        // Apply staff-only view filters if the user is a staff member
-        $isStaff = Auth::check() && Auth::user()->isStaff() == 1;
-        if ($isStaff) {
-            $sectionFilters[1]['is_staff_only_viewing'] = false;
-            $sectionFilters[2]['hidden'] = false;
-            $sectionFilters[3]['is_staff_only_viewing'] = false;
-        }
-
         // Use caching to store the forum topics for each section
-        $sectionOneTopics = Cache::remember('section_one_topics', now()->addMinutes(30), function () use ($sectionFilters) {
-            return ForumTopic::where($sectionFilters[1])->orderBy('id', 'asc')->get();
+        $sectionOneTopics = Cache::remember('section_one_topics', now()->addMinutes(30), function () use ($sectionCorresponds) {
+            return ForumTopic::where([
+                [$sectionCorresponds[1]],
+                ['hidden', false],
+                ['is_staff_only_viewing', false]
+            ])
+                ->orderBy('id', 'asc')
+                ->get();
         });
 
-        $sectionTwoTopics = Cache::remember('section_two_topics', now()->addMinutes(30), function () use ($sectionFilters) {
-            return ForumTopic::where($sectionFilters[2])->orderBy('id', 'asc')->get();
+        $sectionTwoTopics = Cache::remember('section_two_topics', now()->addMinutes(30), function () use ($sectionCorresponds) {
+            return ForumTopic::where([
+                [$sectionCorresponds[2]],
+                ['hidden', false],
+                ['is_staff_only_viewing', false]
+            ])
+                ->orderBy('id', 'asc')
+                ->get();
         });
 
-        $sectionThreeTopics = Cache::remember('section_three_topics', now()->addMinutes(30), function () use ($sectionFilters) {
-            return ForumTopic::where($sectionFilters[3])->orderBy('id', 'asc')->get();
+        $sectionThreeTopics = Cache::remember('section_three_topics', now()->addMinutes(30), function () use ($sectionCorresponds) {
+            return ForumTopic::where([
+                [$sectionCorresponds[3]],
+                ['hidden', false],
+                ['is_staff_only_viewing', false]
+            ])
+                ->orderBy('id', 'asc')
+                ->get();
         });
 
         // Fetch the selected forum topic
         $topic = ForumTopic::where('id', '=', $id)->firstOrFail();
 
         // Check permissions and abort if necessary
-        if (!$isStaff && $topic->is_staff_only_viewing) {
+        if (Auth::check() && !Auth::user()->isStaff() && $topic->is_staff_only_viewing) {
             abort(403);
         }
 
@@ -94,7 +104,11 @@ class ForumController extends Controller
 
         // Attempt to retrieve the forum post from cache
         $post = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($id) {
-            return ForumThread::where('id', '=', $id)->with('creator')->first();
+            if (ForumThread::find($id)) {
+                return ForumThread::where('id', '=', $id)->with('creator')->first();
+            } else {
+                abort(404);
+            }
         });
         // Fetch the associated topic
         $topic = ForumTopic::findOrFail($post->in_topic_id);
@@ -117,9 +131,10 @@ class ForumController extends Controller
         return inertia('Forum/Post', [
             'topic' => $topic,
             'post' => $post,
-            'post.creator' => $post->creator,
-            'post.creator.thumbnail' => $post->creator->thumbnail(),
-            'post.creator.headshot' => $post->creator->headshot(),
+            'creator' => [
+                'thumbnail' => $post->creator->thumbnail(),
+                'headshot' => $post->creator->headshot(),
+            ],
             'replies' => $replies,
         ]);
     }

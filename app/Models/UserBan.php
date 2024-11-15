@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class UserBan extends Model
 {
@@ -18,6 +19,8 @@ class UserBan extends Model
         'note',
         'length',
     ];
+
+    protected $appends = ['DateHum','exactTime'];
 
     public function user()
     {
@@ -44,5 +47,13 @@ class UserBan extends Model
             default:
                 return $this->type; // Return the original type if not a known type
         }
+    }
+    public function getDateHumAttribute()
+    {
+        return Carbon::parse($this->length)->toFormattedDateString();
+    }
+    public function getexactTimeAttribute()
+    {
+        return Carbon::parse($this->length)->format('H:i');
     }
 }

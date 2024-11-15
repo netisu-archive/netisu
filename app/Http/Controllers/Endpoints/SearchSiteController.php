@@ -41,15 +41,15 @@ class SearchSiteController extends Controller
                 case 'items':
                     $name = $result->name;
                     $image = $result->thumbnail();
-                    $url = route('catalog.item', [$result->id, $result->slug()]);
+                    $url = route('store.item', $result->id);
                     break;
-                    
+
                 case 'spaces':
                     $name = $result->name;
                     $image = $result->thumbnail();
                     $url = route('spaces.view', [$result->id, $result->slug()]);
                     break;
-                   
+
                 default:
                     continue 2;
             }

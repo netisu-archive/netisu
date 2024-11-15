@@ -4,7 +4,6 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import Navbar from "@/Components/LayoutParts/Navbar.vue";
 import Sidebar from "@/Components/LayoutParts/Sidebar.vue";
 import { route } from "momentum-trail";
-import FlashMessages from "@/Components/Messages/FlashMessages.vue";
 import AppHead from "@/Components/AppHead.vue";
 import Footer from "@/Components/LayoutParts/Footer.vue";
 import axios from "axios";
@@ -17,6 +16,7 @@ const form = useForm({
         day: "",
         year: "",
     }),
+    starter_item: "",
     email: "",
     password: "",
     password_confirmation: "",
@@ -146,9 +146,9 @@ function updateDays() {
 }
 
 function onImgErrorSmall(id) {
-    let source = document.getElementById(id);
+    let source = document.getElementById(id) as HTMLImageElement;
     source.src = "/assets/img/dummy-error.png";
-    source.onerror = "";
+    source.onerror = null;
 
     return true;
 }
@@ -170,12 +170,14 @@ watch(() => form.birthdate.month, updateDays);
         <div class="cell large-8 medium-10">
             <div class="card">
                 <div class="card-body">
-                    <FlashMessages />
                     <div class="progress-bar">
                         <span
                             class="progress"
                             :style="{ width: getProgressWidth() }"
                         ></span>
+                    </div>
+                    <div v-if="form.errors.length" class="alert alert-danger mt-2">
+                    {{ form.errors }}
                     </div>
                     <div class="mx-1 my-3 divider"></div>
                     <div class="grid-x grid-margin-x grid-padding-y">
@@ -394,12 +396,11 @@ watch(() => form.birthdate.month, updateDays);
                                             class="cell large-6"
                                             v-for="(
                                                 theme, index
-                                            ) in themes.roster"
+                                            ) in themes"
                                             :key="index"
                                         >
-                                            <!-- Move v-if inside the loop -->
                                             <div
-                                                v-if="theme.available"
+
                                                 :class="{
                                                     active:
                                                         currentTheme ===
@@ -436,7 +437,6 @@ watch(() => form.birthdate.month, updateDays);
                                                             {{
                                                                 theme.name
                                                             }}
-                                                            Theme
                                                         </div>
                                                         <div
                                                             class="selection-circle flex-child-grow show-for-small hide-for-large"

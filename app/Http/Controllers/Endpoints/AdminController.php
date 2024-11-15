@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Endpoints;
 
 use Illuminate\Http\Request;
-use App\Models\User; // Use Laravel's database facade
 use App\Http\Controllers\Controller;
-use Kaankilic\WtFilter\Facades\WtFilter;  // Use the WtFilter facade
+use Kaankilic\WtFilter\Facades\WtFilter;
 use Illuminate\Support\Facades\Auth;
+
+use App\Models\{
+    User,
+    SiteSettings
+};
 
 class AdminController extends Controller
 {
@@ -16,6 +20,10 @@ class AdminController extends Controller
         if (!Auth::check() || !Auth::user()->isStaff()) {
             abort(403); // Immediately return a 403 for unauthorized users
         }
+        $site = SiteSettings::find(1);
+
+        $site->site_maintenance = 1;
+        $site->save();
 
     }
     public function disableMaintenance(Request $request)
@@ -24,6 +32,10 @@ class AdminController extends Controller
         if (!Auth::check() || !Auth::user()->isStaff()) {
             abort(403); // Immediately return a 403 for unauthorized users
         }
+        $site = SiteSettings::find(1);
+
+        $site->site_maintenance = 0;
+        $site->save();
 
     }
 }

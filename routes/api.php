@@ -2,17 +2,20 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Endpoints\RssController;
-use App\Http\Controllers\Endpoints\UserController;
-use App\Http\Controllers\Endpoints\AvatarController;
-use App\Http\Controllers\Endpoints\AdminController;
-use App\Http\Controllers\Endpoints\RenderController;
-use App\Http\Controllers\Endpoints\ItemApiController;
-use App\Http\Controllers\Endpoints\ThumbnailController;
-use App\Http\Controllers\Endpoints\SearchSiteController;
-use App\Http\Controllers\Endpoints\NotificationController;
-use App\Http\Controllers\Endpoints\SettingsController;
-use App\Http\Controllers\ChatController;
+
+use App\Http\Controllers\{
+    ChatController,
+    Endpoints\RssController,
+    Endpoints\UserController,
+    Endpoints\AdminController,
+    Endpoints\AvatarController,
+    Endpoints\RenderController,
+    Endpoints\ItemApiController,
+    Endpoints\ThumbnailController,
+    Endpoints\SearchSiteController,
+    Endpoints\NotificationController,
+    Endpoints\SettingsController
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -27,9 +30,10 @@ use App\Http\Controllers\ChatController;
 
 Route::group(['as' => 'api.'], function () {
 
-    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    Route::get('/user', function (Request $request) {
         return $request->user();
-    });
+    })->middleware('auth:sanctum');
+
     Route::group(['as' => 'messaging.', 'prefix' => 'messaging'], function () {
 
         Route::post("/send-Message/to/{id}", [ChatController::class, "sendMessage"]);
@@ -82,7 +86,7 @@ Route::group(['as' => 'api.'], function () {
             return redirect()->to(config('Values.production.domains.main'));
         });
         Route::get('/{category}', [AvatarController::class, 'getItemsByCategory'])->name('items');
-        Route::get('/wearing', [AvatarController::class, 'getWearingItems'])->name('wearing-items');
+        Route::get('/wearing', [AvatarController::class, 'getWearingIhtems'])->name('wearing-items');
         Route::get('/wearing-hats', [AvatarController::class, 'getWearingHats'])->name('wearing-hats');
 
         Route::get('/wear/{id}/{slot}', [AvatarController::class, 'WearItem'])->name('wear-item');
@@ -93,6 +97,8 @@ Route::group(['as' => 'api.'], function () {
             return redirect()->to(config('Values.production.domains.main'));
         });
         Route::post('/change-country/{country}', [SettingsController::class, 'changeCountry'])->name('changeCountry');
+        Route::post('/change-password', [SettingsController::class, 'resetPassword'])->name('resetPassword');
+
     });
 
     Route::get('/rss-feed', [RssController::class, 'index'])->name('rss');

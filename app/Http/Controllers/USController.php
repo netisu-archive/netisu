@@ -28,7 +28,7 @@ class USController extends Controller
             case 'general':
             case 'account':
             case 'billing':
-                $categories = ['general', 'account', 'billing'];
+                $categories = ['General', 'Security & Privacy', 'Billing'];
                 break;
             default:
                 abort(404);
@@ -39,7 +39,9 @@ class USController extends Controller
             'status' => session('status'),
             'countries' => $countries,
             'categories' => $categories,
-            'themes' => config('themes.roster'),
+            'themes' => array_filter(config('themes.roster'), function ($theme) {
+                return $theme['available'];
+            }),
         ]);
     }
 

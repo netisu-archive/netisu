@@ -11,7 +11,7 @@ import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
 import axios from "axios";
 import AppHead from '@/Components/AppHead.vue';
-
+import VLazyImage from 'v-lazy-image';
 defineProps<{
     mustVerifyEmail?: Boolean,
     status?: String,
@@ -27,7 +27,7 @@ function showModal(modalId: string): void {
 };
 
 
-const ActiveCategory: Ref<string> = ref("general");
+const ActiveCategory: Ref<string> = ref("General");
 
 function setActiveCategory(category): void {
     ActiveCategory.value = category;
@@ -55,13 +55,58 @@ const isVerifiedEmail = computed(() => {
 </script>
 
 <template>
-    <AppHead
-    pageTitle="Account Settings"
-    description="Change your account Settings."
-    :url="route(`store.create.page`)"
-  />
+    <AppHead pageTitle="Account Settings" description="Change your account Settings."
+        :url="route(`store.create.page`)" />
     <Navbar />
-    <Sidebar>
+    <Sidebar :alertsEnabled="false"
+        :image="usePage<any>().props.auth.user.settings.profile_banner_enabled ? usePage<any>().props.auth.user.settings.profile_banner_url : null"
+        :superBanActive="true" :OfficialImageBackground="false" superBanType="image">
+        <template>
+            <portal to="bannerAsset">
+                <v-lazy-image :style="usePage<any>().props.auth.user.settings.calling_card_enabled
+                        ? {
+                            margin: '0',
+                            'background-image':
+                                'url(' +
+                                usePage<any>().props.auth.user.settings.calling_card_url +
+                                ')',
+                            'background-repeat': 'no-repeat',
+                            'background-size': 'cover',
+                            'box-shadow':
+                                'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
+                        }
+                        : null
+                    " :src="usePage<any>().props.auth.user.headshot" width="100" class="space-image" alt="Headshot"
+                    src-placeholder="assets/img/space-error.png" />
+            </portal>
+
+            <portal to="bannerName">
+                <div class="text-xl" style="line-height: 16px">
+                    <div class="mb-1 fw-semibold">
+                        {{ usePage<any>().props.auth.user.display_name }}
+                            <i v-if="usePage<any>().props.auth.user.staff" class="fas fa-gavel text-danger">&nbsp;</i>
+                            <i v-else-if="usePage<any>().props.auth.user.settings.beta_tester"
+                                class="fas fa-hard-hat text-success">&nbsp;</i>
+                            <v-lazy-image
+                                :src="'/assets/img/flags/' + usePage<any>().props.auth.user.settings.country_code + '.svg'"
+                                alt="Country Flag" style="width: auto;height: 20px;"
+                                src-placeholder="/assets/img/flags/other/pirate.svg" />
+                    </div>
+                    <div class="text-sm text-muted fw-semibold">
+                        Profile Preview
+                    </div>
+                </div>
+            </portal>
+            <portal to="bannerButtons">
+                <button class="text-lg text-success squish" content="Change Calling Card"
+                    v-tippy="{ placement: 'bottom' }">
+                    <i class="fad fa-user"></i>
+                </button>
+                <button class="text-lg text-info squish" content="Change Banner" v-tippy="{ placement: 'bottom' }">
+                    <i class="fad fa-pen"></i>
+                </button>
+            </portal>
+        </template>
         <div class="modal" id="email-modal">
             <div class="modal-card modal-card-body modal-card-sm">
                 <div class="section-borderless">
@@ -131,7 +176,7 @@ const isVerifiedEmail = computed(() => {
                         Changing your username costs
                         <span class="mx-1 text-success">
                             <i class="fas fa-money-bill-1-wave"></i>
-                            {{ usePage<any>().props.site.price.username }}
+                            {{ usePage<any>().props.site.price.username }} Bucks
                         </span>
                     </div>
                 </div>
@@ -190,15 +235,15 @@ const isVerifiedEmail = computed(() => {
             </ul>
         </div>
         <div class="cell medium-8">
-            <div v-if="ActiveCategory === 'general'">
-                <div class="mb-2 align-middle flex-container align-justify">
+            <div v-if="ActiveCategory === 'General'">
+                <div class="mb-2 gap-4 align-middle flex-container align-justify">
                     <div class="mb-2 text-xl fw-semibold">General</div>
                     <div class="gap-2 align-middle flex-container-lg">
                         <select @change="changeCountry($event.target.value)"
                             class="mb-2 form form-xs form-select form-has-section-color">
                             <option v-for="country in usePage<any>().props.countries" :key="country.code"
                                 :value="country.code">
-                                    {{ country.name }}
+                                {{ country.name }}
                             </option>
                         </select>
                     </div>
@@ -215,7 +260,7 @@ const isVerifiedEmail = computed(() => {
                                     <div
                                         class="gap-2 align-middle card card-body card-inner flex-container align-justify h-100">
                                         <div class="min-w-0">
-                                            <div class="text-xs text-truncate fw-bold text-muted text-uppercase">
+                                            <div class="text-xs  fw-bold text-muted text-uppercase">
                                                 User ID
                                             </div>
                                             <div class="text-truncate fw-semibold">
@@ -229,7 +274,7 @@ const isVerifiedEmail = computed(() => {
                                     <div
                                         class="gap-2 align-middle card card-body card-inner flex-container align-justify">
                                         <div class="min-w-0">
-                                            <div class="text-xs text-truncate fw-bold text-muted text-uppercase">
+                                            <div class="text-xs  fw-bold text-muted text-uppercase">
                                                 Username
                                             </div>
                                             <div class="text-truncate fw-semibold">
@@ -245,7 +290,7 @@ const isVerifiedEmail = computed(() => {
                                     <div
                                         class="gap-2 align-middle card card-body card-inner flex-container align-justify">
                                         <div class="min-w-0">
-                                            <div class="text-xs text-truncate fw-bold text-muted text-uppercase">
+                                            <div class="text-xs  fw-bold text-muted text-uppercase">
                                                 Display Name
                                             </div>
                                             <div class="text-truncate fw-semibold">
@@ -261,7 +306,7 @@ const isVerifiedEmail = computed(() => {
                                     <div
                                         class="gap-2 align-middle card card-body card-inner flex-container align-justify">
                                         <div class="min-w-0">
-                                            <div class="text-xs text-truncate fw-bold text-muted text-uppercase">
+                                            <div class="text-xs fw-bold text-muted text-uppercase">
                                                 Email Address
                                                 <span style="font-size: 10px"
                                                     :class="{ 'text-success': isVerifiedEmail, 'text-danger': !isVerifiedEmail }"
@@ -303,8 +348,8 @@ const isVerifiedEmail = computed(() => {
                                 About You
                             </div>
                             <div class="mb-3 position-relative">
-                                <textarea class="form form-has-button pe-5"
-                                    rows="5">{{ usePage<any>().props.auth.user.about_me }}</textarea>
+                                <textarea class="form form-has-button pe-5" rows="5">{{ usePage<any>().props.auth.user.about_me
+                                }}</textarea>
                                 <input type="button" class="btn btn-success btn-sm" value="Update" style="
                                             position: absolute;
                                             bottom: 10px;
@@ -329,9 +374,9 @@ const isVerifiedEmail = computed(() => {
                         </div>
 
                         <div id="theme-switcher-container" class="grid-x grid-margin-x grid-padding-y">
-                            <div class="cell large-6" v-for="theme in themes">
+                            <div v-for="(theme, index) in themes"class="cell large-6" :key="index">
                                 <!-- Move v-if inside the loop -->
-                                <div v-if="theme.available" :class="{ active: currentTheme === theme.lowercase }"
+                                <div :class="{ active: currentTheme === theme.lowercase }"
                                     class="mb-2 theme-selection squish card card-body card-inner mb-lg-0"
                                     :id="theme.lowercase + '-theme-btn'" @click="setTheme(theme.lowercase)">
                                     <div class="gap-4 align-middle flex-container">
@@ -354,47 +399,15 @@ const isVerifiedEmail = computed(() => {
                     </div>
                 </div>
             </div>
-            <div v-if="ActiveCategory === 'account'">
+            <div v-if="ActiveCategory === 'Security & Privacy'">
                 <div class="mb-1 text-xl fw-semibold">
                     Security & Privacy
                 </div>
                 <div class="section-borderless">
                     <div class="card card-body">
                         <div class="mb-2 text-xl fw-semibold">Security</div>
-                        <div class="grid-x grid-margin-x grid-padding-y">
-                            <div class="cell medium-12">
-                                <div class="card card-inner card-body">
-                                    <div class="mb-2">
-                                        <div class="mb-2 text-xl fw-semibold">
-                                            Change Password
-                                        </div>
-                                        <div class="mb-2">
-                                            <div class="text-xs fw-bold text-muted text-uppercase">
-                                                Current Password
-                                            </div>
-                                            <input type="password" class="form form-has-section-color"
-                                                placeholder="Current Password..." />
-                                        </div>
-                                        <div class="mb-2">
-                                            <div class="text-xs fw-bold text-muted text-uppercase">
-                                                New Password
-                                            </div>
-                                            <input type="password" class="form form-has-section-color"
-                                                placeholder="Current Password..." />
-                                        </div>
-                                        <div class="mb-2">
-                                            <div class="text-xs fw-bold text-muted text-uppercase">
-                                                Confirm Password
-                                            </div>
-                                            <input type="password" class="form form-has-section-color"
-                                                placeholder="Current Password..." />
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-success">
-                                        Change Password
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="cell medium-12">
+                            <UpdatePasswordForm />
                         </div>
                     </div>
                 </div>
@@ -541,7 +554,7 @@ const isVerifiedEmail = computed(() => {
                     </div>
                 </div>
             </div>
-            <div v-if="ActiveCategory === 'billing'">
+            <div v-if="ActiveCategory === 'Billing'">
                 <div class="mb-2 align-middle flex-container align-justify">
                     <div class="text-xl fw-semibold">Billing</div>
                     <a href="#" class="btn btn-upgrade btn-sm"><i class="fas fa-rocket-launch me-2"></i>Upgrade</a>

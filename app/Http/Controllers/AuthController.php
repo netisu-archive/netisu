@@ -19,7 +19,9 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Item;
-
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 /**
  * @OA\Info(title="Netisu API", version="1.14")
@@ -36,16 +38,23 @@ class AuthController extends Controller
             'username' => 'required',
             'password' => 'required',
         ]);
+        $this->ensureIsNotRateLimited();
 
-        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
-            // Authentication passed
-            return redirect()->route('my.dashboard.page');
-        }
+
+
+    if (!Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']], $remember = true)) {
+        RateLimiter::hit($this->throttleKey());
 
         // Authentication failed
         throw ValidationException::withMessages([
             'password' => __('auth.failed'),
         ]);
+        } else {
+        // Authentication passed
+
+        return redirect()->route('my.dashboard.page');
+        RateLimiter::clear($this->throttleKey());
+    };
     }
 
     public function LoginIndex()
@@ -65,7 +74,9 @@ class AuthController extends Controller
         });
 
         return inertia('Authentication/Create', [
-            'themes' => config('themes'),
+            'themes' => array_filter(config('themes.roster'), function ($theme) {
+                return $theme['available'];
+            }),
             'items' => $items,
         ]);
     }
@@ -174,6 +185,8 @@ class AuthController extends Controller
         if ($user->id === 1) {
             Admin::create([
                 'user_id' => $user->id,
+                'role_id' => 1,
+
             ]);
         }
 
@@ -181,9 +194,38 @@ class AuthController extends Controller
 
 
 
-        Auth::login($user);
+        Auth::login($user, $remember = true);
+    }
+    /**
+     * Ensure the login request is not rate limited.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function ensureIsNotRateLimited(Request $request): void
+    {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+            return;
+        }
+
+        event(new Lockout($request));
+
+        $seconds = RateLimiter::availableIn($this->throttleKey());
+
+        throw ValidationException::withMessages([
+            'email' => trans('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ]),
+        ]);
     }
 
+    /**
+     * Get the rate limiting throttle key for the request.
+     */
+    public function throttleKey(): string
+    {
+        return Str::transliterate(Str::lower('attempts_on_'.$this->input('username')).'_from'.$this->ip());
+    }
 
     public function UserExit(): RedirectResponse
     {

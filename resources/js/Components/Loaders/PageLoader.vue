@@ -8,12 +8,15 @@ const emit = defineEmits<{
   (event: "sidebarToggle"): void;
 }>();
 
-defineProps<{
-  isLoading: { value: boolean };
-}>();
+interface Props {
+  isLoading?: boolean;
+}
+
+const props = defineProps<Props>()
 
 const loadingMessages = [
   "Loading...",
+  "Use code (ImBored) for a free item!",
   "Please wait... (unless you have better things to do)",
   "One moment... gathering magical space hamsters to power this up.",
   "Fetching data faster than a squirrel with a nut allergy!",

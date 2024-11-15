@@ -3,13 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as AeoAuthenticatable;
 
-class Admin extends Model
+use Illuminate\Support\Facades\{
+    Cache,
+    Redis,
+    Auth
+};
+
+class Admin extends AeoAuthenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $table = 'admins'; // Specify the actual table name
     protected $fillable = ['adminPoints', 'user_id', 'role_id']; // Allow mass assignment of points

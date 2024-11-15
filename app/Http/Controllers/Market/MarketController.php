@@ -149,12 +149,6 @@ class MarketController extends Controller
         return $path;
     }
 
-    private function uploadOBJ(UploadedFile $file, string $name): string
-    {
-        $path = Storage::disk('public')->putFileAs('uploads', $file, "{$name}.obj");
-
-        return $path;
-    }
     private function validateRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [

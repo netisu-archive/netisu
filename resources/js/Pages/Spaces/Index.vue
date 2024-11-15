@@ -117,7 +117,7 @@ const performSearch = async () => {
       <div v-else class="">
         <div class="pb-0 card-body">
           <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
-            <i class="text-5xl fas fa-face-sad-cry text-muted"></i>
+            <i class="text-5xl fad fa-face-sad-cry text-muted"></i>
             <div style="line-height: 16px">
               <div class="text-xs fw-bold text-muted text-uppercase">
                 No spaces found.

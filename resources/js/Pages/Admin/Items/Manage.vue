@@ -32,7 +32,7 @@ import AppHead from "@/Components/AppHead.vue";
             <p class="title is-2">{{ usePage<any>().props.item.name }}</p>
             <div class="content">
               <blockquote>
-                {{ usePage<any>().props.item.description ?? "This is the items description" }}
+                {{ usePage<any>().props.item.description ?? "This item does not have a description." }}
               </blockquote>
             </div>
           </div>
@@ -70,13 +70,13 @@ import AppHead from "@/Components/AppHead.vue";
           </div>
           <div class="level-item has-text-centered">
             <div>
-              <p class="heading">Onsale?</p>
+              <p class="heading">Onsale</p>
               <p class="title">{{ usePage<any>().props.item.isOnsale ? "Yes" : "No" }}</p>
             </div>
           </div>
           <div class="level-item has-text-centered">
             <div>
-              <p class="heading">Rare?</p>
+              <p class="heading">Rare</p>
               <p class="title">
                 {{ usePage<any>().props.item.isRare ? "Yes" : "No" }}
               </p>

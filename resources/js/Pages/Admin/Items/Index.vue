@@ -72,6 +72,9 @@
           </div>
           <div class="media-right"></div>
         </article>
+        <div v-if="!usePage<any>().props.items.data.length">
+            No items found
+        </div>
       </div>
     </div>
   </Navbar>

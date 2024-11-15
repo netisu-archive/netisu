@@ -54,7 +54,6 @@ class Avatar extends Model
             'tshirt' => $this->tshirt(),
             'shirt' => $this->shirt(),
             'pants' => $this->pants(),
-            'tshirt' => $this->tshirt(),
         ];
 
         return $array;

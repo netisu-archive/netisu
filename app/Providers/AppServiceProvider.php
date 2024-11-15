@@ -15,7 +15,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
-
+use Laravel\Cashier\Cashier;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,14 +39,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot(UrlGenerator $url): void
     {
         $this->bootRoute();
-
-        if (!$this->app->environment('local') || !$this->app->environment('local')) {
+        if (!$this->app->environment('local')) {
             $url->forceScheme('https');
         }
+        
+        Cashier::calculateTaxes();
 
         RedirectIfAuthenticated::redirectUsing(function () {
             return route('my.dashboard.page');
         });
+
 
         Inertia::share([
             'locale' => function () {

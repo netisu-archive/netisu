@@ -9,7 +9,7 @@
     box-shadow: 1px 1px 5px rgb(var(--section-shadow), 0.1);
 }
 .navbar-landing {
-    background: #99d6ff !important;
+    background: var(--info-600) !important;
     color: white;
     box-shadow: none;
     border-bottom: none;

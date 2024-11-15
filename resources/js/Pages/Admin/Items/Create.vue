@@ -131,6 +131,12 @@ const handleImageUpload = (event) => {
                     </div>
                     </div>
                   </div>
+                  <span v-if="form.image">
+                    File Output {{ form.image.name }}
+                  </span>
+                  <span v-if="form.modal">
+                    File Output {{ form.modal.name }}
+                  </span>
                 <button
                   :disabled="form.processing" @click="AttemptUpload" v-bind:class="{ 'is-loading': Uploading }" type="submit"
                   class="button has-text-white is-danger is-fullwidth"

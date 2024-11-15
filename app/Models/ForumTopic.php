@@ -18,7 +18,7 @@ class ForumTopic extends Model
         'description',
         'home_page_priority',
         'is_staff_only_viewing',
-        'is_staff_only_posting'
+        'role_required_to_post'
     ];
 
     public function threads($hasPagination = true)
@@ -33,7 +33,7 @@ class ForumTopic extends Model
 
         return ($hasPagination) ? $threads->paginate(4) : $threads->get();
     }
-  
+
     public function slug()
     {
         $name = str_replace('-', ' ', $this->name);

@@ -3,11 +3,21 @@
 namespace App\Http\Controllers\Endpoints;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\{
+ Contracts\Auth\MustVerifyEmail,
+ Validation\ValidationException,
+ Support\Facades\Redirect, 
+ Support\Facades\Password,
+ Http\RedirectResponse, 
+ Support\Facades\Auth,  
+ Support\Facades\Hash,
+ Http\JsonResponse,  
+ Validation\Rules,
+ Support\Carbon,
+ Http\Request,
+ Support\Str,
+};
+
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Country;
@@ -15,8 +25,10 @@ use App\Models\User;
 
 use App\Models\UserBan;
 use App\Models\UserSettings;
-use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
+
+use Auth\Events\PasswordReset;
+
 
 class SettingsController extends Controller
 {
@@ -27,7 +39,7 @@ class SettingsController extends Controller
     {        // Get the user
         $user = Auth::user();
 
-        // Get the user's settings record (assuming a relationship exists)
+        // Get the user's settings record
         $settings = $user->settings;
 
         // Get the country code from the request
@@ -40,13 +52,13 @@ class SettingsController extends Controller
             $settings->country_code = strtolower($country);
             $settings->save();
 
-            // Success message
+            // Success message (handled by frontend)
             return response()->json([
                 "message" => "Country updated successfully.",
                 "type" => "success",
             ], 200);
         } else {
-            // Country does not exist
+            // Country does not exist (example unitedstates instead of us)
             return response()->json([
                 "message" => "Invalid country code. Please select a valid country.",
                 "type" => "error",
@@ -56,77 +68,37 @@ class SettingsController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(Request $request, $user): RedirectResponse
-    {
-        switch ($request->category) {
-            case 'general':
-                return $this->updateGeneralSettings($request, $user);
-            case 'account':
-                return $this->updateAccountSettings($request, $user);
-            case 'billing':
-                return $this->updateBillingSettings($request, $user);
-            default:
-                abort(404);
-        }
-    }
 
-    private function updateGeneralSettings(Request $request, $user)
+    public function resetPassword(Request $request): JsonResponse
     {
-        $this->validate($request, [
-            'description' => ['max:1024'],
-            'forum_signature' => ['max:100']
+        $request->validate([
+            'token' => ['required'],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user->description = $request->description;
-        $user->forum_signature = $request->forum_signature;
-        $user->save();
+        // Here we will attempt to reset the user's password. If it is successful we
+        // will update the password on an actual user model and persist it to the
+        // database. Otherwise we will parse the error and return the response.
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->string('password')),
+                    'remember_token' => Str::random(60),
+                ])->save();
 
-        return response()->json([
-            "message" => "Successfully updated general settings.",
-            "type" => "success",
-        ], 200);
-    }
+                event(new PasswordReset($user));
+            }
+        );
 
-    private function updateAccountSettings($request, $user)
-    {
-        // Validate and update privacy settings
-        $this->validate($request, [
-            'private_profile' => ['boolean'],
-            'followers_enabled' => ['boolean'],
-            'trading_enabled' => ['boolean'],
-            'posting_enabled' => ['boolean'],
-            'chat_enabled' => ['boolean'],
-            'notifications_enabled' => ['boolean'],
-            'profile_picture_enabled' => ['boolean'],
-        ]);
-
-        $settings = $user->settings;
-
-        $settings->private_profile = $request->has('private_profile');
-        $settings->followers_enabled = $request->has('followers_enabled');
-        $settings->trading_enabled = $request->has('trading_enabled');
-        $settings->posting_enabled = $request->has('posting_enabled');
-        $settings->chat_enabled = $request->has('chat_enabled');
-        $settings->notifications_enabled = $request->has('notifications_enabled');
-        $settings->profile_picture_enabled = $request->has('profile_picture_enabled');
-
-        $settings->save();
-
-        // Validate and update password if requested
-        if ($request->has('new_password')) {
-            $this->validate($request, [
-                'current_password' => ['required'],
-                'new_password' => ['required', 'confirmed', 'min:6', 'max:255']
+        if ($status != Password::PASSWORD_RESET) {
+            throw ValidationException::withMessages([
+                'email' => [__($status)],
             ]);
-
-            if (!password_verify($request->current_password, $user->password))
-                return back()->withErrors(['Incorrect current password.']);
-
-            $user->password = bcrypt($request->new_password);
-            $user->save();
         }
 
-        return back()->with('message', 'Successfully updated account settings.');
+        return response()->json(['status' => __($status)]);
     }
 
     /**

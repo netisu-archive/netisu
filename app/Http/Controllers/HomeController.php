@@ -26,20 +26,32 @@ class HomeController extends Controller
         // Use caching to store the item count query result
         $landingItems = Cache::remember($cacheKeyItems, now()->addHours(1), function () {
             return Item::where([
-                ['status', '=', 'pending']
-            ])->inRandomOrder()->limit(6)->paginate(6)->through(function ($item) {
+                ['status', '!=', 'pending']
+            ])->inRandomOrder()->paginate(6)->through(function ($item) {
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
                     'thumbnail' => $item->thumbnail(),
-                    'creator_username' => $item->creator->username,
-                    'creator_display_name' => $item->creator->display_name,
+                    'creator' => [
+                        'username' => $item->creator->username,
+                        'displayname' => $item->creator->display_name,
+                    ],
                 ];
             });
         });
 
         $landingPosts = Cache::remember($cacheKeyPosts, now()->addHours(1), function () {
-            return ForumThread::inRandomOrder()->limit(4)->get();
+            return ForumThread::inRandomOrder()->paginate(4)->through(function ($post) {
+                return [
+                    'id' => $post->id,
+                    'title' => $post->title,
+                    'body' => $post->body,
+                    'creator' => [
+                        'username' => $post->creator->username,
+                    ],
+                    'slug' => $post->slug(),
+                ];
+            });
         });
 
         return inertia('Welcome', [
@@ -59,7 +71,7 @@ class HomeController extends Controller
 
     public function DashboardVal(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'message' => ['max:124']
         ]);
 
@@ -67,28 +79,35 @@ class HomeController extends Controller
         $limit = 5; // Allow 5 requests per minute (adjust as needed)
         $key = $this->throttleKey();
 
-        if (!RateLimiter::attempt($key, $limit, 60)) {
+        $executed = RateLimiter::attempt(
+            $key,
+            $limit,
+            function (Request $request) {
+            if ($request->message != Auth::user()->latestStatus) {
+                // Logging
+                $status = new Status;
+                $status->creator_id = Auth::id();
+                $status->message = $request->message;
+                $status->save();
+
+                // Clear the cache for the latest status
+                Cache::forget('latest_status_' . Auth::id());
+
+                $user = User::find(Auth::id());
+                $user->status = $request->message;
+                $user->save();
+            }
+
+        }, 60);
+
+        if (!$executed) {
             return response()->json([
                 'message' => 'Too many requests. Please try again later.',
                 'type' => 'error'
             ], 429); // Use status code 429 for Too Many Requests
-        }
+          }
 
 
-        if ($request->message != Auth::user()->latestStatus) {
-            // Logging
-            $status = new Status;
-            $status->creator_id = Auth::id();
-            $status->message = $request->message;
-            $status->save();
-
-            // Clear the cache for the latest status
-            Cache::forget('latest_status_' . Auth::id());
-
-            $user = User::find(Auth::id());
-            $user->status = $request->message;
-            $user->save();
-        }
         return response()->json(
             [
                 'message' => 'Your status has been changed.',
@@ -107,7 +126,7 @@ class HomeController extends Controller
         if (RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return response()->json(
                 [
-                    'message' => 'You have posted to many times try again later.',
+                    'message' => 'You have posted too many times, try again later.',
                     'type' => 'danger'
                 ]
             );

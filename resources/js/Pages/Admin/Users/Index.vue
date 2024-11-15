@@ -9,7 +9,7 @@
 <template>
   <AppHead
     pageTitle="User Index"
-    description="Login to Vestora."
+    description="Login to"
     :url="route('auth.login.page')"
   />
   <Navbar>
@@ -67,7 +67,7 @@
                 <span
                   v-if="user.isStaff"
                   class="tag is-info"
-                  >Team Member</span
+                  >{{ user.position }}</span
                 >
                 </div>
               </p>
@@ -82,6 +82,9 @@
           </div>
           <div class="media-right"></div>
         </article>
+        <div v-if="!usePage<any>().props.users.data.length">
+            No users found
+        </div>
       </div>
     </div>
   </Navbar>

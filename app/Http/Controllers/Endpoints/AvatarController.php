@@ -97,12 +97,14 @@ class AvatarController extends Controller
     public function getWearingItems()
     {
         // Return Wearing Items
-        $items = Auth::user()->avatar()->WearingItems();
+        /** @var \App\Models\User $user **/
+        $user = Auth::user();
+        $items = $user->avatar()->WearingItems();
 
-        return response()->json($items); // Add this line to return the data
+        return dd($items); // returns hats in an array
     }
 
-    public function getWearingHats(Request $request)
+    public function getWearingHats()
     {
         // Return Wearing Hats
         $cacheKey = 'wearing_items_hats'; // Use a specific cache key for hat searches

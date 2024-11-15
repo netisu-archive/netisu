@@ -127,16 +127,17 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__ . '/../routes/web.php',
         api: __DIR__ . '/../routes/api.php',
         commands: __DIR__ . '/../routes/console.php',
-        // channels: __DIR__.'/../routes/channels.php',
         health: '/up',
-    )
-    ->withMiddleware(function (Middleware $middleware) {
+    )->withBroadcasting(
+        __DIR__.'/../routes/channels.php',
+        ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
+    )->withMiddleware(function (Middleware $middleware) {
         $middleware->validateCsrfTokens(except: [
            //
         ]);
         $middleware->throttleApi();
+        $middleware->statefulApi();
         $middleware->api(append: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
         ]);
@@ -144,14 +145,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\Cors::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
-            \App\Http\Middleware\WordFilterCheck::class,
-            \App\Http\Middleware\FeatureFlags::class,
             \App\Http\Middleware\Localization::class,
-            \App\Http\Middleware\SiteConfigMiddleware::class, // SiteSettings
             \App\Http\Middleware\HandleInertiaCrossDomainVisits::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
-            \App\Http\Middleware\Roles::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\SiteConfigMiddleware::class, // SiteSettings
+            \App\Http\Middleware\WordFilterCheck::class,
+            \App\Http\Middleware\FeatureFlags::class,
+            \App\Http\Middleware\Roles::class,
             \App\Http\Middleware\UpdateOnlineStatus::class,
             \App\Http\Middleware\EnsureSettings::class,
             \App\Http\Middleware\RedirectIfBanned::class,

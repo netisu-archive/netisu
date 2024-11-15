@@ -2,30 +2,46 @@
 
 namespace App\Models;
 
-use App\Models\Avatar;
-use App\Models\Admin;
-use App\Models\Level;
-use App\Models\Status;
-use App\Models\ForumThread;
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use LevelUp\Experience\Concerns\GiveExperience;
-use LevelUp\Experience\Concerns\HasAchievements;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as AeoAuthenticatable;
-use Laravel\Scout\Searchable;
-use App\Models\IpLog;
-
-use Illuminate\Support\Facades\{
-    Cache,
-    Redis
+use Illuminate\{
+    Database\Eloquent\Factories\HasFactory,
+    Foundation\Auth\User as AeoAuthenticatable,
+    Notifications\Notifiable,
+    Support\Facades\Cache,
+    Support\Facades\Redis,
+    Support\Facades\Auth,
+    Contracts\Auth\MustVerifyEmail,
 };
 
+use App\Models\{
+    Avatar,
+    Admin,
+    Level,
+    Status,
+    ForumThread,
+    IpLog,
+};
+
+use Laravel\{
+    Cashier\Billable,
+    Sanctum\HasApiTokens,
+    Scout\Searchable,
+};
+use LevelUp\Experience\Concerns\{
+    GiveExperience,
+    HasAchievements,
+};
 class User extends AeoAuthenticatable
 {
-    use HasApiTokens, HasFactory, GiveExperience, HasAchievements, Notifiable, Searchable;
+    use
+        Billable,
+        HasApiTokens,
+        HasFactory,
+        GiveExperience,
+        HasAchievements,
+        Notifiable,
+        Searchable
+        /* MustVerifyEmail */
+    ;
 
     /**
      * The attributes that are mass assignable.
@@ -289,12 +305,25 @@ class User extends AeoAuthenticatable
         }
     }
 
+    public function CurrentPositionID()
+    {
+        if ($this->isStaff()) {
+            $adminRole = AdminRoles::where([
+                ['id', '=', $admin->role_id],
+            ])->first();
+
+            return $admin->role_id;
+        } else {
+            return null;
+        }
+    }
+
     public function thumbnail()
     {
         $url = env('STORAGE_URL');
         $image = ($this->avatar()?->image === 'default') ? env('DEFAULT_AVATAR_FILE') : $this->avatar()?->image;
         if ($this->avatar()?->image === 'default') {
-            return "/{$image}.png";
+            return "{$image}.png";
         } else {
             return "{$url}/thumbnails/{$image}.png";
         }
@@ -309,7 +338,7 @@ class User extends AeoAuthenticatable
         } else {
             $image = ($this->avatar()?->image === 'default') ? env('DEFAULT_AVATAR_FILE') : $this->avatar()?->image;
             if ($this->avatar()?->image === 'default') {
-                return "/{$image}_headshot.png";
+                return "{$image}_headshot.png";
             } else {
                 return "{$url}/thumbnails/{$image}_headshot.png";
             }

@@ -44,17 +44,28 @@ const isHidden = ref(true);
     <Navbar />
     <Sidebar>
         <div class="cell medium-11">
-            <div class="gap-2 align-middle flex-container">
-                <v-lazy-image :src="usePage<any>().props.post.creator.headshot" width="40"
-                    class="headshot flex-child-shrink" alt="Avatar" src-placeholder="/assets/img/dummy_headshot.png" />
-                <div class="text-start">
-                    <div class="mb-2 text-xl fw-semibold">{{ usePage<any>().props.post.title }} </div>
-                    <div class="mb-2 text-xs text-muted fw-semibold">A post by: {{ usePage<any>
-                        ().props.post.creator.username }}</div>
-                </div>
-            </div>
+            <nav class="alert alert-info py-1 alert-landing">
+                        <div class="text-center fw-semibold">
+                            <div
+                                class="gap-2 flex-container"
+                            >
+                                <div>
+                                    <div class="gap-2 align-middle flex-container">
+                                        <v-lazy-image :src="usePage<any>().props.post.creator.headshot" width="40"
+                                            class="headshot flex-child-shrink" alt="Avatar" src-placeholder="/assets/img/dummy_headshot.png" />
+                                        <div class="text-start">
+                                            <div class=" text-xl fw-semibold">{{ usePage<any>().props.post.title }} <span v-if="post.pinned"><i class="text-danger fas fa-thumbtack"></i></span> <span v-if="post.locked"><i class="text-warning fas fa-lock"></i></span> </div>
+                                            <div class=" text-xs text-base fw-semibold">Posted by: {{ usePage<any>
+                                                ().props.post.creator.username }} <span>&bullet;</span> {{ usePage<any>().props.post.DateHum
+                                                }} </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
             <div class="card card-body">
-                <div class="gap-2 align-middle flex-container">
+                <div class="gap-2  flex-container">
                     <div class="gap-2 mb-3 align-middle flex-container flex-dir-column">
                         <Link :href="route('user.profile', { username: usePage<any>().props.post.creator.username })">
                         <v-lazy-image :src="usePage<any>().props.post.creator.thumbnail" style="max-width:136px"
@@ -69,12 +80,8 @@ const isHidden = ref(true);
                         </div>
                     </div>
                     <div class="divider verticalDivider"></div>
-                    <div class="card card-body w-100">
+                    <div class="card-body w-100">
                         <div class="gap-1 flex-container flex-dir-column">
-                            <div class="mb-2 text-sm text-muted fw-semibold"><i class="fas fa-clock"></i>&nbsp; Post by:
-                                {{
-                                    usePage<any>().props.post.creator.username }}, <b>{{ usePage<any>().props.post.DateHum
-                                            }}</b></div>
                             <div class="mb-2" v-html="usePage<any>().props.post.body" style="white-space: pre-wrap;">
                             </div>
                         </div>
@@ -127,7 +134,7 @@ const isHidden = ref(true);
                 </div>
             </div>
             <div class="section flex-container align-center">
-                <a v-on:click="isHidden = !isHidden" class="btn btn-success"><i class="fas fa-reply"></i>&nbsp;Reply</a>
+                <a v-on:click="isHidden = !isHidden" v-if="usePage<any>().props.auth.user" class="btn btn-success"><i class="fas fa-reply"></i>&nbsp;Reply</a>
             </div>
         </div>
     </Sidebar>

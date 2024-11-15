@@ -84,7 +84,6 @@ function site_setting($key)
 
 function getItemHash($itemID): ?string
 {
-    // Assuming your actual primary key column name is 'id'
     $item = Item::where('id', '=', $itemID)->firstOrFail();
 
     return $item->hash;
@@ -94,7 +93,7 @@ function remote_file_exists($url)
 {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_NOBODY, 1);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); # handles 301/2 redirects
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // handles 301/2 redirects
     curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);

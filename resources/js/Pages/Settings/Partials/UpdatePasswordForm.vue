@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
+import { route } from 'momentum-trail'
+import axios from 'axios';
 import { ref } from 'vue';
-//import { route, current } from "momentum-trail";
 
 const passwordInput = ref(null);
 const currentPasswordInput = ref(null);
@@ -13,74 +14,65 @@ const form = useForm({
 });
 
 const updatePassword = () => {
-    form.put(route('password.update'), {
-        preserveScroll: true,
-        onSuccess: () => form.reset(),
-        onError: () => {
-            if (form.errors.password) {
-                form.reset('password', 'password_confirmation');
-                passwordInput.value.focus();
-            }
-            if (form.errors.current_password) {
-                form.reset('current_password');
-                currentPasswordInput.value.focus();
-            }
-        },
-    });
+    axios.get(`/sanctum/csrf-cookie`).then(() => {
+        form.post(route('api.settings.resetPassword'), {
+            preserveScroll: true,
+            onSuccess: () => form.reset(),
+            onError: () => {
+                if (form.errors.password) {
+                    form.reset('password', 'password_confirmation');
+                    passwordInput.value.focus();
+                }
+                if (form.errors.current_password) {
+                    form.reset('current_password');
+                    currentPasswordInput.value.focus();
+                }
+            },
+        });
+    })
 };
 </script>
 
 <template>
-    <section>
-
+    <div class="card card-inner card-body">
         <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
-            <div>
-                <label for="current_password" value="Current Password" />
 
-                <input
-                    id="current_password"
-                    ref="currentPasswordInput"
-                    v-model="form.current_password"
-                    type="password"
-                    class="block w-full mt-1"
-                    autocomplete="current-password"
-                />
+            <div class="mb-2">
+                <div class="mb-2 text-xl fw-semibold">
+                    Change Password
+                </div>
+                <div class="mb-2">
+                    <div class="text-xs fw-bold text-muted text-uppercase">
+                        Current Password
+                    </div>
+                    <input id="current_password" ref="currentPasswordInput" v-model="form.current_password"
+                        type="password" class="form form-has-section-color" autocomplete="current-password"
+                        placeholder="Current Password..." />
+                    <div :message="form.errors.current_password" class="text-danger fw-semibold mt-2" />
+                </div>
+                <div class="mb-2">
+                    <div class="text-xs fw-bold text-muted text-uppercase">
+                        New Password
+                    </div>
+                    <input id="password" ref="passwordInput" v-model="form.password" type="password"
+                        autocomplete="new-password" class="form form-has-section-color"
+                        placeholder="Current Password..." />
+                    <div :message="form.errors.password" class="text-danger fw-semibold mt-2" />
 
-                <div :message="form.errors.current_password" class="mt-2" />
+                </div>
+                <div class="mb-2">
+                    <div class="text-xs fw-bold text-muted text-uppercase">
+                        Confirm Password
+                    </div>
+                    <input id="password_confirmation" v-model="form.password_confirmation" type="password"
+                        autocomplete="new-password" class="form form-has-section-color"
+                        placeholder="Current Password..." />
+                    <div :message="form.errors.password_confirmation" class="text-danger fw-semibold mt-2" />
+                </div>
             </div>
-
-            <div>
-                <label for="password" value="New Password" />
-
-                <input
-                    id="password"
-                    ref="passwordInput"
-                    v-model="form.password"
-                    type="password"
-                    class="block w-full mt-1"
-                    autocomplete="new-password"
-                />
-
-                <input :message="form.errors.password" class="mt-2" />
-            </div>
-
-            <div>
-                <label for="password_confirmation" value="Confirm Password" />
-
-                <input
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="block w-full mt-1"
-                    autocomplete="new-password"
-                />
-
-                <div :message="form.errors.password_confirmation" class="mt-2" />
-            </div>
-
-            <div class="flex items-center gap-4">
-                <button :disabled="form.processing">Save</button>
-            </div>
+            <button :disabled="form.processing" class="btn btn-success">
+                Change Password
+            </button>
         </form>
-    </section>
+    </div>
 </template>

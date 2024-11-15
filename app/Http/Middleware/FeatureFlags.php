@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Inertia\Inertia as InertiaResponse;
+use Inertia\Middleware;
 
 class FeatureFlags
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
         $route = $request->route()->getName();
         $middleware = $request->route()->middleware();
@@ -84,7 +86,7 @@ class FeatureFlags
     private function isFeatureSettingDisabled($feature)
     {
     $settingValue = site_setting("{$feature}");
-   // var_dump($settingValue); // Add this line to check the value of $settingValue
+   // var_dump($settingValue); // Add this line to debug the value of $settingValue
     return !$settingValue;
     }
 
@@ -95,11 +97,11 @@ class FeatureFlags
 
         if ($feature === 'Maintenance') {
             return redirect()->route('maintenance.page');
-        } elseif (!Auth::check() && in_array('auth', $middleware)) {
+        } elseif (!Auth::check() && in_array('guest', $middleware)) {
             return redirect()->route('auth.login.page');
-        } elseif (Auth::check() && in_array('guest', $middleware)) {
+        } elseif (Auth::check() && in_array('auth', $middleware)) {
             return redirect()->route('my.dashboard.page');
-        } elseif ($isPost || ((!Auth::check() || (Auth::check() && !Auth::user()->isStaff)))) {
+        } elseif ($isPost || ((!Auth::check() || (Auth::check() && !Auth::user()->isStaff())))) {
 	    return inertia('App/FeatureDisabled', ['title' => $alias]);
         }
 

@@ -7,6 +7,7 @@ import { usePage } from '@inertiajs/vue3';
 import { route } from 'momentum-trail'
 import axios from 'axios';
 import { ref } from 'vue';
+import { TresCanvas } from '@tresjs/core'
 
 const isDescOpen = ref(false);
 const isOtherOpen = ref(false);
@@ -17,8 +18,8 @@ defineProps<{
     itemOwnership: Boolean
 }>();
 
-const JSONDATA = ref<Array>([]);
-let thumbnail = document.getElementById("thumbnail");
+const JSONDATA = Array as any;
+let thumbnail = document.getElementById("thumbnail") as HTMLImageElement;
 
 let isPreview = ref(false);
 
@@ -27,71 +28,63 @@ function capitalizeFirstLetter(str) {
 }
 
 function showModal(modalId: string): void {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.toggle("active");
-            }
-}
-
-function setAttributeActive(id: string) {
-  const element = document.getElementById(id);
-
-  if (element) {
-    // Toggle the 'active' class
-    element.classList.toggle('active');
-  } else {
-    console.error(`Element with ID ${id} not found`);
-  }
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.toggle("active");
+    }
 }
 
 const purchaseBucks = () => {
     showModal('purchase-with-bucks-modal')
-    axios.get(`/sanctum/csrf-cookie`).then(response => {
+    axios.get(`/sanctum/csrf-cookie`).then(() => {
         axios.post(route(`api.store.purchase`, { id: usePage<any>().props.item.id, currencyType: 'bucks' }))
-        .then(response => {
-            JSONDATA.value = response.data;
-      })
-      .catch(error => {
-        console.error(error);
-      });
+            .then(response => {
+                const { message, type } = response.data;
+
+                JSONDATA.value = { message, type };
+            })
+            .catch(error => {
+                console.error(error);
+            });
     });
 };
 const purchaseCoins = () => {
     showModal('purchase-with-coins-modal')
-    axios.get(`/sanctum/csrf-cookie`).then(response => {
+    axios.get(`/sanctum/csrf-cookie`).then(() => {
         axios.post(route(`api.store.purchase`, { id: usePage<any>().props.item.id, currencyType: 'coins' }))
-        .then(response => {
-        const { message, type } = response.data;
+            .then(response => {
+                const { message, type } = response.data;
 
-        JSONDATA.value = { message, type };
-      })
-      .catch(error => {
-        console.error(error);
-      });
+                JSONDATA.value = { message, type };
+            })
+            .catch(error => {
+                console.error(error);
+            });
     });
 };
 
 const swap = () => {
-  if (isPreview.value) {
-    isPreview.value = false;
-    thumbnail.src = usePage<any>().props.item.thumbnail;
-  } else {
-    isPreview.value = true;
-    thumbnail.src = usePage<any>().props.item.preview;
-  }
+    if (isPreview.value) {
+        isPreview.value = false;
+        thumbnail.src = usePage<any>().props.item.thumbnail;
+    } else {
+        isPreview.value = true;
+        thumbnail.src = usePage<any>().props.item.preview;
+    }
 }
 function onImgErrorSmall(id) {
-  let source = document.getElementById(id);
-  source.src = "/assets/img/dummy-error.png";
-  source.onerror = "";
+    let source = document.getElementById(id) as HTMLImageElement;
+    source.src = "/assets/img/dummy-error.png";
+    source.onerror = null;
 
-  return true;
+    return true;
 }
 </script>
 <template>
     <AppHead :pageTitle="usePage<any>().props.item.name" :description="usePage<any>().props.item.description"
-        :url="route(`store.item`, { id: usePage<any>().props.item.id })" :item="true" :iid="usePage<any>().props.item.id"
-        :itime="usePage<any>().props.item.time_off_sale" :cover="usePage<any>().props.item.thumbnail" />
+        :url="route(`store.item`, { id: usePage<any>().props.item.id })" :item="true"
+        :iid="usePage<any>().props.item.id" :itime="usePage<any>().props.item.time_off_sale"
+        :cover="usePage<any>().props.item.thumbnail" />
     <Navbar />
     <Sidebar :showJsonAlert="JSONDATA ? true : false" :JSONALERT="JSONDATA">
         <div class="modal" id="sell-modal">
@@ -519,7 +512,8 @@ function onImgErrorSmall(id) {
                                 right: 10px;
                             ">
                                 <div class="ms-auto">
-                                    <button v-if="usePage<any>().props.item.preview" class="btn btn-secondary btn-xs" @click="swap()">
+                                    <button v-if="usePage<any>().props.item.preview" class="btn btn-secondary btn-xs"
+                                        @click="swap()">
                                         <i class="fad fa-shirt"></i> {{ isPreview ? 'View Item' : 'View Preview' }}
                                     </button>
                                 </div>
@@ -530,8 +524,19 @@ function onImgErrorSmall(id) {
                                     </button>
                                 </div>
                             </div>
-                            <img :src="usePage<any>().props.item.thumbnail" @error="onImgErrorSmall('thumbnail')" class="mx-auto d-block" id="thumbnail"
-                                ref="thumbnail" width="512" height="512">
+                            <div class="mx-auto d-block">
+                                <TresCanvas shadows :output-encoding="SRGBColorSpace">
+                                    <TresPerspectiveCamera />
+                                    <TresMesh>
+                                        <TresTorusGeometry :args="[1, 0.5, 16, 32]" />
+                                        <TresMeshBasicMaterial color="orange" />
+                                    </TresMesh>
+                                    <!-- Your scene goes here -->
+                                    <TresAmbientLight :intensity="1" />
+                                </TresCanvas>
+                            </div>
+                            <img :src="usePage<any>().props.item.thumbnail" @error="onImgErrorSmall('thumbnail')"
+                                class="mx-auto d-block" id="thumbnail" ref="thumbnail" width="512" height="512">
                         </div>
                         <div v-if="itemOwnership"
                             class="gap-2 py-2 overflow-hidden text-sm text-center align-middle flex-container align-center bg-success fw-semibold">
@@ -593,91 +598,95 @@ function onImgErrorSmall(id) {
                         </div>
                     </div>
                     <div v-if="usePage<any>().props.item.rare">
-                    <div class="mb-1 text-xl fw-semibold">
-                        Private Sellers
-                        <span class="text-xs fw-semibold text-muted">This item has 3 listings</span>
-                    </div>
-                    <div class="card card-body">
-                        <div class="gap-4 align-middle section flex-container">
-                            <div class="gap-2 align-middle flex-container flex-child-grow">
-                                <img src="/assets/img/dummy_headshot.png" class="headshot" width="50">
-                                <div style="line-height: 10px">
-                                    <div class="text-lg fw-semibold">
-                                        Nabrious
-                                    </div>
-                                    <div class="text-xs fw-semibold text-muted">
-                                        Copy #1 of 200
+                        <div class="mb-1 text-xl fw-semibold">
+                            Private Sellers
+                            <span class="text-xs fw-semibold text-muted">This item has 3 listings</span>
+                        </div>
+                        <div class="card card-body">
+                            <div class="gap-4 align-middle section flex-container">
+                                <div class="gap-2 align-middle flex-container flex-child-grow">
+                                    <img src="/assets/img/dummy_headshot.png" class="headshot" width="50">
+                                    <div style="line-height: 10px">
+                                        <div class="text-lg fw-semibold">
+                                            Nabrious
+                                        </div>
+                                        <div class="text-xs fw-semibold text-muted">
+                                            Copy #1 of 200
+                                        </div>
                                     </div>
                                 </div>
+                                <button class="btn btn-success btn-xs w-100"
+                                    data-toggle-modal="#purchase-with-bucks-modal">
+                                    <i class="fas fa-money-bill-1-wave" style="width: 30px"></i>10 Bucks
+                                </button>
                             </div>
-                            <button class="btn btn-success btn-xs w-100" data-toggle-modal="#purchase-with-bucks-modal">
-                                <i class="fas fa-money-bill-1-wave" style="width: 30px"></i>10 Bucks
-                            </button>
-                        </div>
-                        <div class="gap-4 align-middle section flex-container">
-                            <div class="gap-2 align-middle flex-container flex-child-grow">
-                                <img src="/assets/img/dummy_headshot.png" class="headshot" width="50">
-                                <div style="line-height: 10px">
-                                    <div class="text-lg fw-semibold">
-                                        Nabrious
-                                    </div>
-                                    <div class="text-xs fw-semibold text-muted">
-                                        Copy #1 of 200
+                            <div class="gap-4 align-middle section flex-container">
+                                <div class="gap-2 align-middle flex-container flex-child-grow">
+                                    <img src="/assets/img/dummy_headshot.png" class="headshot" width="50">
+                                    <div style="line-height: 10px">
+                                        <div class="text-lg fw-semibold">
+                                            Nabrious
+                                        </div>
+                                        <div class="text-xs fw-semibold text-muted">
+                                            Copy #1 of 200
+                                        </div>
                                     </div>
                                 </div>
+                                <button class="btn btn-success btn-xs w-100"
+                                    data-toggle-modal="#purchase-with-bucks-modal">
+                                    <i class="fas fa-money-bill-1-wave" style="width: 30px"></i>10 Bucks
+                                </button>
                             </div>
-                            <button class="btn btn-success btn-xs w-100" data-toggle-modal="#purchase-with-bucks-modal">
-                                <i class="fas fa-money-bill-1-wave" style="width: 30px"></i>10 Bucks
-                            </button>
-                        </div>
-                        <div class="gap-4 align-middle section flex-container">
-                            <div class="gap-2 align-middle flex-container flex-child-grow">
-                                <img src="/assets/img/dummy_headshot.png" class="headshot" width="50">
-                                <div style="line-height: 10px">
-                                    <div class="text-lg fw-semibold">
-                                        Nabrious
-                                    </div>
-                                    <div class="text-xs fw-semibold text-muted">
-                                        Copy #1 of 200
+                            <div class="gap-4 align-middle section flex-container">
+                                <div class="gap-2 align-middle flex-container flex-child-grow">
+                                    <img src="/assets/img/dummy_headshot.png" class="headshot" width="50">
+                                    <div style="line-height: 10px">
+                                        <div class="text-lg fw-semibold">
+                                            Nabrious
+                                        </div>
+                                        <div class="text-xs fw-semibold text-muted">
+                                            Copy #1 of 200
+                                        </div>
                                     </div>
                                 </div>
+                                <button class="btn btn-success btn-xs w-100"
+                                    data-toggle-modal="#purchase-with-bucks-modal">
+                                    <i class="fas fa-money-bill-1-wave" style="width: 30px"></i>10 Bucks
+                                </button>
                             </div>
-                            <button class="btn btn-success btn-xs w-100" data-toggle-modal="#purchase-with-bucks-modal">
-                                <i class="fas fa-money-bill-1-wave" style="width: 30px"></i>10 Bucks
-                            </button>
-                        </div>
-                        <div class="gap-4 align-middle section flex-container">
-                            <div class="gap-2 align-middle flex-container flex-child-grow">
-                                <img src="/assets/img/dummy_headshot.png" class="headshot" width="50">
-                                <div style="line-height: 10px">
-                                    <div class="text-lg fw-semibold">
-                                        Nabrious
-                                    </div>
-                                    <div class="text-xs fw-semibold text-muted">
-                                        Copy #1 of 200
+                            <div class="gap-4 align-middle section flex-container">
+                                <div class="gap-2 align-middle flex-container flex-child-grow">
+                                    <img src="/assets/img/dummy_headshot.png" class="headshot" width="50">
+                                    <div style="line-height: 10px">
+                                        <div class="text-lg fw-semibold">
+                                            Nabrious
+                                        </div>
+                                        <div class="text-xs fw-semibold text-muted">
+                                            Copy #1 of 200
+                                        </div>
                                     </div>
                                 </div>
+                                <button class="btn btn-success btn-xs w-100"
+                                    data-toggle-modal="#purchase-with-bucks-modal">
+                                    <i class="fas fa-money-bill-1-wave" style="width: 30px"></i>10 Bucks
+                                </button>
                             </div>
-                            <button class="btn btn-success btn-xs w-100" data-toggle-modal="#purchase-with-bucks-modal">
-                                <i class="fas fa-money-bill-1-wave" style="width: 30px"></i>10 Bucks
-                            </button>
+                            <ul class="section pagination flex-container align-center">
+                                <button class="page-link page-disabled">
+                                    <i class="fa-regular fa-chevron-left"></i>
+                                </button>
+                                <button class="page-link page-active">
+                                    1
+                                </button>
+                                <button class="page-link">2</button>
+                                <button class="page-link">3</button>
+                                <button class="page-link">
+                                    <i class="fa-regular fa-chevron-right"></i>
+                                </button>
+                            </ul>
                         </div>
-                        <ul class="section pagination flex-container align-center">
-                            <button class="page-link page-disabled">
-                                <i class="fa-regular fa-chevron-left"></i>
-                            </button>
-                            <button class="page-link page-active">
-                                1
-                            </button>
-                            <button class="page-link">2</button>
-                            <button class="page-link">3</button>
-                            <button class="page-link">
-                                <i class="fa-regular fa-chevron-right"></i>
-                            </button>
-                        </ul>
                     </div>
                 </div>
-            </div>
                 <div class="cell medium-7">
                     <div class="mb-3 card card-body">
                         <div class="gap-2 mb-2 align-middle flex-container align-justify">
@@ -720,7 +729,8 @@ function onImgErrorSmall(id) {
                             <div class="text-xs text-muted text-uppercase fw-bold">
                                 By
                             </div>
-                            <Link :href="route('user.profile', { username: usePage<any>().props.item.creator.username })"
+                            <Link
+                                :href="route('user.profile', { username: usePage<any>().props.item.creator.username })"
                                 class="gap-2 align-middle flex-container"
                                 :class="{ 'text-danger': usePage<any>().props.item.creator.staff }">
                             <img :src="usePage<any>().props.item.creator.thumbnail" class="headshot" width="38">
@@ -738,11 +748,11 @@ function onImgErrorSmall(id) {
                                 Purchase With
                             </span>
                             <span class="text-md text-info" v-else-if="itemOwnership">
-                                    You already own this item.
+                                You already own this item.
                             </span>
-                            <Link :href="route('auth.login.page')" class="text-md text-warning squish"  as="span" v-else>
-                                Login to Purchase {{ usePage<any>().props.item.name }}
-                            </Link>
+                            <Link :href="route('auth.login.page')" class="text-md text-warning squish" as="span" v-else>
+                            Login to Purchase {{ usePage<any>().props.item.name }}
+                                </Link>
                         </div>
                         <div class="gap-2 align-middle flex-container-lg"
                             v-if="usePage<any>().props.auth.user && itemOwnership != true">
@@ -766,54 +776,61 @@ function onImgErrorSmall(id) {
                     </div>
                     <div class="card">
                         <div class="description-parent">
-                          <button class="mt-3 description fw-semibold text-body" :class="{ active: isDescOpen ? 'active' : '' }" @click="isDescOpen = !isDescOpen">
-                            <i class="me-2 fad fa-comments"></i>
-                            Description
-                          </button>
-                          <div class="text-sm description-content text-muted" :style="{ height: isDescOpen ? '45px' : '20px' }">
-                            <div v-if="isDescOpen" class="mt-1 text-sm text-body fw-semibold description-body">
-                                {{ usePage<any>().props.item.description ?? "This item does not have a description" }}
+                            <button class="mt-3 description fw-semibold text-body"
+                                :class="{ active: isDescOpen ? 'active' : '' }" @click="isDescOpen = !isDescOpen">
+                                <i class="me-2 fad fa-comments"></i>
+                                Description
+                            </button>
+                            <div class="text-sm description-content text-muted"
+                                :style="{ height: isDescOpen ? '45px' : '20px' }">
+                                <div v-if="isDescOpen" class="mt-1 text-sm text-body fw-semibold description-body">
+                                    {{ usePage<any>().props.item.description ?? "This item does not have a description"
+                                        }}
+                                </div>
                             </div>
-                          </div>
                         </div>
-                      </div>
-                      <div class="card">
+                    </div>
+                    <div class="card">
                         <div class="description-parent">
-                          <button class="mt-3 description fw-semibold text-body" :class="{ active: isOtherOpen ? 'active' : '' }" @click="isOtherOpen = !isOtherOpen">
-                            <i class="me-2 fad fa-layer-plus"></i>
-                            Items by {{ usePage<any>().props.item.creator.username }}
-                          </button>
-                          <div class="text-sm description-content text-muted" :style="{ height: isOtherOpen ? 'auto' : '20px' }">
-                            <div  v-if="isOtherOpen" class="mt-1 mb-2 text-sm text-body fw-semibold description-body">
-                                <div v-if="recommendations.length" class="grid-x grid-margin-x">
-                                    <div class="cell large-3 medium-4 small-6" v-for="suggestion in recommendations">
-                                        <Link :href="route('store.item', { id: suggestion.id })" class="d-block">
+                            <button class="mt-3 description fw-semibold text-body"
+                                :class="{ active: isOtherOpen ? 'active' : '' }" @click="isOtherOpen = !isOtherOpen">
+                                <i class="me-2 fad fa-layer-plus"></i>
+                                Items by {{ usePage<any>().props.item.creator.username }}
+                            </button>
+                            <div class="text-sm description-content text-muted"
+                                :style="{ height: isOtherOpen ? 'auto' : '20px' }">
+                                <div v-if="isOtherOpen"
+                                    class="mt-1 mb-2 text-sm text-body fw-semibold description-body">
+                                    <div v-if="recommendations.length" class="grid-x grid-margin-x">
+                                        <div class="cell large-3 medium-4 small-6"
+                                            v-for="suggestion in recommendations">
+                                            <Link :href="route('store.item', { id: suggestion.id })" class="d-block">
                                             <div class="p-2 mb-1 card card-inner position-relative">
                                                 <img :src="suggestion.thumbnail">
                                             </div>
                                             <div class="text-body fw-semibold text-truncate">
                                                 {{ suggestion.name }}
                                             </div>
-                                        </Link>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                    <div v-else class="text-sm fw-bold text-muted">
+                                        There is no other items from this creator
                                     </div>
                                 </div>
-                                <div v-else class="text-sm fw-bold text-muted">
-                                    There is no other items from this creator
-                                </div>
                             </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div v-if="usePage<any>().props.item.rare">
-                    <div class="mb-1 text-xl fw-semibold">
-                        Price Chart
-                    </div>
-                    <div class="card card-body">
-                        <div class="text-xs fw-bold text-uppercase text-muted">
-                            PRICE CHART GOES HERE
                         </div>
                     </div>
-                </div>
+                    <div v-if="usePage<any>().props.item.rare">
+                        <div class="mb-1 text-xl fw-semibold">
+                            Price Chart
+                        </div>
+                        <div class="card card-body">
+                            <div class="text-xs fw-bold text-uppercase text-muted">
+                                PRICE CHART GOES HERE
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -826,8 +843,8 @@ export default {
     name: 'MyComponent',
     methods: {
         isNewItem(created_at) {
-            const currentTime = new Date();
-            const itemTime = new Date(created_at);
+            const currentTime = new Date() as any;
+            const itemTime = new Date(created_at) as any;
             const timeDifference = currentTime - itemTime;
             const twoHoursInMillis = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
 

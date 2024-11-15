@@ -368,10 +368,11 @@
     position: absolute;
     left: 0;
     top: 0;
-    z-index: 0.5;
+    z-index: -1;
 }
 
 .profile-banner .masoqi {
+    z-index: 0;
     -webkit-mask-image: -webkit-gradient(
         linear,
         left top,
@@ -393,6 +394,8 @@
 .profile-banner .masoqi.special {
     opacity: 0.25;
     height: 300px;
+    z-index: -1;
+
   }
   .profile-banner .masoqi.special:before {
     content: "";
@@ -401,6 +404,8 @@
     height: inherit;
     top: -50%;
     left: -50%;
+    z-index: -1;
+
   }
   .profile-banner .masoqi.special:before
   {
@@ -534,6 +539,12 @@ a:hover {
     height: 1px;
     background: rgb(var(--black-rgb), 0.1);
     margin: 6px 10px;
+}
+
+.divider-m0 {
+    height: 1px;
+    background: rgb(var(--black-rgb), 0.1);
+    margin: 6px 0px;
 }
 
 .section:not(:last-child) {
@@ -945,6 +956,9 @@ a:hover {
 }
 .text-italic {
     font-style: italic;
+}
+.text-wrap{
+    text-wrap: wrap;
 }
 .flex-wrap {
     flex-wrap: wrap !important;

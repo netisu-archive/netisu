@@ -29,13 +29,13 @@
             <div class="column is-5">
               <br/>
             <p class="title is-2">{{ usePage<any>().props.user.display_name }}
-                <p class="title is-size-6 has-text-grey">{{ "@" + usePage<any>().props.user.username }}</p>
+                <span class="title is-size-6 has-text-grey">{{ "@" + usePage<any>().props.user.username }}</span>
 
             </p>
               <div class="content">
-
                 <blockquote>{{ usePage<any>().props.user.about_me  ?? usePage<any>().props.user.username + " does not hava a description yet."}}</blockquote>
               </div>
+              <template v-if="usePage<any>().props.permissions.canMangeUser">
               <label><strong>UID:</strong></label> <label>{{ usePage<any>().props.user.id }}</label>
               <br>
               <label><strong>IP:</strong></label> <label>{{ usePage<any>().props.user.lastIp }}</label>
@@ -43,12 +43,13 @@
               <label><strong>Email:</strong></label> <label>{{ usePage<any>().props.user.email }}</label>
               <br>
               <label><strong>Past Usernames:</strong></label> <label>Username, Usersname, User, Bitch</label>
+              </template>
             </div>
             <div class="column ">
               <div v-if="usePage<any>().props.permissions.canMangeUser">
               <label><strong>User:</strong></label>
               <br>
-              <a href="" class="button is-dark is-outlined">View Profile</a>
+              <a :href="route(`user.profile`, { username: usePage<any>().props.user.username })" class="button is-dark is-outlined">View Profile</a>
               <a href="grant.html" class="button is-dark is-outlined">Grant Achievement</a>
               <a href="grant.html" class="button is-dark is-outlined">Grant Item</a>
             </div>

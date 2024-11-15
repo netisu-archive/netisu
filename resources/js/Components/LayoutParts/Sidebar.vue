@@ -141,7 +141,7 @@ const sidebar = [
         en: { title: "Players" },
         es: { title: "Jugadoras" },
         ru: { title: "Игроки" },
-        ja: { title: "発展" },
+        ja: { title: "ユーザー" },
     },
     {
         url: route(`spaces.page`),

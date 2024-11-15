@@ -8,7 +8,7 @@ import AppHead from "@/Components/AppHead.vue";
 import Navbar from "@/Components/LayoutParts/Navbar.vue";
 import Sidebar from "@/Components/LayoutParts/Sidebar.vue";
 import Footer from "@/Components/LayoutParts/Footer.vue";
-import { route, current } from "momentum-trail";
+import { route } from "momentum-trail";
 import ItemCardSkeleton from "@/Components/ItemCardSkeleton.vue";
 import VLazyImage from "v-lazy-image";
 
@@ -48,9 +48,9 @@ function selectCategory(category) {
 }
 
 function onImgErrorSmall(id) {
-    let source = document.getElementById(id);
+    let source = document.getElementById(id) as HTMLImageElement;
     source.src = "/assets/img/dummy-error.png";
-    source.onerror = "";
+    source.onerror = null;
 
     return true;
 }
@@ -102,7 +102,7 @@ provide("selectedSubCategory", selectedSubCategory);
                 </div>
             </portal>
             <portal to="bannerDescription">
-                <span class="text-muted text-truncate"
+                <span class="text-muted text-wrap fw-semibold"
                     >Craving something new? Create it or find it here.</span
                 >
             </portal>

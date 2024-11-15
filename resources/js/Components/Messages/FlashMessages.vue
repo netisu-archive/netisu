@@ -35,7 +35,7 @@ watch(
 </script>
 
 <template>
-    <nav v-if="message && show" class="toast-menu" @click="handleClick">
+    <nav v-if="message && show" class="toast-menu" id="ToastNotif" @click="handleClick">
         <div
             v-if="type === 'success' && message && show"
             class="py-2 mb-1 text-center alert alert-toast alert-success fw-semibold"
@@ -66,13 +66,15 @@ watch(
     </nav>
 </template>
 <script lang="ts">
-$(document).ready(function () {
-    setTimeout(function () {
-        $(".toast-menu").toggleClass("toast-menu-slide");
-    }, 1000);
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const toastMenu = document.getElementById("ToastNotif") as HTMLElement;
+    toastMenu.classList.toggle('toast-menu-slide');
+  }, 1000);
 
-    setTimeout(function () {
-        $(".toast-menu").toggleClass("toast-menu-slide");
-    }, 6000);
+  setTimeout(() => {
+    const toastMenu = document.getElementById("ToastNotif") as HTMLElement;
+    toastMenu.classList.toggle('toast-menu-slide');
+  }, 6000);
 });
 </script>

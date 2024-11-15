@@ -30,14 +30,6 @@ function setActiveTopCat(categoryName): void {
 <template>
     <div class="gap-2 mb-2 align-middle flex-container align-justify">
         <div class="text-2xl fw-semibold"><i class="text-xl fad fa-message-code"></i>&nbsp;Forum</div>
-        <a href="#" class="btn btn-danger btn-circle" @click="showModal('forum-modal')"
-            v-if="usePage<any>().props.auth.user && usePage<any>().props.auth.user.staff != false"
-            data-tooltip-title="Create" data-tooltip-placement="bottom" style="margin-right: -14px"><i
-                class="fas fa-plus"></i></a>
-        <a href="#" class="btn btn-success btn-circle" @click="showModal('forum-modal')"
-            v-else-if="usePage<any>().props.auth.user && usePage<any>().props.auth.user.staff != true && topic.is_staff_only_posting == '0'"
-            data-tooltip-title="Create" data-tooltip-placement="bottom" style="margin-right: -14px"><i
-                class="fas fa-plus"></i></a>
     </div>
     <div class="collapsible" @click="setActiveTopCat('Official')" id="Official">
         <button class="d-block w-100 market-section-item">
