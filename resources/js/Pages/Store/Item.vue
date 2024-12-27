@@ -7,7 +7,7 @@ import { usePage } from '@inertiajs/vue3';
 import { route } from 'momentum-trail'
 import axios from 'axios';
 import { ref } from 'vue';
-import { TresCanvas } from '@tresjs/core'
+
 
 const isDescOpen = ref(false);
 const isOtherOpen = ref(false);
@@ -524,19 +524,9 @@ function onImgErrorSmall(id) {
                                     </button>
                                 </div>
                             </div>
-                            <div class="mx-auto d-block">
-                                <TresCanvas shadows :output-encoding="SRGBColorSpace">
-                                    <TresPerspectiveCamera />
-                                    <TresMesh>
-                                        <TresTorusGeometry :args="[1, 0.5, 16, 32]" />
-                                        <TresMeshBasicMaterial color="orange" />
-                                    </TresMesh>
-                                    <!-- Your scene goes here -->
-                                    <TresAmbientLight :intensity="1" />
-                                </TresCanvas>
-                            </div>
-                            <img :src="usePage<any>().props.item.thumbnail" @error="onImgErrorSmall('thumbnail')"
-                                class="mx-auto d-block" id="thumbnail" ref="thumbnail" width="512" height="512">
+                            <img :src="usePage<any>().props.item.thumbnail"
+                                @error="onImgErrorSmall('thumbnail')" class="mx-auto d-block" id="thumbnail"
+                                ref="thumbnail" width="512" height="512">
                         </div>
                         <div v-if="itemOwnership"
                             class="gap-2 py-2 overflow-hidden text-sm text-center align-middle flex-container align-center bg-success fw-semibold">

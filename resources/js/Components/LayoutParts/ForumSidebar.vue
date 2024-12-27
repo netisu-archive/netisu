@@ -1,20 +1,11 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3';
 import { route, current } from 'momentum-trail';
 
-const { topic, section_one, section_two, section_three } = defineProps([
-    'topic',
+const { section_one, section_two, section_three } = defineProps([
     'section_one',
     'section_two',
     'section_three',
 ]);
-
-function showModal(modalId: string): void {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.toggle("active");
-    }
-};
 function setActiveTopCat(categoryName): void {
     // Select the element with the matching ID
     const element = document.getElementById(categoryName);

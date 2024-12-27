@@ -7,7 +7,7 @@ import AppHead from "@/Components/AppHead.vue";
 import { ref, watch } from "vue";
 
 
-let MaintenanceActive = ref(usePage<any>().props.siteSettings.inMaintenance);
+const MaintenanceActive = ref(usePage<any>().props.siteSettings.inMaintenance);
 
 const EnableMaintenance = async () => {
   await axios
@@ -19,7 +19,7 @@ const EnableMaintenance = async () => {
 const DisableMaintenance = async () => {
   await axios
     .post(route(`api.admin.disableMaintenance`))
-    .then(MaintenanceActive.value = 0)
+    .then( MaintenanceActive.value = 0)
     .catch((err) => console.log(err));
 };
 watch(MaintenanceActive, (newValue, oldValue) => {

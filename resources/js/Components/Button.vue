@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { current } from 'momentum-trail';
-
 // Props
 defineProps({
     link: { type: String },

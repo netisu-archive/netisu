@@ -41,12 +41,12 @@ createServer((page) =>
         setup({ App, props, plugin }) {
             return createSSRApp({ render: () => h(App, props) })
                 .use(plugin)
+                .use(VueTippy)
+                .use(PortalVue)
                 .use(trail, {
                     routes,
                     url: props.initialPage.url,
                 })
-                .use(VueTippy)
-                .use(PortalVue)
                 .component("Skeletor", Skeletor)
                 .component("Pagination", Pagination)
                 .component("AppHead", AppHead)

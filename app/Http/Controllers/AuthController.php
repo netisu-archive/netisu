@@ -38,23 +38,36 @@ class AuthController extends Controller
             'username' => 'required',
             'password' => 'required',
         ]);
-        $this->ensureIsNotRateLimited();
 
+        $this->ensureIsNotRateLimited($request);
 
+        $user = User::where('username', $credentials['username'])->where('password', '!=', '')->first();
 
-    if (!Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']], $remember = true)) {
-        RateLimiter::hit($this->throttleKey());
+        $guard = $user->isStaff() ? 'admin' : 'web';
 
-        // Authentication failed
-        throw ValidationException::withMessages([
-            'password' => __('auth.failed'),
-        ]);
+        if (!Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']], $remember = true)) {
+            // Authentication failed
+            RateLimiter::hit($this->throttleKey($request));
+            if ($this->limiter()->attempts($this->throttleKey($request)) == '5') {
+                if (!Cache::has("{$this->throttleKey($request)}_mins"))
+                    Cache::put("{$this->throttleKey($request)}_mins", 2, now()->addMinutes(30));
+                else
+                    Cache::increment("{$this->throttleKey($request)}_mins");
+            }
+
+            throw ValidationException::withMessages([
+                'password' => __('auth.failed'),
+            ]);
         } else {
-        // Authentication passed
+            // Authentication passed
+            RateLimiter::clear($this->throttleKey($request));
+            if (Hash::needsRehash($user->password)) {
+                $user->password = Hash::make($request->password);
+                $user->save();
+            }
 
-        return redirect()->route('my.dashboard.page');
-        RateLimiter::clear($this->throttleKey());
-    };
+            return redirect()->route('my.dashboard.page');
+        };
     }
 
     public function LoginIndex()
@@ -203,13 +216,13 @@ class AuthController extends Controller
      */
     public function ensureIsNotRateLimited(Request $request): void
     {
-        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
             return;
         }
 
         event(new Lockout($request));
 
-        $seconds = RateLimiter::availableIn($this->throttleKey());
+        $seconds = RateLimiter::availableIn($this->throttleKey($request));
 
         throw ValidationException::withMessages([
             'email' => trans('auth.throttle', [
@@ -222,14 +235,19 @@ class AuthController extends Controller
     /**
      * Get the rate limiting throttle key for the request.
      */
-    public function throttleKey(): string
+    public function throttleKey(Request $request): string
     {
-        return Str::transliterate(Str::lower('attempts_on_'.$this->input('username')).'_from'.$this->ip());
+        return Str::transliterate(Str::lower('attempts_on_' . $request->input('username')) . '_from' . $request->ip());
     }
 
     public function UserExit(): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        if (Auth::check() && Auth::user()->isStaff()) {
+            Auth::guard('admin')->logout();
+            Auth::guard('web')->logout();
+        } else {
+            Auth::guard('web')->logout();
+        }
 
         return redirect()->intended(route("auth.login.page"))->with([
             'type' => 'success',

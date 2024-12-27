@@ -97,10 +97,6 @@ class FeatureFlags
 
         if ($feature === 'Maintenance') {
             return redirect()->route('maintenance.page');
-        } elseif (!Auth::check() && in_array('guest', $middleware)) {
-            return redirect()->route('auth.login.page');
-        } elseif (Auth::check() && in_array('auth', $middleware)) {
-            return redirect()->route('my.dashboard.page');
         } elseif ($isPost || ((!Auth::check() || (Auth::check() && !Auth::user()->isStaff())))) {
 	    return inertia('App/FeatureDisabled', ['title' => $alias]);
         }

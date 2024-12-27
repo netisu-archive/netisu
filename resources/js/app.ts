@@ -38,9 +38,9 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createSSRApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(trail, { routes })
             .use(VueTippy)
             .use(PortalVue)
+            .use(trail, { routes })
             .component("Skeletor", Skeletor)
             .component("Pagination", Pagination)
             .component("AppHead", AppHead)

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import axios from "axios";
   import { route } from "momentum-trail";
   import { usePage } from "@inertiajs/vue3";
   import Navbar from "@/Components/LayoutParts/Admin/Navbar.vue";

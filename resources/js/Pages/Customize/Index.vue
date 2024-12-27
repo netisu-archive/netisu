@@ -215,127 +215,90 @@ onMounted(() => {
 });
 </script>
 <template>
-  <Navbar />
-  <Sidebar>
-    <div class="modal" id="SlotModal">
-      <div class="modal-card modal-card-body modal-card-sm">
-        <div class="section-borderless">
-          <div class="gap-2 align-middle flex-container align-justify">
-            <div class="text-lg fw-semibold">Pick a Slot</div>
-            <button
-              @click="showModal('SlotModal')"
-              class="btn-circle"
-              data-toggle-modal="#SlotModal"
-              style="margin-right: -10px"
-            >
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <div class="section-borderless">
-          <div class="mb-2">
-            <div class="flex-wrap gap-1 flex-container align-center">
-              <button
-                class="btn btn-info"
-                v-for="n in 6"
-                :key="n"
-                :value="n"
-                @click="setSlotValue($event)"
-              >
-                <i class="mr-1 fa-solid fa-hat-beach"></i>
-                Slot {{ n }}
-              </button>
+    <Navbar />
+    <Sidebar>
+        <div class="modal" id="SlotModal">
+            <div class="modal-card modal-card-body modal-card-sm">
+                <div class="section-borderless">
+                    <div class="gap-2 align-middle flex-container align-justify">
+                        <div class="text-lg fw-semibold">Pick a Slot</div>
+                        <button @click="showModal('SlotModal')" class="btn-circle" data-toggle-modal="#SlotModal"
+                            style="margin-right: -10px">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="section-borderless">
+                    <div class="mb-2">
+                        <div class="flex-wrap gap-1 flex-container align-center">
+                            <button class="btn btn-info" v-for="n in 6" :key="n" :value="n"
+                                @click="setSlotValue($event)">
+                                <i class="mr-1 fa-solid fa-hat-beach"></i>
+                                Slot {{ n }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-wrap gap-2 flex-container justify-content-end section-borderless">
+                    <button type="button" class="btn btn-secondary" @click="showModal('SlotModal')">
+                        Cancel
+                    </button>
+                    <button v-if="!VrcRequest" type="submit" class="btn btn-success"
+                        @click="WearItem(SelectedItemID, slotValue)">
+                        Wear
+                    </button>
+                </div>
             </div>
-          </div>
         </div>
-        <div
-          class="flex-wrap gap-2 flex-container justify-content-end section-borderless"
-        >
-          <button type="button" class="btn btn-secondary" @click="showModal('SlotModal')">
-            Cancel
-          </button>
-          <button
-            v-if="!VrcRequest"
-            type="submit"
-            class="btn btn-success"
-            @click="WearItem(SelectedItemID, slotValue)"
-          >
-            Wear
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="modal" id="PartsModal">
-      <div class="modal-card modal-card-body modal-card-sm">
-        <div class="section-borderless">
-          <div class="gap-2 align-middle flex-container align-justify">
-            <div v-if="selectedPart" class="text-lg fw-semibold">
-              Change {{ partNames[selectedPart] }} Color
-            </div>
-            <div v-else class="text-lg fw-semibold">
-              Select a part to change its color
-            </div>
-            <button
-              @click="showModal('PartsModal')"
-              class="btn-circle"
-              data-toggle-modal="#PartsModal"
-              style="margin-right: -10px"
-            >
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <div class="mr-2 section-borderless grid-x">
-          <div class="mr-2" v-for="(color, index) in colors" :key="index">
-            <div
-              class="ColorPickerItem"
-              @click="setColor(color)"
-              :class="{
+        <div class="modal" id="PartsModal">
+            <div class="modal-card modal-card-body modal-card-sm">
+                <div class="section-borderless">
+                    <div class="gap-2 align-middle flex-container align-justify">
+                        <div v-if="selectedPart" class="text-lg fw-semibold">
+                            Change {{ partNames[selectedPart] }} Color
+                        </div>
+                        <div v-else class="text-lg fw-semibold">
+                            Select a part to change its color
+                        </div>
+                        <button @click="showModal('PartsModal')" class="btn-circle" data-toggle-modal="#PartsModal"
+                            style="margin-right: -10px">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mr-2 section-borderless grid-x">
+                    <div class="mr-2" v-for="(color, index) in colors" :key="index">
+                        <div class="ColorPickerItem" @click="setColor(color)" :class="{
                 active:
                   selectedColor === color ||
                   userAvatar[`color_${selectedPart}`] === color,
-              }"
-              :style="{
+              }" :style="{
                 backgroundColor: '#' + color,
                 display: 'inline-block',
                 width: '32px',
                 height: '32px',
-              }"
-            ></div>
-          </div>
-          <div class="text-xs text-muted fw-semibold">
-            After changing your avatar part your avatar will rerender with the changes
-            applied.
-          </div>
-          <div
-            class="flex-wrap gap-2 flex-container justify-content-end section-borderless"
-          >
-            <button class="btn btn-secondary" @click="showModal('PartsModal')">
-              Cancel
-            </button>
-            <input
-              v-if="selectedPart && !VrcRequest"
-              @click="changeColor(selectedColor, selectedPart)"
-              type="submit"
-              class="btn btn-success"
-              value="Submit"
-            />
-          </div>
+              }"></div>
+                    </div>
+                    <div class="text-xs text-muted fw-semibold">
+                        After changing your avatar part your avatar will rerender with the changes
+                        applied.
+                    </div>
+                    <div class="flex-wrap gap-2 flex-container justify-content-end section-borderless">
+                        <button class="btn btn-secondary" @click="showModal('PartsModal')">
+                            Cancel
+                        </button>
+                        <input v-if="selectedPart && !VrcRequest" @click="changeColor(selectedColor, selectedPart)"
+                            type="submit" class="btn btn-success" value="Submit" />
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="cell medium-3">
-      <div class="mb-3 card card-body">
-        <div id="avatarDiv">
-          <v-lazy-image
-            :src="thumbnail"
-            :src-placeholder="userAvatar.image"
-            style="display: block; margin: 0 auto !important"
-          />
-          <div
-            v-if="VrcRequest"
-            id="avatar-loading"
-            style="
+        <div class="cell medium-3">
+            <div class="mb-3 card card-body">
+                <div id="avatarDiv">
+                    <v-lazy-image :src="thumbnail" :src-placeholder="userAvatar.image"
+                        style="display: block; margin: 0 auto !important" />
+                    <div v-if="VrcRequest" id="avatar-loading" style="
               width: inherit;
               height: inherit;
               visibility: none;
@@ -345,224 +308,167 @@ onMounted(() => {
               display: inline-grid;
               justify-content: center;
               align-items: center;
-            "
-          >
-            <i
-              class="justify-center text-3xl text-center align-middle fa-duotone fa-spinner flex-container flex-dir-column text-info"
-              style="
+            ">
+                        <i class="justify-center text-3xl text-center align-middle fa-duotone fa-spinner flex-container flex-dir-column text-info"
+                            style="
                 animation-iteration-count: infinite;
                 animation-timing-function: linear;
                 animation-name: spin;
                 animation-duration: 0.7s;
                 font-size: 3em;
-              "
-            ></i>
-          </div>
-        </div>
-        <div class="min-w-0 gap-2 mt-3 flex-container">
-          <button @click="VRCReset()" class="btn btn-danger btn-sm text-truncate w-100">
-            Reset
-          </button>
-          <button class="btn btn-info btn-sm text-truncate w-100">Random</button>
-        </div>
-      </div>
-      <div class="text-center">
-        <div class="card card-body">
-          <div style="">
-            <div style="margin-bottom: 2.5px">
-              <button
-                class="avatar-body-part"
-                id="head"
-                :style="{
+              "></i>
+                    </div>
+                </div>
+                <div class="min-w-0 gap-2 mt-3 flex-container">
+                    <button @click="VRCReset()" class="btn btn-danger btn-sm text-truncate w-100">
+                        Reset
+                    </button>
+                    <button class="btn btn-info btn-sm text-truncate w-100">Random</button>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="card card-body">
+                    <div style="display:block">
+                        <div style="margin-bottom: 2.5px">
+                            <button class="avatar-body-part" id="head" :style="{
                   backgroundColor: '#' + userAvatar.color_head,
                   padding: '5px',
                   borderRadius: '15px',
                   marginTop: '-1px',
-                }"
-                @click="handlePartSelection('head')"
-              >
-                <VLazyImage
-                  :src="userAvatar.current_face"
-                  :src-placeholder="usePage<any>().props.site.production.domains.storage + '/assets/default.png'"
-                  width="50"
-                  height="50"
-                />
-              </button>
-            </div>
-            <div style="margin-bottom: 2.5px">
-              <button
-                class="avatar-body-part"
-                id="left_arm"
-                :style="{
+                }" @click="handlePartSelection('head')">
+                                <VLazyImage :src="userAvatar.current_face"
+                                    :src-placeholder="usePage<any>().props.site.production.domains.storage + '/assets/default.png'"
+                                    width="50" height="50" />
+                            </button>
+                        </div>
+                        <div style="margin-bottom: 2.5px">
+                            <button class="avatar-body-part" id="left_arm" :style="{
                   backgroundColor: '#' + userAvatar.color_left_arm,
                   padding: '50px',
                   paddingRight: '0px',
-                }"
-                @click="handlePartSelection('left_arm')"
-              ></button>
+                }" @click="handlePartSelection('left_arm')"></button>
 
-              <button
-                class="avatar-body-part"
-                id="torso"
-                :style="{
+                            <button class="avatar-body-part" id="torso" :style="{
                   backgroundColor: '#' + userAvatar.color_torso,
                   padding: '50px',
-                }"
-                @click="handlePartSelection('torso')"
-              ></button>
+                }" @click="handlePartSelection('torso')"></button>
 
-              <button
-                class="avatar-body-part"
-                id="right_arm"
-                :style="{
+                            <button class="avatar-body-part" id="right_arm" :style="{
                   backgroundColor: '#' + userAvatar.color_right_arm,
                   padding: '50px',
                   paddingRight: '0px',
-                }"
-                @click="handlePartSelection('right_arm')"
-              ></button>
-            </div>
-            <div>
-              <button
-                class="avatar-body-part"
-                name="left_leg"
-                @click="handlePartSelection('left_leg')"
-                :style="{
+                }" @click="handlePartSelection('right_arm')"></button>
+                        </div>
+                        <div>
+                            <button class="avatar-body-part" name="left_leg" @click="handlePartSelection('left_leg')"
+                                :style="{
                   backgroundColor: '#' + userAvatar.color_left_leg,
                   padding: '50px',
                   paddingRight: '0px',
                   paddingLeft: '47px',
-                }"
-              ></button>
+                }"></button>
 
-              <button
-                class="avatar-body-part"
-                name="right_leg"
-                @click="handlePartSelection('right_leg')"
-                :style="{
+                            <button class="avatar-body-part" name="right_leg" @click="handlePartSelection('right_leg')"
+                                :style="{
                   backgroundColor: '#' + userAvatar.color_right_leg,
                   padding: '50px',
                   paddingRight: '0px',
                   borderBottom: '15px',
                   paddingLeft: '47px',
-                }"
-              ></button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="cell medium-8">
-      <div class="mb-3 card card-body">
-        <div class="mb-1 align-middle flex-container align-justify">
-          <div class="mb-1 text-xl fw-semibold">Currently Wearing</div>
-        </div>
-        <div class="section">
-          <div class="gap-3 text-center flex-container flex-dir-column">
-            <div class="grid-x grid-margin-x">
-              <div
-                v-for="item in wearingItems.data"
-                class="cell large-2 medium-3 small-3"
-              >
-                <div class="d-block">
-                  <div class="p-2 mb-1 card card-inner position-relative">
-                    <img :src="item.thumbnail" />
-                  </div>
-                  <Link
-                    :href="route(`store.item`, { id: item.id })"
-                    class="text-body fw-semibold text-truncate"
-                  >
-                    {{ item.name }}
-                  </Link>
+                }"></button>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-
-          <div
-            v-if="!wearingItems.length"
-            class="gap-3 text-center flex-container flex-dir-column"
-          >
-            <i class="text-5xl fad fa-wand-magic-sparkles text-muted"></i>
-            <div style="line-height: 16px">
-              <div class="text-xs fw-bold text-muted text-uppercase">No Items.</div>
-              <div class="text-xs text-muted fw-semibold">
-                You are not wearing any items.
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-
-      <div class="mb-3 card card-body">
-        <div class="mb-2 align-middle grid-x">
-          <div class="cell large-7">
-            <div class="mb-2 text-xl fw-semibold">Inventory</div>
-          </div>
-          <div class="cell large-5">
-            <div class="gap-2 align-middle flex-container-lg">
-              <select
-                @change="getItemsbyCategory($event.target.value)"
-                class="mb-2 form form-xs form-select form-has-section-color"
-              >
-                <option
-                  v-for="category in usePage<any>().props.categories"
-                  :key="category.internal"
-                  :value="category.internal"
-                >
-                  <span
-                    class="tab-link squish"
-                    :class="{ active: currentcat === category.internal }"
-                  >
-                    {{ category.name }}
-                  </span>
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="gap-3 text-center flex-container flex-dir-column">
-            <div class="grid-x grid-margin-x">
-              <div
-                v-for="item in CategoryItems.data"
-                class="cell large-2 medium-3 small-3"
-                @click="SortItemByType(item.id, item.type)"
-              >
-                <div class="d-block">
-                  <div class="p-2 mb-1 card card-inner position-relative">
-                    <img :src="item.thumbnail" />
-                  </div>
-                  <Link
-                    :href="route(`store.item`, { id: item.id })"
-                    class="text-body fw-semibold text-truncate"
-                  >
-                    {{ item.name }}
-                  </Link>
+        <div class="cell medium-8">
+            <div class="mb-3 card card-body">
+                <div class="mb-1 align-middle flex-container align-justify">
+                    <div class="mb-1 text-xl fw-semibold">Currently Wearing</div>
                 </div>
-              </div>
-            </div>
-          </div>
-          <Pagination v-if="CategoryItems.data" v-bind:pagedata="CategoryItems" />
+                <div class="section">
+                    <div class="gap-3 text-center flex-container flex-dir-column">
+                        <div class="grid-x grid-margin-x">
+                            <div v-for="item in wearingItems.data" class="cell large-2 medium-3 small-3">
+                                <div class="d-block">
+                                    <div class="p-2 mb-1 card card-inner position-relative">
+                                        <img :src="item.thumbnail" />
+                                    </div>
+                                    <Link :href="route(`store.item`, { id: item.id })"
+                                        class="text-body fw-semibold text-truncate">
+                                    {{ item.name }}
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-          <div
-            v-else-if="!CategoryItems.data || !CategoryItems.data.length"
-            class="gap-3 text-center flex-container flex-dir-column"
-          >
-            <i class="text-5xl fad fa-crate-apple text-muted"></i>
-            <div style="line-height: 16px">
-              <div class="text-xs fw-bold text-muted text-uppercase">No Items</div>
-              <div class="text-xs text-muted fw-semibold">
-                You have no {{ currentcat }}{{ currentcat !== 'pants' ? 's' : null }}.
-              </div>
+                    <div v-if="!wearingItems.length" class="gap-3 text-center flex-container flex-dir-column">
+                        <i class="text-5xl fad fa-wand-magic-sparkles text-muted"></i>
+                        <div style="line-height: 16px">
+                            <div class="text-xs fw-bold text-muted text-uppercase">No Items.</div>
+                            <div class="text-xs text-muted fw-semibold">
+                                You are not wearing any items.
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+
+            <div class="mb-3 card card-body">
+                <div class="mb-2 align-middle grid-x">
+                    <div class="cell large-7">
+                        <div class="mb-2 text-xl fw-semibold">Inventory</div>
+                    </div>
+                    <div class="cell large-5">
+                        <div class="gap-2 align-middle flex-container-lg">
+                            <select @change="getItemsbyCategory($event.target.value)"
+                                class="mb-2 form form-xs form-select form-has-section-color">
+                                <option v-for="category in usePage<any>().props.categories" :key="category.internal"
+                                    :value="category.internal">
+                                    <span class="tab-link squish" :class="{ active: currentcat === category.internal }">
+                                        {{ category.name }}
+                                    </span>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="gap-3 text-center flex-container flex-dir-column">
+                        <div class="grid-x grid-margin-x">
+                            <div v-for="item in CategoryItems.data" class="cell large-2 medium-3 small-3"
+                                @click="SortItemByType(item.id, item.type)">
+                                <div class="d-block">
+                                    <div class="p-2 mb-1 card card-inner position-relative">
+                                        <img :src="item.thumbnail" />
+                                    </div>
+                                    <Link :href="route(`store.item`, { id: item.id })"
+                                        class="text-body fw-semibold text-truncate">
+                                    {{ item.name }}
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <Pagination v-if="CategoryItems.data" v-bind:pagedata="CategoryItems" />
+
+                    <div v-else-if="!CategoryItems.data || !CategoryItems.length"
+                        class="gap-3 text-center flex-container flex-dir-column">
+                        <i class="text-5xl fad fa-crate-apple text-muted"></i>
+                        <div style="line-height: 16px">
+                            <div class="text-xs fw-bold text-muted text-uppercase">No Items</div>
+                            <div class="text-xs text-muted fw-semibold">
+                                You have no {{ currentcat }}{{ currentcat !== 'pants' ? 's' : null }}.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </Sidebar>
-  <Footer />
-  <!--
+    </Sidebar>
+    <Footer />
+    <!--
     {{ AVATAR CLASSES }}
     Body Colors:
     {{ userAvatar.color_head }}

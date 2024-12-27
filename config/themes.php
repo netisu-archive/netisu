@@ -41,7 +41,7 @@ return [
             'name' => 'Christmas',
             'lowercase' => 'xmas',
             'file' => '/css/themes/variables-xmas.css',
-            'available' => true
+            'available' => false
         ],
 
         'classic' => [

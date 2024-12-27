@@ -4,10 +4,6 @@ import { ref } from "vue";
 
 const isPageLoading = ref(false);
 
-const emit = defineEmits<{
-  (event: "sidebarToggle"): void;
-}>();
-
 interface Props {
   isLoading?: boolean;
 }
@@ -42,7 +38,7 @@ const randomMessage = loadingMessages[Math.floor(Math.random() * loadingMessages
 </script>
 <template>
   <Transition>
-    <div v-if="isPageLoading || isLoading" class="loading-page flex-dir-column py-5">
+    <div v-if="isPageLoading || props.isLoading" class="loading-page flex-dir-column py-5">
       <div class="loader__container flex-container-lg align-center">
         <div class="mb-1">
           <img :src="usePage<any>().props.site.icon" width="150" height="150" />

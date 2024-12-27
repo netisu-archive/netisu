@@ -16,6 +16,7 @@
         "dg/rss-php": "^1.5",
         "doctrine/dbal": "^3.6",
         "ezyang/htmlpurifier": "^4.16",
+        "fahlisaputra/laravel-minify": "^1.1",
         "guzzlehttp/guzzle": "^7.2",
         "http-interop/http-factory-guzzle": "^1.2",
         "illuminate/pagination": "*",
@@ -49,6 +50,7 @@
         "symfony/http-client": "^6.3",
         "symfony/mailgun-mailer": "^6.3",
         "symfony/process": "^7.0",
+        "tightenco/ziggy": "^2.4",
         "tremby/laravel-git-version": "^1.2"
     },
     "require-dev": {

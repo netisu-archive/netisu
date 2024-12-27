@@ -5,8 +5,9 @@ import Footer from '@/Components/LayoutParts/Footer.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head, usePage } from '@inertiajs/vue3';
-import { route, current } from 'momentum-trail'
+import Upload from '@/Components/Upload.vue';
+import { usePage } from '@inertiajs/vue3';
+import { route } from 'momentum-trail'
 import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
 import axios from "axios";
@@ -26,7 +27,7 @@ function showModal(modalId: string): void {
     }
 };
 
-
+const bannerVisible = ref(usePage<any>().props.auth.user.settings.profile_banner_enabled);
 const ActiveCategory: Ref<string> = ref("General");
 
 function setActiveCategory(category): void {
@@ -46,6 +47,20 @@ function changeCountry(country): void {
     console.log(country);
 };
 
+function enableBannerVisibility(visible): void {
+    axios.post(route(`api.settings.bannerVisibility`, { value: visible }))
+        .then(response => {
+            // Handle the success response here
+            console.error('Success:', response);
+
+        })
+        .catch(error => {
+            // Handle the error response here
+            console.error('Error changing your banner visibility:', error);
+        });
+    console.log(country);
+};
+
 const currentTheme = localStorage.getItem('theme');
 
 
@@ -56,7 +71,7 @@ const isVerifiedEmail = computed(() => {
 
 <template>
     <AppHead pageTitle="Account Settings" description="Change your account Settings."
-        :url="route(`store.create.page`)" />
+        :url="route(`user.settings.page`)" />
     <Navbar />
     <Sidebar :alertsEnabled="false"
         :image="usePage<any>().props.auth.user.settings.profile_banner_enabled ? usePage<any>().props.auth.user.settings.profile_banner_url : null"
@@ -64,29 +79,30 @@ const isVerifiedEmail = computed(() => {
         <template>
             <portal to="bannerAsset">
                 <v-lazy-image :style="usePage<any>().props.auth.user.settings.calling_card_enabled
-                        ? {
-                            margin: '0',
-                            'background-image':
-                                'url(' +
-                                usePage<any>().props.auth.user.settings.calling_card_url +
-                                ')',
-                            'background-repeat': 'no-repeat',
-                            'background-size': 'cover',
-                            'box-shadow':
-                                'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
-                        }
-                        : null
+                    ? {
+                        margin: '0',
+                        'background-image':
+                            'url(' +
+                            usePage<any>().props.auth.user.settings.calling_card_url +
+                            ')',
+                        'background-repeat': 'no-repeat',
+                        'background-size': 'cover',
+                        'box-shadow':
+                            'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
+                    }
+                    : null
                     " :src="usePage<any>().props.auth.user.headshot" width="100" class="space-image" alt="Headshot"
                     src-placeholder="assets/img/space-error.png" />
             </portal>
 
             <portal to="bannerName">
                 <div class="text-xl" style="line-height: 16px">
-                    <div class="mb-1 fw-semibold">
+                    <div class="mb-1 flex-container align-middle gap-1 fw-semibold">
                         {{ usePage<any>().props.auth.user.display_name }}
-                            <i v-if="usePage<any>().props.auth.user.staff" class="fas fa-gavel text-danger">&nbsp;</i>
+                            <i v-if="usePage<any>().props.auth.user.staff" 
+                                :content="usePage<any>().props.auth.user.staff.Position" v-tippy="{ placement: 'bottom' }" class="fad fa-gavel text-danger"></i>
                             <i v-else-if="usePage<any>().props.auth.user.settings.beta_tester"
-                                class="fas fa-hard-hat text-success">&nbsp;</i>
+                                class="fad fa-hard-hat text-success"></i>
                             <v-lazy-image
                                 :src="'/assets/img/flags/' + usePage<any>().props.auth.user.settings.country_code + '.svg'"
                                 alt="Country Flag" style="width: auto;height: 20px;"
@@ -102,7 +118,8 @@ const isVerifiedEmail = computed(() => {
                     v-tippy="{ placement: 'bottom' }">
                     <i class="fad fa-user"></i>
                 </button>
-                <button class="text-lg text-info squish" content="Change Banner" v-tippy="{ placement: 'bottom' }">
+                <button @click="showModal('banner-modal')" class="text-lg text-info squish" content="Change Banner"
+                    v-tippy="{ placement: 'bottom' }">
                     <i class="fad fa-pen"></i>
                 </button>
             </portal>
@@ -114,7 +131,7 @@ const isVerifiedEmail = computed(() => {
                         <div class="text-lg fw-semibold">Change Email</div>
                         <button @click="showModal('email-modal')" class="btn-circle" data-toggle-modal="#email-modal"
                             style="margin-right: -10px">
-                            <i class="fas fa-times"></i>
+                            <i class="fad fa-times"></i>
                         </button>
                     </div>
                 </div>
@@ -144,6 +161,41 @@ const isVerifiedEmail = computed(() => {
                 </div>
             </div>
         </div>
+        <div class="modal" id="banner-modal">
+            <div class="modal-card modal-card-body modal-card-sm">
+                <div class="section-borderless">
+                    <div class="gap-2 align-middle flex-container align-justify">
+                        <div class="text-lg fw-semibold">Change Banner</div>
+                        <button @click="showModal('email-modal')" class="btn-circle" data-toggle-modal="#email-modal"
+                            style="margin-right: -10px">
+                            <i class="fad fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="section-borderless">
+                    <div class="mb-1">
+                        <div class="text-xs fw-bold text-muted text-uppercase">
+                            Visibility
+                        </div>
+                        <button @change="changeCountry($event.target.value)" class="btn btn-success btn-sm w-100">
+                            Enable Banner</button>
+                    </div>
+                    <div class="mb-2">
+                        <Upload modal="" />
+                    </div>
+                    <div class="text-xs text-muted fw-semibold">
+                        After changing your email address, a confirmation email
+                        will be sent to your inbox to confirm your identity.
+                    </div>
+                </div>
+                <div class="flex-wrap gap-2 flex-container justify-content-end section-borderless">
+                    <button class="btn btn-secondary" @click="showModal('banner-modal')">
+                        Cancel
+                    </button>
+                    <input type="submit" class="btn btn-success" value="Change Email" />
+                </div>
+            </div>
+        </div>
         <div class="modal" id="username-modal">
             <div class="modal-card modal-card-body modal-card-sm">
                 <div class="section-borderless">
@@ -151,7 +203,7 @@ const isVerifiedEmail = computed(() => {
                         <div class="text-lg fw-semibold">Change Username</div>
                         <button @click="showModal('username-modal')" class="btn-circle"
                             data-toggle-modal="#username-modal" style="margin-right: -10px">
-                            <i class="fas fa-times"></i>
+                            <i class="fad fa-times"></i>
                         </button>
                     </div>
                 </div>
@@ -175,7 +227,7 @@ const isVerifiedEmail = computed(() => {
                     <div class="text-xs text-muted fw-semibold">
                         Changing your username costs
                         <span class="mx-1 text-success">
-                            <i class="fas fa-money-bill-1-wave"></i>
+                            <i class="fad fa-money-bill-1-wave"></i>
                             {{ usePage<any>().props.site.price.username }} Bucks
                         </span>
                     </div>
@@ -196,7 +248,7 @@ const isVerifiedEmail = computed(() => {
                             Change Display Name
                         </div>
                         <button class="btn-circle" @click="showModal('displayname-modal')" style="margin-right: -10px">
-                            <i class="fas fa-times"></i>
+                            <i class="fad fa-times"></i>
                         </button>
                     </div>
                 </div>
@@ -282,7 +334,7 @@ const isVerifiedEmail = computed(() => {
                                             </div>
                                         </div>
                                         <button class="btn btn-info btn-circle" @click="showModal('username-modal')">
-                                            <i class="fas fa-pencil"></i>
+                                            <i class="fad fa-pencil"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -298,7 +350,7 @@ const isVerifiedEmail = computed(() => {
                                             </div>
                                         </div>
                                         <button class="btn btn-info btn-circle" @click="showModal('displayname-modal')">
-                                            <i class="fas fa-pencil"></i>
+                                            <i class="fad fa-pencil"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -311,7 +363,7 @@ const isVerifiedEmail = computed(() => {
                                                 <span style="font-size: 10px"
                                                     :class="{ 'text-success': isVerifiedEmail, 'text-danger': !isVerifiedEmail }"
                                                     class="ms-2">
-                                                    <i class="fas me-1"
+                                                    <i class="fad me-1"
                                                         :class="{ 'fa-check': isVerifiedEmail, 'fa-times': !isVerifiedEmail }"></i>
                                                     {{ isVerifiedEmail ? 'Verified' : 'Unverified' }}
                                                 </span>
@@ -321,7 +373,7 @@ const isVerifiedEmail = computed(() => {
                                             </div>
                                         </div>
                                         <button class="btn btn-info btn-circle" @click="showModal('email-modal')">
-                                            <i class="fas fa-pencil"></i>
+                                            <i class="fad fa-pen"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -374,7 +426,7 @@ const isVerifiedEmail = computed(() => {
                         </div>
 
                         <div id="theme-switcher-container" class="grid-x grid-margin-x grid-padding-y">
-                            <div v-for="(theme, index) in themes"class="cell large-6" :key="index">
+                            <div v-for="(theme, index) in themes" class="cell large-6" :key="index">
                                 <!-- Move v-if inside the loop -->
                                 <div :class="{ active: currentTheme === theme.lowercase }"
                                     class="mb-2 theme-selection squish card card-body card-inner mb-lg-0"
@@ -482,7 +534,7 @@ const isVerifiedEmail = computed(() => {
                             </div>
                             <div class="card card-body">
                                 <div class="gap-3 text-center flex-container flex-dir-column">
-                                    <i class="text-5xl fas fa-user-slash text-muted"></i>
+                                    <i class="text-5xl fad fa-user-slash text-muted"></i>
                                     <div style="line-height: 16px">
                                         <div class="text-xs fw-bold text-muted text-uppercase">
                                             No Blocked Players
@@ -557,7 +609,7 @@ const isVerifiedEmail = computed(() => {
             <div v-if="ActiveCategory === 'Billing'">
                 <div class="mb-2 align-middle flex-container align-justify">
                     <div class="text-xl fw-semibold">Billing</div>
-                    <a href="#" class="btn btn-upgrade btn-sm"><i class="fas fa-rocket-launch me-2"></i>Upgrade</a>
+                    <a href="#" class="btn btn-upgrade btn-sm"><i class="fad fa-rocket-launch me-2"></i>Upgrade</a>
                 </div>
                 <div class="mb-3 card card-body">
                     <div class="mb-2 text-xl fw-semibold">
@@ -565,7 +617,7 @@ const isVerifiedEmail = computed(() => {
                     </div>
                     <div class="card card-inner card-body">
                         <div class="gap-3 text-center flex-container flex-dir-column">
-                            <i class="text-5xl fas fa-rocket-launch text-muted"></i>
+                            <i class="text-5xl fad fa-rocket-launch text-muted"></i>
                             <div style="line-height: 16px">
                                 <div class="text-xs fw-bold text-muted text-uppercase">
                                     No Active Membership
@@ -596,7 +648,7 @@ const isVerifiedEmail = computed(() => {
                   <div class="cell medium-4">
                     <div class="gap-2 align-middle flex-container text-warning">
                       <i
-                        class="text-xl text-center fas fa-coins"
+                        class="text-xl text-center fad fa-coins"
                         style="width: 30px"
                       ></i>
                       <div class="fw-semibold">5000 Coins</div>
@@ -619,7 +671,7 @@ const isVerifiedEmail = computed(() => {
                   <div class="cell medium-4">
                     <div class="gap-2 align-middle flex-container text-success">
                       <i
-                        class="text-xl text-center fas fa-money-bill-1-wave"
+                        class="text-xl text-center fad fa-money-bill-1-wave"
                         style="width: 30px"
                       ></i>
                       <div class="fw-semibold">1000 Bucks</div>
@@ -632,7 +684,7 @@ const isVerifiedEmail = computed(() => {
                   </div>
                   <div class="cell medium-4">
                     <div class="fw-semibold">
-                      <i class="fas fa-credit-card text-muted me-2"></i>Credit
+                      <i class="fad fa-credit-card text-muted me-2"></i>Credit
                       Card
                     </div>
                   </div>
@@ -650,13 +702,13 @@ const isVerifiedEmail = computed(() => {
                   </div>
                   <div class="cell medium-4">
                     <div class="gap-2 align-middle flex-container text-success">
-                      <i class="text-center fas fa-money-bill-1-wave"></i>
+                      <i class="text-center fad fa-money-bill-1-wave"></i>
                       <div class="fw-semibold">500 Bucks</div>
                     </div>
                   </div>
                   <div class="cell medium-4">
                     <div class="fw-semibold">
-                      <i class="fas fa-money-bill-1-wave text-muted me-2"></i
+                      <i class="fad fa-money-bill-1-wave text-muted me-2"></i
                       >Bucks
                     </div>
                   </div>
@@ -689,7 +741,7 @@ const isVerifiedEmail = computed(() => {
 
                     <div class="card card-inner card-body">
                         <div class="gap-3 text-center flex-container flex-dir-column">
-                            <i class="text-5xl fas fa-envelope-open-text text-muted"></i>
+                            <i class="text-5xl fad fa-envelope-open-text text-muted"></i>
                             <div style="line-height: 16px">
                                 <div class="text-xs fw-bold text-muted text-uppercase">
                                     No Previous Purchases

@@ -69,16 +69,19 @@ class RenderController extends Controller
         } else {
             $requestData = $this->prepareRequestData('item_preview', $item, $itemHashName);
         }
-        $itemPreview = "{$itemHashName}_preview";
         // Make HTTP request to the rendering server
         $this->makeRenderRequest($requestData);
 
         // Update the items image and save
         if ($noNameOverride) {
             $item->hash = $itemName;
+            $itemPreview = "{$itemName}_preview";
+
         } else {
             $item->hash = $itemHashName;
+            $itemPreview = "{$itemHashName}_preview";
         }
+        
         $item->avatar_preview = $itemPreview;
         $item->save();
 

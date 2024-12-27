@@ -14,7 +14,7 @@ class Event
     ]; // Array of item IDs
     public $keys = [
     'giftme<3'
-    ];  // Array of key strings associated with item IDs (key => item ID)
+    ];  // Array of key strings associated with item IDs (item ID => key) 
 
     public function grantItem(Item $item, User $user, string $key, bool $internalRedeem = false): bool
     {
@@ -31,12 +31,12 @@ class Event
         }
 
         try {
-            // Check if user already has the item (assuming `crate` is a relationship method)
+            // Check if user already has the item
             if ($user->inventory()->itemId($item->id)->exists()) {
                 return true;
             }
 
-            // Grant the item (assuming `create` creates a new record in the crate table)
+            // Grant the item
             return $user->inventory()->create(['crateable_id' => $item->id, 'crateable_type' => 1])->exists();
         } catch (\Exception $e) {
             Log::error("Error granting item (user: {$user->id}, item: {$item->id}): " . $e->getMessage()); // Log error details

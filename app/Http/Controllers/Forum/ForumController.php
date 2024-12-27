@@ -19,6 +19,36 @@ use Illuminate\Support\Facades\Redirect;
 
 class ForumController extends Controller
 {
+
+    public function myPosts()
+    {
+        $userPosts = ForumThread::with('creator')
+            ->where('creator_id', Auth::id())
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
+            
+            $posts = Cache::remember('topic_' . Auth::id() . '_posts', now()->addMinutes(15), function () use ($userPosts) {
+                return $userPosts->through(function ($post) {
+                    return [
+                        'id' => $post->id,
+                        'topic_id' => $post->id,
+                        'seo' => $post->slug(),
+                        'name' => $post->title,
+                        'username' => $post->creator->username,
+                        'headshot' => $post->creator->headshot(),
+                        'display_name' => $post->creator->display_name,
+                        'message' => $post->body,
+                        'pinned' => $post->is_pinned,
+                        'locked' => $post->is_locked,
+                        'deleted' => $post->is_deleted,
+                        'DateHum' => $post->DateHum,
+                    ];
+                });
+            });
+
+        return inertia('Forum/MyPosts', ['posts' => $posts]);
+    }
+
     public function ForumIndex($id)
     {
         // Define the sections

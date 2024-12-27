@@ -45,76 +45,76 @@ return Application::configure(basePath: dirname(__DIR__))
                 403 => 'fa-duotone fa-star-half-stroke text-danger',
             ];
 
-                if (app()->environment(['local', 'testing'])) {
-                    return $response;
-                }
+            if (app()->environment(['local', 'testing'])) {
+                return $response;
+            }
 
-                if (!array_key_exists($response->getStatusCode(), $messages)) {
-                    return $response;
-                }
+            if (!array_key_exists($response->getStatusCode(), $messages)) {
+                return $response;
+            }
 
-                if ($exception instanceof ModelNotFoundException && $request->wantsJson()) {
-                    return response()->json([
-                        'data' => 'Resource not found'
-                    ], 404);
-                }
+            if ($exception instanceof ModelNotFoundException && $request->wantsJson()) {
+                return response()->json([
+                    'data' => 'Resource not found'
+                ], 404);
+            }
 
-                if (!$request->isMethod('GET')) {
-                    return response()->json([
-                        'type' => 'error',
-                        'message' => $this->messages[$response->getStatusCode()]
-                    ], $response->getStatusCode());
-                }
+            if (!$request->isMethod('GET')) {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => $this->messages[$response->getStatusCode()]
+                ], $response->getStatusCode());
+            }
 
-                if ($request->wantsJson() || $request->isJson() && !Auth::check()) {
-                    return response()->json([
-                        'type' => 'error',
-                        'message' => 'login nigga'
-                    ], 403);
-                }
+            if ($request->wantsJson() || $request->isJson() && !Auth::check()) {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'login nigga'
+                ], 403);
+            }
 
-                return inertia('App/Error', [
-                    'site' => config('Values'),
-                    'auth' => function () use ($request) {
-                        return [
-                            'user' => $request->user() ? [
-                                'id' => $request->user()->id,
-                                'username' => $request->user()->username,
-                                'display_name' => $request->user()->display_name,
-                                'email' => $request->user()->email,
-                                'birthdate' => $request->user()->birthdate,
-                                'coins' => $request->user()->coins,
-                                'bucks' => $request->user()->bucks,
-                                'status' => $request->user()->status,
-                                'staff' => $request->user()->isStaff(),
-                                'position' => $request->user()->CurrentPosition(),
-                                'about_me' => $request->user()->about_me,
-                                'headshot' => $request->user()->headshot(),
-                                'following' => $request->user()->following(),
-                                'settings' => $request->user()->settings,
-                                'level' => $request->user()->getLevel(),
-                                'xp' => $request->user()->getPoints(),
-                                'nextlevelxp' =>  $request->user()->nextLevelAt(),
-                                'notifications' => $request->user()->unreadNotifications()->limit(5)->get()
+            return inertia('App/Error', [
+                'site' => config('Values'),
+                'auth' => function () use ($request) {
+                    return [
+                        'user' => $request->user() ? [
+                            'id' => $request->user()->id,
+                            'username' => $request->user()->username,
+                            'display_name' => $request->user()->display_name,
+                            'email' => $request->user()->email,
+                            'birthdate' => $request->user()->birthdate,
+                            'coins' => $request->user()->coins,
+                            'bucks' => $request->user()->bucks,
+                            'status' => $request->user()->status,
+                            'staff' => $request->user()->isStaff(),
+                            'position' => $request->user()->CurrentPosition(),
+                            'about_me' => $request->user()->about_me,
+                            'headshot' => $request->user()->headshot(),
+                            'following' => $request->user()->following(),
+                            'settings' => $request->user()->settings,
+                            'level' => $request->user()->getLevel(),
+                            'xp' => $request->user()->getPoints(),
+                            'nextlevelxp' =>  $request->user()->nextLevelAt(),
+                            'notifications' => $request->user()->unreadNotifications()->limit(5)->get()
                                 ->each(function ($notification) {
                                     $notification->DateHum = $notification->created_at->diffForHumans();
                                 }),
-                            ] : null,
-                        ];
-                    },
-                    'site_config' => [
-                        'announcement_message' => site_setting('announcement_message') ?? null,
-                        'announcement' => site_setting('announcement_enabled') ?? false,
-                        'item_creation_enabled' => site_setting('item_creation_enabled') ?? false,
-                        'in_maintenance' => site_setting('site_maintenance') ?? false,
-                    ],
-                    'status' => $response->getStatusCode(),
-                    'message' => $messages[$response->getStatusCode()],
-                    'adonis_error' => $routes[$response->getStatusCode()],
-                    'icon' => $icons[$response->getStatusCode()]
-                ])
-                    ->toResponse($request)
-                    ->setStatusCode($response->getStatusCode());
+                        ] : null,
+                    ];
+                },
+                'site_config' => [
+                    'announcement_message' => site_setting('announcement_message') ?? null,
+                    'announcement' => site_setting('announcement_enabled') ?? false,
+                    'item_creation_enabled' => site_setting('item_creation_enabled') ?? false,
+                    'in_maintenance' => site_setting('site_maintenance') ?? false,
+                ],
+                'status' => $response->getStatusCode(),
+                'message' => $messages[$response->getStatusCode()],
+                'adonis_error' => $routes[$response->getStatusCode()],
+                'icon' => $icons[$response->getStatusCode()]
+            ])
+                ->toResponse($request)
+                ->setStatusCode($response->getStatusCode());
 
             if ($response->getStatusCode() === 419) {
                 return back()->with([
@@ -124,16 +124,22 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withRouting(
-        web: __DIR__ . '/../routes/web.php',
         api: __DIR__ . '/../routes/api.php',
+        web: __DIR__ . '/../routes/web.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
+        then: function () {
+            Route::middleware(['web', 'admin'])->namespace('App\Http\Controllers\Admin')
+                ->prefix('admin')
+                ->name('admin.')
+                ->group(base_path('routes/admin.php'));
+        },
     )->withBroadcasting(
-        __DIR__.'/../routes/channels.php',
+        __DIR__ . '/../routes/channels.php',
         ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
     )->withMiddleware(function (Middleware $middleware) {
         $middleware->validateCsrfTokens(except: [
-           //
+            //
         ]);
         $middleware->throttleApi();
         $middleware->statefulApi();
@@ -144,6 +150,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->replace(\Illuminate\Http\Middleware\TrustProxies::class, \App\Http\Middleware\TrustProxies::class);
         $middleware->web(append: [
             \App\Http\Middleware\Cors::class,
+            \Fahlisaputra\Minify\Middleware\MinifyHtml::class,
+            \Fahlisaputra\Minify\Middleware\MinifyCss::class,
+            \App\Http\Middleware\CompressResponse::class,
+            \Fahlisaputra\Minify\Middleware\MinifyJavascript::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
             \App\Http\Middleware\Localization::class,
             \App\Http\Middleware\HandleInertiaCrossDomainVisits::class,
@@ -162,5 +172,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\UpdateOnlineStatus::class,
             \App\Http\Middleware\VerifyAccount::class,
         ]);
-        $middleware->redirectGuestsTo(fn (Request $request) => route('auth.login.page'));
+        $middleware->alias([
+            'admin' =>\App\Http\Middleware\Admin::class,
+        ]);
+        $middleware->redirectGuestsTo(fn(Request $request) => route('auth.login.page'));
     })->create();

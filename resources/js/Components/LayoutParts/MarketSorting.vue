@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { route } from 'momentum-trail'; // If you're using the 'route' function from 'momentum-trail'
 
 defineProps<{
     selectedSubCategory: string,

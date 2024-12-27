@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { usePage } from "@inertiajs/vue3";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import type { Ref } from "vue";
 
 interface Category {

@@ -14,10 +14,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use App\Services\BBCodeService;
 
 class HomeController extends Controller
 {
-    public function WelcomeIndex()
+    public function WelcomeIndex(BBCodeService $bbcodeService)
     {
         // Define a cache key for this query result
         $cacheKeyItems = 'landing_items';
@@ -40,12 +41,12 @@ class HomeController extends Controller
             });
         });
 
-        $landingPosts = Cache::remember($cacheKeyPosts, now()->addHours(1), function () {
-            return ForumThread::inRandomOrder()->paginate(4)->through(function ($post) {
+        $landingPosts = Cache::remember($cacheKeyPosts, now()->addHours(1), function () use ($bbcodeService)  {
+            return ForumThread::inRandomOrder()->paginate(4)->through(function ($post) use ($bbcodeService){
                 return [
                     'id' => $post->id,
                     'title' => $post->title,
-                    'body' => $post->body,
+                    'body' => $bbcodeService->parse($post->body),
                     'creator' => [
                         'username' => $post->creator->username,
                     ],
@@ -65,6 +66,7 @@ class HomeController extends Controller
     {
         return inertia('Dashboard', [
             'nextlevelxp' => Auth::user()->getNextLevelExp(),
+            'position' => Auth::user()->CurrentPosition(),
         ]);
     }
 
@@ -82,7 +84,7 @@ class HomeController extends Controller
         $executed = RateLimiter::attempt(
             $key,
             $limit,
-            function (Request $request) {
+            function () use ($request) {
             if ($request->message != Auth::user()->latestStatus) {
                 // Logging
                 $status = new Status;
@@ -116,9 +118,9 @@ class HomeController extends Controller
         );
     }
 
-    private function throttleKey(): String
+    private function throttleKey(): string
     {
-        return 'status_for_id_' . Auth::id();
+        return 'latest_status_' . Auth::id();
     }
 
     public function ensureIsNotRateLimited()

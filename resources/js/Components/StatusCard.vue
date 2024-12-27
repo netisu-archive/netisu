@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { route, current } from 'momentum-trail';
+import { route } from 'momentum-trail';
 import VLazyImage from "v-lazy-image";
 
 // Props

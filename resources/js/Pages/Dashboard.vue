@@ -62,32 +62,34 @@ onMounted(() => {
     <Sidebar>
         <div class="mb-4 cell medium-11">
 
-        <div class="gap-3 align-middle flex-container">
-            <Link :href="route(`user.profile`, {username: usePage<any>().props.auth.user.username})">
-                <v-lazy-image :src="usePage<any>().props.auth.user.headshot" width="100" class="border headshot flex-child-shrink img-fluid rounded-circle border-secondary bg-dark v-lazy-image v-lazy-image-loaded flex-wrap col-md-4 d-flex justify-content-center align-content-start" style="flex-direction: column;" alt="Avatar"
-                    src-placeholder="/assets/img/dummy_headshot.png" />
-                    </Link>
-                    <div class="flex-wrap col-md-4 d-flex justify-content-center align-content-start" style="flex-direction: column;">
+            <div class="gap-3 align-middle flex-container">
+                <Link :href="route(`user.profile`, {username: usePage<any>().props.auth.user.username})">
+                <v-lazy-image :src="usePage<any>().props.auth.user.headshot" width="100"
+                    class="border headshot flex-child-shrink img-fluid rounded-circle border-secondary bg-dark v-lazy-image v-lazy-image-loaded flex-wrap col-md-4 d-flex justify-content-center align-content-start"
+                    style="flex-direction: column;" alt="Avatar" src-placeholder="/assets/img/dummy_headshot.png" />
+                </Link>
+                <div class="flex-wrap col-md-4 d-flex justify-content-center align-content-start"
+                    style="flex-direction: column;">
                     <div class="text-start">
                         <span class="text-base text-2xl fw-semibold">
                             Welcome Back
                         </span>
                         <div></div>
-                        <Link class="text-base text-2xl fw-semibold" :href="route(`user.profile`, {username: usePage<any>().props.auth.user.username})">
-                            {{ "@" + usePage<any>().props.auth.user.username }}
-                        </Link>
+                        <Link class="text-base text-2xl fw-semibold"
+                            :href="route(`user.profile`, {username: usePage<any>().props.auth.user.username})">
+                        {{ "@" + usePage<any>().props.auth.user.username }}
+                            </Link>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    </div>
         <div class="cell medium-3">
             <div class="gap-2 mb-3 align-middle card card-body flex-container flex-dir-column">
                 <v-lazy-image :src="usePage<any>().props.auth.user.thumbnail" width="200" alt="Avatar"
-                    src-placeholder="assets/img/dummy_headshot.png" />
-                <div class="text-center" style="line-height: 16px">
-                    <div class="fw-semibold">{{ usePage<any>().props.auth.user.display_name }}</div>
-                    <div class="text-xs fw-semibold text-muted">
-                        {{ '@' + usePage<any>().props.auth.user.username }}
+                    src-placeholder="assets/img/dummy.png" />
+                <div class="text-center fw-semibold text-md" style="line-height: 16px">
+                     <div :class="usePage<any>().props.auth.user.staff ? 'text-danger' : 'text-success'">
+                        {{ usePage<any>().props.auth.user.staff ? usePage<any>().props.auth.user.position : 'Netizen' }}
                     </div>
                 </div>
                 <div class="divider w-100"></div>
@@ -101,7 +103,7 @@ onMounted(() => {
                                 </div>
                                 <div class="text-xs fw-bold text-muted text-uppercase">
                                     {{ usePage<any>().props.auth.user.xp + '/' + usePage<any>
-                                        ().props.nextlevelxp }} EXP
+                                            ().props.nextlevelxp }} EXP
                                 </div>
                             </div>
                             <div class="progress-bar">
@@ -112,67 +114,85 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
-            <div class="mb-1 text-xl fw-semibold">
-                The {{ usePage<any>().props.site.name }} Times
-            </div>
-            <div class="card card-body">
-                <div v-if="NewsLoading">
-                    <NewsCardSkeleton />
-                </div>
-                <div v-else>
-                    <div class="gap-3 text-center flex-container flex-dir-column" v-if="!Feed">
-                        <i class="text-5xl fas fa-face-sleeping text-muted"></i>
-                        <div style="line-height: 18px">
-                            <div class="text-xs fw-bold text-muted text-uppercase">
-                                No Blog Posts
-                            </div>
-                            <div class="text-xs text-muted fw-semibold">
-                                When we publish a post it will appear here.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-sm text-danger fw-semibold" v-else-if="Feed.error">
-                        {{ Feed.error }}
-                    </div>
-                    <NewsCard v-else v-for="Bpost in Feed" :key="Bpost.link" :link="Bpost.link" :creator="Bpost.creator"
-                        :image="Bpost.image" :title="Bpost.title" :desc="Bpost.desc" :date="Bpost.date" />
-                </div>
-            </div>
         </div>
         <div class="cell medium-8">
-
-            <div class="mb-1 text-xl fw-semibold show-for-small-only">
-                Feed
+            <div class="section">
+                <ul class="tabs">
+                    <li class="tab-item">
+                        <a href="#" class="tab-link active squish">Feed</a>
+                    </li>
+                    <li class="tab-item">
+                        <a href="#" class="tab-link squish">Stats</a>
+                    </li>
+                </ul>
             </div>
-            <div class="mb-3">
-                <div class="position-relative">
-                    <textarea class="mb-2 form form-has-button form-has-section-color pe-5" rows="5"
-                        v-model="form.message" placeholder="How are you doing?"></textarea>
-                    <input type="submit" @click="addStatus(form.message)" class="btn btn-success btn-sm has-ripple"
-                        value="Post" style="
+            <div class="section no-divider">
+                <div class="mb-1 text-xl fw-semibold">
+                    The {{ usePage<any>().props.site.name }} Times
+                </div>
+                <div class="card-body">
+                    <div class="gap-2 cell medium-4 mb-1 align-justify  flex-container"
+                        v-if="NewsLoading">
+                        <NewsCardSkeleton />
+                        <NewsCardSkeleton />
+                        <NewsCardSkeleton />
+
+                    </div>
+                    <div class="cell large-4 medium-4 small-1" v-else>
+
+                        <div class="gap-3 text-center flex-container flex-dir-column" v-if="!Feed">
+                            <i class="text-5xl fas fa-face-sleeping text-muted"></i>
+                            <div style="line-height: 18px">
+                                <div class="text-xs fw-bold text-muted text-uppercase">
+                                    No Blog Posts
+                                </div>
+                                <div class="text-xs text-muted fw-semibold">
+                                    When we publish a post it will appear here.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-danger fw-semibold" v-else-if="Feed.error">
+                            {{ Feed.error }}
+                        </div>
+
+                        <NewsCard v-else v-for="Bpost in Feed" :key="Bpost.link" :link="Bpost.link"
+                            :creator="Bpost.creator" :image="Bpost.image" :title="Bpost.title" :desc="Bpost.desc"
+                            :date="Bpost.date" />
+                    </div>
+                </div>
+                <div class="mb-1 text-xl fw-semibold show-for-small-only">
+                    Feed
+                </div>
+                <div class="mb-3">
+                    <div class="position-relative">
+                        <textarea class="mb-2 form form-has-button form-has-section-color pe-5" rows="5"
+                            v-model="form.message" placeholder="How are you doing?"></textarea>
+                        <input type="submit" @click="addStatus(form.message)" class="btn btn-success btn-sm has-ripple"
+                            value="Post" style="
                             position: absolute;
                             bottom: 10px;
                             right: 10px;
                         " />
-                </div>
-            </div>
-            <div class="mb-1 text-xl fw-semibold">Posts</div>
-            <div class="card card-body">
-
-                <div class="gap-3 text-center flex-container flex-dir-column" v-if="!statuses">
-                    <i class="text-5xl fas fa-face-sleeping text-muted"></i>
-                    <div style="line-height: 16px">
-                        <div class="text-xs fw-bold text-muted text-uppercase">
-                            No Posts
-                        </div>
-                        <div class="text-xs text-muted fw-semibold">
-                            Start following players and their posts will appear here.
-                        </div>
                     </div>
                 </div>
-                <StatusCard v-else v-for="(status, index) in initialData" :key="index" :DisplayName="status.dname"
-                    :Thumbnail="status.thumbnail" :name="status.name" :message="status.message"
-                    :date="status.DateHum" />
+                <div class="mb-1 text-xl fw-semibold">Posts</div>
+                <div class="card card-body">
+
+                    <div class="gap-3 text-center flex-container flex-dir-column" v-if="!statuses.length">
+                        <i class="text-5xl fas fa-face-sleeping text-muted"></i>
+                        <div style="line-height: 16px">
+                            <div class="text-xs fw-bold text-muted text-uppercase">
+                                No Posts
+                            </div>
+                            <div class="text-xs text-muted fw-semibold">
+                                Start following players and their posts will appear here.
+                            </div>
+                        </div>
+                    </div>
+                    <StatusCard v-else v-for="(status, index) in initialData" :key="index" :DisplayName="status.dname"
+                        :Thumbnail="status.thumbnail" :name="status.name" :message="status.message"
+                        :date="status.DateHum" />
+                </div>
             </div>
         </div>
     </Sidebar>

@@ -2,10 +2,8 @@
 import { route } from "momentum-trail";
 import { usePage, router } from "@inertiajs/vue3";
 
-import axios from "axios";
-
-const locale_active = usePage().props.locale;
-const locales = usePage().props.locales;
+const locale_active = usePage().props?.['locale'];
+const locales = usePage().props?.['locales'];
 </script>
 
 <template>

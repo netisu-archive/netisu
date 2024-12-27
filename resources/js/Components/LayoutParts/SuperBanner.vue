@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import { usePage } from "@inertiajs/vue3";
 import VLazyImage from "v-lazy-image";
-const { props } = usePage<any>();
+
+interface Props {
+    bannerType?: string,
+    bannerAsset?: string,
+
+}
+
+const props = defineProps<Props>();
 </script>
 
 <template>
     <main
         :class="{
-            'container-navbar': !props.site.frontend.sidebar_menu,
-            container: props.site.frontend.sidebar_menu,
+            'container-navbar': !usePage<any>().props.site.frontend.sidebar_menu,
+            container: usePage<any>().props.site.frontend.sidebar_menu,
         }"
     >
         <div
@@ -18,17 +25,17 @@ const { props } = usePage<any>();
         <portal-target name="bannerAsset" />
 
             <v-lazy-image
-                v-if="bannerType == 'image'"
-                :src="bannerAsset"
+                v-if="props.bannerType == 'image'"
+                :src="props.bannerAsset"
                 width="100"
                 class="space-image"
                 alt="Space Thumbnail"
                 src-placeholder="assets/img/space-error.png"
             />
             <i
-                v-else-if="bannerType == 'icon'"
+                v-else-if="props.bannerType == 'icon'"
                 class="text-5xl text-muted"
-                :class="bannerAsset"
+                :class="props.bannerAsset"
             ></i>
             <template v-else />
             <div class="text-start">

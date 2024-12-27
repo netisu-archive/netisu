@@ -99,8 +99,8 @@ const submit = () => {
                             placeholder="Search..." name="search" v-model="search" @input="performSearch" />
 
                         <div class="mb-2 flex-container flex-child-grow">
-                            <button href="#" class="text-center btn btn-info btn-xs flex-child-grow"><i
-                                    class="fad fa-star-circle"></i>&nbsp; Your Posts</button>
+                            <Link :href="route(`forum.your.posts`)"  as="button" class="text-center btn btn-info btn-xs flex-child-grow"><i
+                                    class="fad fa-star-circle"></i>&nbsp; Your Posts</Link>
                         </div>
                         <div class="mb-2 flex-container flex-child-grow">
                             <button @click="showModal('forum-modal')"

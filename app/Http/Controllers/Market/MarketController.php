@@ -47,7 +47,7 @@ class MarketController extends Controller
         $recommendationCacheKey = 'recommendation_' . $id;
 
         // Retrieve item data with caching
-        $item = Cache::remember($cacheKey, now()->addHours(6), function () use ($id) {
+        $item = Cache::remember($cacheKey, now()->addMinutes(15), function () use ($id) {
             return Item::where('id', $id)->first();
         });
 

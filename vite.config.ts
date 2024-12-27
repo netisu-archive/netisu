@@ -6,10 +6,12 @@ import path from "path";
 import { watch } from "vite-plugin-watch";
 import { splitVendorChunkPlugin } from "vite";
 import { obfuscator } from "rollup-obfuscator";
-//import basicSsl from '@vitejs/plugin-basic-ssl'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 import { viteObfuscateFile } from "vite-plugin-obfuscator";
 import { VitePWA } from "vite-plugin-pwa";
 import { templateCompilerOptions } from '@tresjs/core'
+import ClassMangler from 'vite-plugin-class-mangler';
+import viteCompression from 'vite-plugin-compression'
 
 export default defineConfig({
     root: "", // Specify the root directory for development
@@ -18,9 +20,15 @@ export default defineConfig({
         exclude: ["brotli-wasm", "brotli-wasm/pkg.bundler/brotli_wasm_bg.wasm"],
     },
     server: {
+        host: '100.115.92.195',
+        https: true,
+        cors: true,
         hmr: {
-            host: 'localhost',
-        }
+            host: '100.115.92.195',
+        },
+        watch: {
+            usePolling: false,
+        },
     },
     css: {
         modules: {
@@ -37,6 +45,14 @@ export default defineConfig({
                 enabled: true,
             },
         }),
+        ClassMangler({
+            dev: true,
+            min: 2,
+            max: 6,
+            length: 8,
+            suffixes: ['.vue', '.html']
+        }),
+        viteCompression(),
         splitVendorChunkPlugin(),
         obfuscator({
             compact: true,
@@ -48,6 +64,7 @@ export default defineConfig({
             debugProtectionInterval: 0,
             disableConsoleOutput: false,
             domainLock: [
+                "100.115.92.195",
                 "localhost:8000",
                 "localhost",
                 "netisu.com",
@@ -135,7 +152,7 @@ export default defineConfig({
             },
         }),
         viteObfuscateFile({}),
-        //basicSsl(),
+        basicSsl(),
     ],
     resolve: {
         extensions: [".ts", ".tsx", ".js"],

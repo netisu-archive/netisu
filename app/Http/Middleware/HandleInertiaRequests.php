@@ -51,6 +51,7 @@ class HandleInertiaRequests extends Middleware
                         'display_name' => $request->user()->display_name,
                         'email' => $request->user()->email,
                         'birthdate' => $request->user()->birthdate,
+                        'event_currency' => shortNum($request->user()->event_currency),
                         'coins' => shortNum($request->user()->coins),
                         'bucks' => shortNum($request->user()->bucks),
                         'status' => $request->user()->status,
@@ -63,6 +64,7 @@ class HandleInertiaRequests extends Middleware
                         'settings' => $request->user()->settings,
                         'level' => $request->user()->getLevel(),
                         'xp' => $request->user()->getPoints(),
+                        'navSpaces' => $request->user()->navSpaces(),
                         'nextlevelxp' =>  $request->user()->nextLevelAt(),
                         'notifications' => $request->user()->unreadNotifications()->limit(5)->get()
                             ->each(function ($notification) {

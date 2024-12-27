@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import axios from "axios";
 import { route } from "momentum-trail";
 import { usePage } from "@inertiajs/vue3";
-import AeoPagination from "@/Components/Pagination.vue";
 import Navbar from "@/Components/LayoutParts/Admin/Navbar.vue";
 import AppHead from "@/Components/AppHead.vue";
 </script>

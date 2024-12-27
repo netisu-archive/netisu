@@ -2,10 +2,10 @@
 import { usePaginator } from "momentum-paginator";
 
 const props  = defineProps<{
-    pagedata: Paginator<Array>
+    pagedata: Paginator<Array<any>>
 }>();
 
-const { from, to, total, previous, next, pages } = usePaginator(props.pagedata);
+const { previous, next, pages } = usePaginator(props.pagedata);
 </script>
 
 <template>

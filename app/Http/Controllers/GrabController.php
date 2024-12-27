@@ -45,7 +45,10 @@ class GrabController extends Controller
         $search = $request->input('search', '');
 
         $spaces = Space::where([
-            ['thumbnail_pending', '!=', true]
+
+            ['thumbnail_pending', '!=', true],
+            ['name', 'like', "%$search%"]
+
         ])->orderBy('created_at', 'desc')->paginate(12)->through(function ($space) {
             return [
                 'name' => $space->name,
@@ -99,9 +102,9 @@ class GrabController extends Controller
                 'color_right_leg' => $user->avatar()->color_right_leg,
                 'thumbnail' => $user->thumbnail(),
                 'current_face' => env('STORAGE_URL') . (
-                $user->avatar()->face ? '/uploads/' . getItemHash($user->avatar()->face) . ".png" : '/assets/default.png'
-            ),
-        ],
+                    $user->avatar()->face ? '/uploads/' . getItemHash($user->avatar()->face) . ".png" : '/assets/default.png'
+                ),
+            ],
             'colors' => $colors,
             'categories' => $categories,
         ]);

@@ -91,7 +91,7 @@ watch(following, (newValue, oldValue) => {
                         </div>
                         <button @click="showModal('following-modal')" class="btn-circle"
                             data-toggle-modal="#following-modal" style="margin-right: -10px">
-                            <i class="fas fa-times"></i>
+                            <i class="fad fa-times"></i>
                         </button>
                     </div>
                 </div>
@@ -131,7 +131,7 @@ watch(following, (newValue, oldValue) => {
                         </div>
                         <button @click="showModal('followers-modal')" class="btn-circle"
                             data-toggle-modal="#followers-modal" style="margin-right: -10px">
-                            <i class="fas fa-times"></i>
+                            <i class="fad fa-times"></i>
                         </button>
                     </div>
                 </div>
@@ -181,11 +181,11 @@ watch(following, (newValue, oldValue) => {
 
             <portal to="bannerName">
                 <div class="text-xl" style="line-height: 16px">
-                    <div class="mb-1 fw-semibold">
+                    <div class="mb-1 flex-container align-middle gap-1 fw-semibold">
                         {{ usePage<any>().props.user.display_name }}
-                            <i v-if="usePage<any>().props.user.staff" class="fas fa-gavel text-danger">&nbsp;</i>
+                            <i v-if="usePage<any>().props.user.staff" class="fad fa-gavel text-danger"></i>
                             <i v-else-if="usePage<any>().props.user.settings.beta_tester"
-                                class="fas fa-hard-hat text-success">&nbsp;</i>
+                                class="fad fa-hard-hat text-success"></i>
                             <v-lazy-image
                                 :src="'/assets/img/flags/' + usePage<any>().props.user.settings.country_code + '.svg'"
                                 alt="Country Flag" style="width: auto;height: 20px;"
@@ -281,23 +281,23 @@ watch(following, (newValue, oldValue) => {
             <div class="mb-3 card card-body">
                 <div class="gap-1 align-middle flex-container flex-dir-column">
                     <div class="text-sm text-membership fw-semibold w-100">
-                        <i class="text-center fas fa-rocket-launch text-membership" style="width: 26px"></i>
+                        <i class="text-center fad fa-rocket-launch text-membership" style="width: 26px"></i>
                         Premium Subscriber
                     </div>
                     <div class="text-sm w-100">
-                        <i class="text-center fas fa-medal text-muted" style="width: 26px"></i>
+                        <i class="text-center fad fa-medal text-muted" style="width: 26px"></i>
                         {{ "Rank Lvl. " + usePage<any>().props.user.level }}
                     </div>
                     <div class="text-sm w-100">
-                        <i class="text-center fas fa-users-medical text-muted" style="width: 26px"></i>
+                        <i class="text-center fad fa-users-medical text-muted" style="width: 26px"></i>
                         Joined on {{ usePage<any>().props.user.joindate }}
                     </div>
                     <div class="text-sm w-100">
-                        <i class="text-center fas fa-clock text-muted" style="width: 26px"></i>
+                        <i class="text-center fad fa-clock text-muted" style="width: 26px"></i>
                         Last seen {{ usePage<any>().props.user.DateHum }}
                     </div>
                     <div class="text-sm w-100">
-                        <i class="text-center fas fa-messages text-muted" style="width: 26px"></i>
+                        <i class="text-center fad fa-messages text-muted" style="width: 26px"></i>
                         {{ usePage<any>().props.user.posts }} Discussion Posts
                     </div>
                 </div>
@@ -305,7 +305,7 @@ watch(following, (newValue, oldValue) => {
             <div class="mb-1 text-xl fw-semibold">Spaces</div>
             <div class="mb-3 card card-body">
                 <div class="gap-3 text-center flex-container flex-dir-column">
-                    <i class="text-5xl fas fa-planet-ringed text-muted"></i>
+                    <i class="text-5xl fad fa-planet-ringed text-muted"></i>
                     <div style="line-height: 16px">
                         <div class="text-xs fw-bold text-muted text-uppercase">
                             No Spaces
@@ -322,7 +322,7 @@ watch(following, (newValue, oldValue) => {
                             <img src="/assets/img/space_placeholder.png" class="mb-1" />
                             <div>
                                 <div class="text-sm fw-semibold text-truncate">
-                                    <i class="mb-1 text-xs text-info fw-bold text-uppercase fas fa-star"></i>&nbsp;
+                                    <i class="mb-1 text-xs text-info fw-bold text-uppercase fad fa-star"></i>&nbsp;
                                     Namesnipe
                                 </div>
                                 <div class="text-xs text-muted fw-semibold">
@@ -354,7 +354,7 @@ watch(following, (newValue, oldValue) => {
             <div class="mb-3 card card-body">
                 <div v-if="!usePage<any>().props.user.friends.data || !usePage<any>().props.user.friends.data.length"
                     class="gap-3 text-center flex-container flex-dir-column">
-                    <i class="text-5xl fas fa-face-sad-tear text-muted"></i>
+                    <i class="text-5xl fad fa-face-sad-tear text-muted"></i>
                     <div style="line-height: 16px">
                         <div class="text-xs fw-bold text-muted text-uppercase">
                             No Friends
@@ -391,7 +391,7 @@ watch(following, (newValue, oldValue) => {
                 </div>
                 <div v-if="!statuses.data.length" class="section">
                     <div class="gap-3 text-center flex-container flex-dir-column">
-                        <i class="text-5xl fas fa-face-sleeping text-muted"></i>
+                        <i class="text-5xl fad fa-face-sleeping text-muted"></i>
                         <div style="line-height: 16px">
                             <div class="text-xs fw-bold text-muted text-uppercase">
                                 No Posts
@@ -435,12 +435,12 @@ watch(following, (newValue, oldValue) => {
                             </div>
                             <div class="dropdown ms-auto position-relative">
                                 <button class="btn-circle" style="margin-right: -10px">
-                                    <i class="fas fa-ellipsis-vertical"></i>
+                                    <i class="fad fa-ellipsis-vertical"></i>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li class="dropdown-item">
                                         <a href="#" class="dropdown-link dropdown-link-has-icon">
-                                            <i class="fas fa-flag dropdown-icon"></i> Report
+                                            <i class="fad fa-flag dropdown-icon"></i> Report
                                         </a>
                                     </li>
                                     <div class="align-middle flex-container">
@@ -449,7 +449,7 @@ watch(following, (newValue, oldValue) => {
                                     </div>
                                     <li class="dropdown-item">
                                         <a href="#" class="dropdown-link dropdown-link-has-icon text-danger">
-                                            <i class="fas fa-trash text-danger dropdown-icon"></i>
+                                            <i class="fad fa-trash text-danger dropdown-icon"></i>
                                             Delete
                                         </a>
                                     </li>

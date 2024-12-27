@@ -10,15 +10,16 @@ import SuperBanner from "./SuperBanner.vue";
 interface Props {
     image?: string;
     showJsonAlert?: boolean;
-    JSONALERT?: Object<JsonResponse>;
+    JSONALERT?: JsonResponse;
     alertsEnabled?: boolean;
     superBanType?: string;
     superBanAsset?: string;
     superBanName?: string;
     superBanDesc?: string;
-    superBanButtons?: Array<BannerButtons>;
+    superBanButtons?: BannerButtons;
     superBanActive?: boolean;
     OfficialImageBackground?: boolean;
+    navSpaces?: Array<any>;
 }
 
 interface JsonResponse {
@@ -40,7 +41,7 @@ withDefaults(defineProps<Props>(), {
     JSONALERT: [{
         message: 'Server Error',
         type: 'error',
-    }]<JsonResponse>,
+    }] as JsonResponse,
     OfficialImageBackground: false,
 });
 
@@ -177,74 +178,65 @@ const sidebar = [
 const lang = computed(() => usePage<any>().props.locale);
 </script>
 <template>
-    <nav
-        v-if="props.site.frontend.sidebar_menu"
-        class="sidebar show-for-large"
-        id="sidebar"
-    >
+    <nav v-if="props.site.frontend.sidebar_menu" class="sidebar show-for-large" id="sidebar">
         <ul class="sidebar-nav">
             <div class="hide-for-large" v-if="!props.auth.user">
                 <li class="side-item side-title">Account</li>
-                <SideLink
-                    :link="route('auth.register.page')"
-                    :ActiveLink="route('auth.register.page')"
-                >
+                <SideLink :link="route('auth.register.page')" :ActiveLink="route('auth.register.page')">
                     <i class="fad fa-user-plus side-icon"></i>
                     <span>Get Started</span>
                 </SideLink>
-                <SideLink
-                    :link="route('auth.login.page')"
-                    :ActiveLink="route('auth.login.page')"
-                >
+                <SideLink :link="route('auth.login.page')" :ActiveLink="route('auth.login.page')">
                     <i class="fad fa-sign-in side-icon"></i>
                     <span>Log In</span>
                 </SideLink>
             </div>
-            <SideLink
-                :link="route('Welcome')"
-                :ActiveLink="props.auth.user ? 'my.dashboard.page' : 'Welcome'"
-            >
+            <SideLink :link="route('Welcome')" :ActiveLink="props.auth.user ? 'my.dashboard.page' : 'Welcome'">
                 <i class="fad fa-home side-icon"></i>
                 <span> {{ props.auth.user ? "Dashboard" : "Welcome" }} </span>
             </SideLink>
-            <template
-                v-for="sidesections in sidebarsections"
-                class="hide-for-large"
-            >
+            <template v-for="sidesections in sidebarsections" class="hide-for-large">
                 <li class="side-item side-title">
                     {{ sidesections[lang].name }}
                 </li>
                 <!-- Iterate over links within the current section -->
-                <SideLink
-                    class="side-item"
-                    v-for="sidelink in sidebar.filter(
+                <SideLink class="side-item" v-for="sidelink in sidebar.filter(
                         (link) => link.section === sidesections.en.name
-                    )"
-                    :link="sidelink.url"
-                    :ActiveLink="sidelink.active_link"
-                >
-                    <i class="side-icon" :class="sidelink.icon"></i
-                    ><span>{{ sidelink[lang].title }}</span>
+                    )" :link="sidelink.url" :ActiveLink="sidelink.active_link">
+                    <i class="side-icon" :class="sidelink.icon"></i><span>{{ sidelink[lang].title }}</span>
                 </SideLink>
             </template>
             <li v-if="props.auth.user" class="side-item side-title">
                 My Spaces
             </li>
-            <li v-if="props.auth.user" class="side-item">
+            <li v-if="props.auth.user && usePage<any>().props.navSpaces"
+                v-for="(space, index) in usePage<any>().props.navSpaces" :key="index" class="side-item">
                 <Link href="#" class="side-link side-link-has-img">
+                <span class="side-img">
+                    <v-lazy-image :src="space.thumbnail" />
+                </span>
+                <span>{{ space.name }}</span>
+                </Link>
+            </li>
+            <li v-else class="side-item">
+                <Link :href="route('spaces.page')" class="side-link side-link-has-img">
+                <button class="gap-2 align-middle flex-container squish" style="outline: none;">
                     <span class="side-img">
-                        <img src="/assets/img/icon.png" />
+                    <i class="fad fa-square-xmark" />
                     </span>
-                    <span>Project Eclipse</span>
+
+                    <div class="text-start show-for-large">
+                        <div class="text-sm fw-semibold text-body">No spaces found</div>
+                        <div class="mb-1 text-xs text-muted fw-semibold"> Join a space here </div>
+                    </div>
+                </button>
                 </Link>
             </li>
         </ul>
     </nav>
     <nav v-if="props.site_config.announcement" class="sitewide-alert">
         <div class="py-2 text-center alert alert-danger alert-wide fw-semibold">
-            <div
-                class="gap-2 text-center align-middle flex-container align-center"
-            >
+            <div class="gap-2 text-center align-middle flex-container align-center">
                 <div>
                     {{ props.site_config.announcement_message }}
                 </div>
@@ -252,32 +244,21 @@ const lang = computed(() => usePage<any>().props.locale);
         </div>
     </nav>
     <div v-if="image" class="profile-banner">
-        <img
-      class="masoqi"
-      :class="{ special: OfficialImageBackground }"
-      :style="{
+        <img class="masoqi" :class="{ special: OfficialImageBackground }" :style="{
         backgroundImage: `url(${image})`,
         backgroundRepeat: OfficialImageBackground ? 'repeat-x' : 'no-repeat',
         backgroundSize: OfficialImageBackground ? '' : 'cover',
         backgroundPosition: 'center'
-      }"
-    />
+      }" />
     </div>
     <FlashMessages :ShowJsonAlert="showJsonAlert" :flash="JSONALERT[0]" />
-    <SuperBanner
-    v-if="superBanActive"
-    />
-    <main
-        :class="{
+    <SuperBanner v-if="superBanActive" />
+    <main :class="{
             'container-navbar': !props.site.frontend.sidebar_menu,
             container: props.site.frontend.sidebar_menu,
-        }"
-    >
+        }">
         <div v-if="alertsEnabled">
-            <div
-                v-if="adblock"
-                class="py-2 mb-4 text-center alert alert-danger fw-semibold"
-            >
+            <div v-if="adblock" class="py-2 mb-4 text-center alert alert-danger fw-semibold">
                 <div class="gap-2 align-middle flex-container align-justify">
                     <i class="text-lg far fa-triangle-exclamation pe-2"></i>
                     <div>
@@ -288,19 +269,12 @@ const lang = computed(() => usePage<any>().props.locale);
                     <i class="text-lg far fa-triangle-exclamation pe-2"></i>
                 </div>
             </div>
-            <div
-                v-if="props.site_config.in_maintenance"
-                class="py-2 mb-4 text-center text-white alert alert-danger"
-            >
+            <div v-if="props.site_config.in_maintenance" class="py-2 mb-4 text-center text-white alert alert-danger">
                 <div class="gap-2 align-middle flex-container align-justify">
                     <i class="text-lg far fa-hammer pe-2"></i>
                     <div>
                         You are currently in maintenance mode.
-                        <Link
-                            :href="route('maintenance.exit')"
-                            class="ml-2 text-white fw-semibold"
-                            >Exit</Link
-                        >
+                        <Link :href="route('maintenance.exit')" class="ml-2 text-white fw-semibold">Exit</Link>
                     </div>
                     <i class="text-lg far fa-hammer pe-2"></i>
                 </div>
@@ -308,45 +282,26 @@ const lang = computed(() => usePage<any>().props.locale);
         </div>
         <div class="grid-x grid-margin-x align-center">
             <slot />
-            <div
-                id="chat-container"
-                class="chat-container chat-vis focused"
-                style="right: 66px; z-index: 1060"
-                v-if="chatToggle"
-            >
-                <div
-                    class="chat-windows-header chat-header bg-info hover"
-                    @click="chatToggle = !chatToggle"
-                >
+            <div id="chat-container" class="chat-container chat-vis focused" style="right: 66px; z-index: 1060"
+                v-if="chatToggle">
+                <div class="chat-windows-header chat-header bg-info hover" @click="chatToggle = !chatToggle">
                     <div class="chat-header-action">
-                        <i
-                            class="chat-icon fad fa-message-xmark chat-link-icon"
-                        ></i>
+                        <i class="chat-icon fad fa-message-xmark chat-link-icon"></i>
                         <i class="chat-icon fad fa-cog chat-link-icon"></i>
-                        <i
-                            class="chat-icon fad fa-gamepad-modern chat-link-icon"
-                        ></i>
+                        <i class="chat-icon fad fa-gamepad-modern chat-link-icon"></i>
                     </div>
                     <div class="chat-header-label">
-                        <span
-                            class="chat-caption-header text-overflow chat-header-title"
-                        >
+                        <span class="chat-caption-header text-overflow chat-header-title">
                             Aeo
                         </span>
                     </div>
                 </div>
                 <div class="chat-main">
                     <div class="chat-body card-chat card-chat-body no-corners">
-                        <div
-                            v-for="message in messages"
-                            class="gap-2 p-2 mb-2 align-middle squish flex-container align-justify"
-                        >
+                        <div v-for="message in messages"
+                            class="gap-2 p-2 mb-2 align-middle squish flex-container align-justify">
                             <div class="gap-2 align-middle flex-container">
-                                <img
-                                    src="/assets/img/dummy_headshot.png"
-                                    class="headshot"
-                                    width="50"
-                                />
+                                <img src="/assets/img/dummy_headshot.png" class="headshot" width="50" />
                                 <div class="w-100">
                                     <div class="fw-semibold">
                                         {{ message.displayname }}

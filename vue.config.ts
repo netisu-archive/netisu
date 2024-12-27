@@ -1,6 +1,15 @@
 import { defineConfig } from '@vue/cli-service';
 module.exports = defineConfig({
   transpileDependencies: true,
+  css: {
+    loaderOptions: {
+      css: {
+        modules: {
+          auto: () => true
+        }
+      }
+    }
+  },
    pwa: {
     name: "workbox",
     themeColor: "#fff3e0",
@@ -15,5 +24,6 @@ module.exports = defineConfig({
     manifestOptions: {
       background_color: "#ffe24a",
     }
+
   }
 })

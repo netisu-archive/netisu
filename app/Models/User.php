@@ -9,6 +9,10 @@ use Illuminate\{
     Support\Facades\Cache,
     Support\Facades\Redis,
     Support\Facades\Auth,
+    Support\Collection,
+    Database\Eloquent\Relations\BelongsTo,
+    Database\Eloquent\Relations\HasMany,
+    Database\Eloquent\Relations\HasOne,
     Contracts\Auth\MustVerifyEmail,
 };
 
@@ -19,8 +23,8 @@ use App\Models\{
     Status,
     ForumThread,
     IpLog,
+    UsernameHistory,
 };
-
 use Laravel\{
     Cashier\Billable,
     Sanctum\HasApiTokens,
@@ -30,8 +34,10 @@ use LevelUp\Experience\Concerns\{
     GiveExperience,
     HasAchievements,
 };
-class User extends AeoAuthenticatable
+
+class User extends AeoAuthenticatable implements MustVerifyEmail
 {
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use
         Billable,
         HasApiTokens,
@@ -39,9 +45,7 @@ class User extends AeoAuthenticatable
         GiveExperience,
         HasAchievements,
         Notifiable,
-        Searchable
-        /* MustVerifyEmail */
-    ;
+        Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -87,6 +91,8 @@ class User extends AeoAuthenticatable
     ];
 
     protected $appends = ['DateHum'];
+    protected $guard = ['web', 'admin'];
+
 
     /**
      * Meilisearch search array.
@@ -109,7 +115,7 @@ class User extends AeoAuthenticatable
     }
 
     // Classes
-    public function avatar()
+    public function avatar(): Avatar
     {
         return $this->hasOne(Avatar::class)->first();
     }
@@ -153,7 +159,7 @@ class User extends AeoAuthenticatable
         return $this->bans()->where('active', 1)->exists();
     }
 
-    public function bans()
+    public function bans(): HasMany
     {
         return $this->hasMany(UserBan::class, 'user_id', 'id');
     }
@@ -168,22 +174,45 @@ class User extends AeoAuthenticatable
         return $this->isFollowing($user) && $user->isFollowing($user); // Check mutual following
     }
 
-    public function posts()
+    public function Friends(User $user1, User $user2)
+{
+    // Check if both users are following each other
+    $isFollowing1 = $user1->follows->contains($user2->id);
+    $isFollowing2 = $user2->follows->contains($user1->id);
+
+    if ($isFollowing1 && $isFollowing2) {
+        // Create a friendship (you might have a separate friendships table or a flag in the users table)
+        // For example, if you have a 'friends' pivot table:
+        $user1->friends()->attach($user2);
+        $user2->friends()->attach($user1);
+
+        // Or, if you have a 'is_friend' boolean flag in the User model:
+        $user1->is_friend = true;
+        $user1->save();
+
+        $user2->is_friend = true;
+        $user2->save();
+
+        // Notify the users or perform other actions as needed
+    }
+}
+
+    public function posts(): HasMany
     {
         return $this->hasMany(ForumThread::class, 'creator_id');
     }
 
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
     }
 
-    public function sentMessages()
+    public function sentMessages(): HasMany
     {
         return $this->hasMany(Message::class, 'sending_id');
     }
 
-    public function receivedMessages()
+    public function receivedMessages(): HasMany
     {
         return $this->hasMany(Message::class, 'receiving_id');
     }
@@ -196,7 +225,7 @@ class User extends AeoAuthenticatable
         ])->exists();
     }
 
-    public function ipLogs()
+    public function ipLogs(): HasMany
     {
         return $this->hasMany(IpLog::class, 'user_id');
     }
@@ -231,23 +260,23 @@ class User extends AeoAuthenticatable
         return $resellableCopies;
     }
 
-    public function spaces()
+    public function spaces(): Collection
     {
         return $this->hasMany(SpaceMembers::class, 'user_id')->get()->pluck('space')->unique('id');
     }
 
-    public function primarySpace()
+    public function primarySpace(): Bool
     {
         return $this->belongsTo(Space::class, $this->settings->primary_space) || null;
     }
 
-    public function navSpaces()
+    public function navSpaces(): Collection
     {
         if ($this->primarySpace()) {
             return $this->spaces()
                 ->where('id', '!=', $this->settings->primary_space)
                 ->sortByDesc('updated_at')
-                ->add($this->primarySpace)
+                ->add($this->primarySpace())
                 ->take(5);
         }
 
@@ -259,21 +288,17 @@ class User extends AeoAuthenticatable
 
 
 
-    public function canEditItem($id)
+    public function canEditItem($id): bool
     {
-        $item = Item::where('id', '=', $id)->first();
+        $item = Item::findOrFail($id);
 
-        return ($item->creator_type == 'user' && $this->id == $item->creator->id) || ($item->creator_type == 'group' && $this->id == $item->creator->owner_id);
+        return ($item->creator_type === 'user' && $this->id === $item->creator->id) || ($item->creator_type === 'group' && $this->id === $item->creator->owner_id);
     }
 
 
     public function online()
     {
-        // Calculate the expiration time for online status
-        $expirationTime = strtotime($this->updated_at) + 300;
-
-        // Check if the expiration time is greater than the current time
-        return $expirationTime > time();
+        return $this->updated_at->diffInSeconds() < 300;
     }
 
     public function settings()
@@ -308,10 +333,9 @@ class User extends AeoAuthenticatable
     public function CurrentPositionID()
     {
         if ($this->isStaff()) {
-            $adminRole = AdminRoles::where([
-                ['id', '=', $admin->role_id],
+            $admin = Admin::where([
+                ['user_id', '=', $this->id],
             ])->first();
-
             return $admin->role_id;
         } else {
             return null;
@@ -327,6 +351,10 @@ class User extends AeoAuthenticatable
         } else {
             return "{$url}/thumbnails/{$image}.png";
         }
+    }
+    public function usernameHistory()
+    {
+        return UsernameHistory::where('user_id', $this->id)->orderBy('created_at')->get();
     }
 
     public function headshot()
