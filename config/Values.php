@@ -4,7 +4,7 @@ return [
     'logo' => '/assets/img/logo-theta.svg',
     'icon' => '/assets/img/icon.png',
     'in_event' => true,
-    'system_account_id' => 1,
+    'system_account_id' => 2,
     'in_testing_phase' => true,
 
     'version' => "enigma",
