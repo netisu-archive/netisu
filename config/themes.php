@@ -23,10 +23,10 @@ return [
             'available' => true
         ],
 
-        'galaxy' => [
-            'name' => 'Galaxy',
-            'lowercase' => 'galaxy',
-            'file' => '/css/themes/variables-galaxy.css',
+        'vistora' => [
+            'name' => 'Vistora',
+            'lowercase' => 'vistora',
+            'file' => '/css/themes/variables-vistora.css',
             'available' => true
         ],
 
