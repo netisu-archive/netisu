@@ -62,6 +62,20 @@ class UserController extends Controller
             abort(404);
         }
 
+        if ($user->settings->private_profile){
+
+            if (Auth::check()) {
+                if ($user->id != Auth::id()) {
+                    return inertia('App/ProfileDisabled', [
+                        'username' => $user->username,
+                    ]);
+                }
+            } else {
+               return inertia('App/ProfileDisabled', [
+                    'username' => $user->username,
+                ]);
+            }
+        } else {
         // Load relationships and counts
         $userFollowing = $user->following()->get();
         $FollowingCount = $userFollowing->count();
@@ -96,21 +110,6 @@ class UserController extends Controller
             });
         });
 
-        if ($user->settings->private_profile) {
-            if (Auth::check()) {
-                $loggedInUser = Auth::user();
-                if ($user->id != $loggedInUser->id) {
-                    $response = inertia('App/ProfileDisabled', [
-                        'username' => $user->username,
-                    ]);
-                }
-            } else {
-                $response = inertia('App/ProfileDisabled', [
-                    'username' => $user->username,
-                ]);
-            }
-        } else {
-
         $friends = Cache::remember($friendcacheKey, now()->addMinutes(5), function () use ($user) {
             $mutualFollowers = $user->followers()->whereHas('following', function ($query) use ($user) {
                 $query->where('following_id', $user->id)
@@ -128,7 +127,7 @@ class UserController extends Controller
         });
 
 
-        $response = inertia('Users/Profile', [
+        return inertia('Users/Profile', [
             'user' => [
                 'id' => $user->id,
                 'username' => $user->username,
@@ -187,6 +186,5 @@ class UserController extends Controller
             'statuses' => $statuses,
         ]);
     }
-        return $response;
     }
 }
