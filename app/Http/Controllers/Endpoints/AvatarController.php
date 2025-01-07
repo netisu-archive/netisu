@@ -93,6 +93,56 @@ class AvatarController extends Controller
             "type" => "success",
         ], 200);
     }
+    public function RemoveItem(int $itemId, int | string $slot)
+    {
+        // Fetch the avatar and item record
+        /** @var \App\Models\User $user **/
+        $user = Auth::user();
+        $avatar = $user->avatar();
+        $newVrcInstance = new RenderController();
+        $vrs = $newVrcInstance;
+        $item = Item::where('id', '=', $itemId)->first();
+
+        // Check if avatar record exists
+        if (!$avatar) {
+            return response()->json([
+                "message" => "Avatar record not found",
+                "type" => "error",
+            ], 404);
+        }
+
+        // Validate slot number (1-6)
+        if ($item->item_type == "hat" && $slot != 'none' && $slot != null) {
+            $hatSlot = "hat_" . $slot; // Define $hatSlot here within the if block
+        }
+
+
+        if ($item->item_type == "hat" && !in_array($slot, range(1, 6)) && $slot != 'none') {
+            return response()->json([
+                "message" => "Invalid hat slot. Please choose between 1 and 6.",
+                "type" => "error",
+            ], 400); // Bad request status code
+        }
+
+        // Update the specific item based on type and id
+        if ($item->item_type == "hat" && $slot != 'none' && $slot != null) {
+            $avatar->{$hatSlot} = null;
+        } else {
+            $avatar->{$item->item_type} = null;
+        }
+
+
+        // Save the updated avatar record
+        $avatar->save();
+
+        $this->regenerate();
+
+        return response()->json([
+            "thumbnail" => $vrs->getAvatarRenderHash($avatar->id),
+            "message" => "You have taken off this item",
+            "type" => "success",
+        ], 200);
+    }
 
     public function getWearingItems()
     {

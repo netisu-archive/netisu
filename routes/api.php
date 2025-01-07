@@ -95,6 +95,8 @@ Route::group(['as' => 'api.'], function () {
         Route::get('/wearing-hats', [AvatarController::class, 'getWearingHats'])->name('wearing-hats');
 
         Route::get('/wear/{id}/{slot}', [AvatarController::class, 'WearItem'])->name('wear-item');
+        Route::get('/take-off/{id}/{slot}', [AvatarController::class, 'RemoveItem'])->name('remove-item');
+
     });
 
     Route::group(['as' => 'settings.', 'prefix' => 'settings'], function () {
