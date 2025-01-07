@@ -66,15 +66,19 @@ watch(
     </nav>
 </template>
 <script lang="ts">
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    const toastMenu = document.getElementById("ToastNotif") as HTMLElement;
-    toastMenu.classList.toggle('toast-menu-slide');
-  }, 1000);
+window.onload = () => {
+    setTimeout(() => {
+        const toastMenu = document.getElementById("ToastNotif") as HTMLElement;
+        if (toastMenu) { // Check if the element exists
+            toastMenu.classList.toggle('toast-menu-slide');
+        }
+    }, 1000);
 
-  setTimeout(() => {
-    const toastMenu = document.getElementById("ToastNotif") as HTMLElement;
-    toastMenu.classList.toggle('toast-menu-slide');
-  }, 6000);
-});
+    setTimeout(() => {
+        const toastMenu = document.getElementById("ToastNotif") as HTMLElement;
+        if (toastMenu) {
+            toastMenu.classList.toggle('toast-menu-slide');
+        }
+    }, 6000);
+};
 </script>

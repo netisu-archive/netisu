@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Stevebauman\Location\Facades\Location;
 use App\Models\IpLog;
+use App\Models\UserSettings;
 
 class Roles
 {
@@ -29,10 +30,11 @@ class Roles
             $ipLog->save();
         }
 
-        if (Auth::check() && config('Values.in_testing_phase') && !$user->settings->beta_tester) {
-            $user->settings->beta_tester = true;
-            $user->save();
-        }
+        if (Auth::check() && config('Values.in_testing_phase') && $user->settings->beta_tester != false) {
+            UserSettings::updateOrCreate([
+                'beta_tester' => true
+            ]);
+        };
 
         return $next($request);
     }

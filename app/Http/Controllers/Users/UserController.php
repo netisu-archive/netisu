@@ -109,7 +109,7 @@ class UserController extends Controller
                     'username' => $user->username,
                 ]);
             }
-        }
+        } else {
 
         $friends = Cache::remember($friendcacheKey, now()->addMinutes(5), function () use ($user) {
             $mutualFollowers = $user->followers()->whereHas('following', function ($query) use ($user) {
@@ -135,7 +135,7 @@ class UserController extends Controller
                 'display_name' => $user->display_name,
                 'about_me' => $user->about_me,
                 'posts' => $user->posts()->count(),
-                'avatar' => $user->thumbnail(),
+                'thumbnail' => $user->thumbnail(),
                 'headshot' => $user->headshot(),
                 'level' => $user->getLevel(),
                 'following' => $user->following()->get(),
@@ -151,6 +151,17 @@ class UserController extends Controller
                 'DateHum' => $user->DateHum,
                 'status' => $user->status,
                 'online' => $user->online(),
+                'avatar' => [
+                    'color_head' => $user->avatar()->color_head,
+                    'color_left_arm' => $user->avatar()->color_left_arm,
+                    'color_torso' => $user->avatar()->color_torso,
+                    'color_right_arm' => $user->avatar()->color_right_arm,
+                    'color_left_leg' => $user->avatar()->color_left_leg,
+                    'color_right_leg' => $user->avatar()->color_right_leg,
+                    'current_face' => env('STORAGE_URL') . (
+                        $user->avatar()->face ? '/uploads/' . getItemHash($user->avatar()->face) . ".png" : '/assets/default.png'
+                    ),
+                ],
                 'settings' => [
                     "verified" => $user->settings->is_verified,
                     "beta_tester" => $user->settings->beta_tester,
@@ -175,7 +186,7 @@ class UserController extends Controller
             'is_following' => $isFollowing,
             'statuses' => $statuses,
         ]);
-
+    }
         return $response;
     }
 }

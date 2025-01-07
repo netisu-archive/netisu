@@ -3,10 +3,11 @@
     dir="{{ App::isLocale('ar') ? 'rtl' : 'ltr' }}">
 
 <head>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     @inertiaHead
     <link id="theme-style" rel="stylesheet">
-    @vite(['resources/js/app.ts'])
-</head>
+    @vite(['resources/js/app.ts', "resources/js/Pages/{$page['component']}.vue"])
+  </head>
 <style>
     #snowflakeContainer {
       position: absolute;

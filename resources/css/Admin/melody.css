@@ -34,6 +34,35 @@ footer {
   text-align: center;
 }
 
+.button {
+    background: #3298dc !important;
+    color: #fff;
+    border-color: #207BB9 !important;
+}
+.button.is-danger {
+    background: #ff4136 !important;
+    color: #fff !important;
+    border-color: #F70E00 !important;
+}
+.button.is-danger:hover {
+    color: orange !important;
+}
+.content blockquote { 
+    background: #3298dc !important;
+    color: #fff;
+    border-color: #207BB9 !important;
+}
+.input, .select select, .textarea {
+    background: #3298dc !important;
+    color: #fff;
+    border-color: #207BB9 !important;
+}
+.button.is-purple {
+    background: #4956f3 !important;
+    color: #fff;
+    border-color: #161616 !important;
+
+}
 .card {
   background: rgb(255, 255, 255) !important;
   border-color: #d8d5d5 !important;
@@ -67,5 +96,5 @@ footer {
 }
 
 .input::placeholder {
-  color: #cacad2 !important;
+  color: #fff !important;
 }

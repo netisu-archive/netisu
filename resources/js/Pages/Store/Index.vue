@@ -64,173 +64,93 @@ provide("selectedSubCategory", selectedSubCategory);
 </script>
 
 <template>
-    <AppHead
-        pageTitle="Market"
-        description="Level up your style."
-        :url="route(`store.page`)"
-    />
+    <AppHead pageTitle="Market" description="Level up your style." :url="route(`store.page`)" />
     <Navbar :landing="false" />
-    <Sidebar
-        image="/assets/img/site-banners/market-background.svg"
-        :superBanActive="true"
-        :OfficialImageBackground="true"
-    >
+    <Sidebar image="/assets/img/site-banners/market-background.svg" :superBanActive="true"
+        :OfficialImageBackground="true">
         <template>
             <portal to="bannerAsset">
                 <i class="text-5xl fad fa-store text-info"></i>
             </portal>
             <portal to="bannerButtons">
-                <Link
-                    v-if="usePage<any>().props.auth.user"
-                    class="text-xl text-success squish"
-                    :href="route(`store.create.page`)"
-                    content="Create Item"
-                    as="button"
-                    v-tippy="{ placement: 'bottom' }"
-                    style="outline: none"
-                >
-                    <i class="fad fa-square-pen"></i>
+                <Link v-if="usePage<any>().props.auth.user" class="text-xl text-success squish"
+                    :href="route(`store.create.page`)" content="Create Item" as="button"
+                    v-tippy="{ placement: 'bottom' }" style="outline: none">
+                <i class="fad fa-square-pen"></i>
                 </Link>
             </portal>
             <portal to="bannerName">
                 <div class="text-xl" style="line-height: 16px">
-                    <v-lazy-image
-                        src="/assets/img/site-banners/market-title.png"
-                        alt="Market"
-                        style="width: auto; height: 50px"
-                    />
+                    <v-lazy-image src="/assets/img/site-banners/market-title.png" alt="Market"
+                        style="width: auto; height: 50px" />
                 </div>
             </portal>
             <portal to="bannerDescription">
-                <span class="text-muted text-wrap fw-semibold"
-                    >Craving something new? Create it or find it here.</span
-                >
+                <span class="text-muted text-wrap fw-semibold">Craving something new? Create it or find it here.</span>
             </portal>
         </template>
         <div class="cell large-2">
-            <MarketSidebar
-                :categories="categories"
-                @category-selected="fetchItems"
-                :selectCategory="selectCategory"
-            />
+            <MarketSidebar :categories="categories" @category-selected="fetchItems" :selectCategory="selectCategory" />
         </div>
         <div class="cell large-10">
-            <MarketSorting
-                :selectedCategory="selectedCategory"
-                :selectedSubCategory="selectedSubCategory"
-            />
-            <div
-                v-if="ItemLoading || (items && items.length > 0)"
-                class="grid-x grid-margin-x grid-padding-y"
-            >
+            <MarketSorting :selectedCategory="selectedCategory" :selectedSubCategory="selectedSubCategory" />
+            <div v-if="ItemLoading || (items && items.length > 0)" class="grid-x grid-margin-x grid-padding-y">
                 <template v-if="ItemLoading">
                     <ItemCardSkeleton v-for="n in 12" :key="n" />
                 </template>
-                <div
-                    v-else
-                    class="cell large-2 medium-3 small-6"
-                    v-for="(item, index) in items"
-                    :key="index"
-                >
+                <div v-else class="cell large-2 medium-3 small-6" v-for="(item, index) in items" :key="index">
                     <Link :href="itemRoute(item.id)" class="d-block">
-                        <div class="p-2 mb-1 card card-item position-relative">
-                            <div
-                                style="
+                    <div class="p-2 mb-1 card card-item position-relative">
+                        <div style="
                                     position: absolute;
                                     bottom: 10px;
                                     left: 10px;
-                                "
-                            >
-                                <div
-                                    v-if="item.in_event"
-                                    class="mb-1 badge badge-warning fw-semibold"
-                                >
-                                    <i
-                                        class="fas fa-calendar-star"
-                                        style="width: 18px"
-                                    ></i
-                                    >Event
-                                </div>
-                                <div
-                                    v-else-if="item.rare"
-                                    class="mb-1 badge badge-info fw-semibold"
-                                >
-                                    <i
-                                        class="fas fa-star"
-                                        style="width: 18px"
-                                    ></i
-                                    >Rare
-                                </div>
-                                <div
-                                    v-else-if="item.sale_ongoing"
-                                    class="mb-1 badge badge-danger fw-semibold"
-                                >
-                                    <i
-                                        class="fas fa-badge-percent"
-                                        style="width: 18px"
-                                    ></i
-                                    >{{ item.percent_off + "%" }} off
-                                </div>
+                                ">
+                            <div v-if="item.in_event" class="mb-1 badge badge-warning fw-semibold">
+                                <i class="fas fa-calendar-star" style="width: 18px"></i>Event
+                            </div>
+                            <div v-else-if="item.rare" class="mb-1 badge badge-info fw-semibold">
+                                <i class="fas fa-star" style="width: 18px"></i>Rare
+                            </div>
+                            <div v-else-if="item.sale_ongoing" class="mb-1 badge badge-danger fw-semibold">
+                                <i class="fas fa-badge-percent" style="width: 18px"></i>{{ item.percent_off + "%" }} off
+                            </div>
 
-                                <div
-                                    v-else-if="item.time_off_sale != null"
-                                    class="mb-1 badge badge-warning fw-semibold"
-                                >
-                                    <i
-                                        class="fas fa-clock"
-                                        style="width: 18px"
-                                    ></i
-                                    >Timed
-                                </div>
-                                <div
-                                    class="min-w-0 gap-1 mt-3 flex-container align-center"
-                                >
-                                    <div
-                                        class="mb-1 badge badge-success fw-semibold"
-                                    >
-                                        <i
-                                            class="fad fa-money-bill-1-wave"
-                                            style="width: 18px"
-                                        ></i
-                                        >{{ item.cost_bucks }}
+                            <div v-else-if="item.time_off_sale != null" class="mb-1 badge badge-warning fw-semibold">
+                                <i class="fas fa-clock" style="width: 18px"></i>Timed
+                            </div>
+                            <div v-if="!item.onsale" class="mb-1 badge badge-secondary fw-semibold">
+                                <i class="fas fa-shield" style="width: 18px"></i>Offsale
+                            </div>
+                            <div v-else>
+                                <div class="min-w-0 gap-1 mt-3 flex-container align-center">
+                                    <div class="mb-1 badge badge-success fw-semibold">
+                                        <i class="fad fa-money-bill-1-wave" style="width: 18px"></i>{{ item.cost_bucks
+                                        }}
                                     </div>
-                                    <div
-                                        class="mb-1 badge badge-warning fw-semibold"
-                                    >
-                                        <i
-                                            class="fad fa-coins"
-                                            style="width: 18px"
-                                        ></i
-                                        >{{ item.cost_coins }}
+                                    <div class="mb-1 badge badge-warning fw-semibold">
+                                        <i class="fad fa-coins" style="width: 18px"></i>{{ item.cost_coins }}
                                     </div>
                                 </div>
                             </div>
-                            <img
-                                :src="item.thumbnail"
-                                :id="item.thumbnail"
-                                @error="onImgErrorSmall(item.thumbnail)"
-                            />
                         </div>
-                        <div class="text-body fw-semibold text-truncate">
-                            {{ item.name }}
-                        </div>
+                        <img :src="item.thumbnail" :id="item.thumbnail" @error="onImgErrorSmall(item.thumbnail)" />
+                    </div>
+                    <div class="text-body fw-semibold text-truncate">
+                        {{ item.name }}
+                    </div>
                     </Link>
                     <div class="text-xs fw-semibold text-truncate">
                         <span class="text-muted">By:</span>&nbsp;
                         <Link :href="creatorRoute(item.creator.username)">
-                            {{ "@" + item.creator.username
-                            }}<i
-                                class="fas fa-shield-check text-success ms-1"
-                            ></i
-                        ></Link>
+                        {{ "@" + item.creator.username
+                        }}<i class="fas fa-shield-check text-success ms-1"></i></Link>
                     </div>
                 </div>
             </div>
             <div v-else-if="items.message" class="">
                 <div class="pb-0 card-body">
-                    <div
-                        class="gap-3 mb-2 text-center flex-container flex-dir-column"
-                    >
+                    <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
                         <i class="text-5xl fas fa-store-slash text-muted"></i>
                         <div style="line-height: 16px">
                             <div class="text-xs fw-bold text-muted">
@@ -247,14 +167,10 @@ provide("selectedSubCategory", selectedSubCategory);
             </div>
             <div v-else class="">
                 <div class="pb-0 card-body">
-                    <div
-                        class="gap-3 mb-2 text-center flex-container flex-dir-column"
-                    >
+                    <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
                         <i class="text-5xl fad fa-cart-xmark text-muted"></i>
                         <div style="line-height: 16px">
-                            <div
-                                class="text-xs fw-bold text-muted text-uppercase"
-                            >
+                            <div class="text-xs fw-bold text-muted text-uppercase">
                                 No Items
                             </div>
                             <div class="text-muted fw-semibold">

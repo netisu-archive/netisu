@@ -49,7 +49,7 @@ class HandleInertiaRequests extends Middleware
                         'id' => $request->user()->id,
                         'username' => $request->user()->username,
                         'display_name' => $request->user()->display_name,
-                        'email' => $request->user()->email,
+                        'email' => preg_replace('/[^@]+@([^\s]+)/', ''.substr($request->user()->email, 0, 3).'********@$1', $request->user()->email),
                         'birthdate' => $request->user()->birthdate,
                         'event_currency' => shortNum($request->user()->event_currency),
                         'coins' => shortNum($request->user()->coins),

@@ -222,7 +222,7 @@ const lang = computed(() => usePage<any>().props.locale);
                 <Link :href="route('spaces.page')" class="side-link side-link-has-img">
                 <button class="gap-2 align-middle flex-container squish" style="outline: none;">
                     <span class="side-img">
-                    <i class="fad fa-square-xmark" />
+                        <i class="fad fa-square-xmark" />
                     </span>
 
                     <div class="text-start show-for-large">
@@ -279,6 +279,17 @@ const lang = computed(() => usePage<any>().props.locale);
                     <i class="text-lg far fa-hammer pe-2"></i>
                 </div>
             </div>
+            <Link as="div" style="cursor:pointer;" v-if="props.auth.user && !props.auth.user.email_verified_at" :href="route('verification.notice')" class="py-2 mb-4 text-center text-white alert alert-danger">
+                <div class="gap-2 align-middle flex-container align-justify">
+                    <i class="text-lg far fa-hammer pe-2"></i>
+                    <div>
+                        We need to verify your email at
+                        {{ props.auth.user.email }}
+                        to keep your account in good standing.
+                    </div>
+                    <i class="text-lg far fa-hammer pe-2"></i>
+                </div>
+            </Link>
         </div>
         <div class="grid-x grid-margin-x align-center">
             <slot />

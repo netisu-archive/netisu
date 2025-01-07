@@ -99,8 +99,9 @@ const submit = () => {
                             placeholder="Search..." name="search" v-model="search" @input="performSearch" />
 
                         <div class="mb-2 flex-container flex-child-grow">
-                            <Link :href="route(`forum.your.posts`)"  as="button" class="text-center btn btn-info btn-xs flex-child-grow"><i
-                                    class="fad fa-star-circle"></i>&nbsp; Your Posts</Link>
+                            <Link :href="route(`forum.your.posts`)" as="button"
+                                class="text-center btn btn-info btn-xs flex-child-grow"><i
+                                class="fad fa-star-circle"></i>&nbsp; Your Posts</Link>
                         </div>
                         <div class="mb-2 flex-container flex-child-grow">
                             <button @click="showModal('forum-modal')"
@@ -169,6 +170,7 @@ const submit = () => {
                         </div>
                     </div>
                     <div :class="{ divider: usePage<any>().props.posts.data.length > 0 }" class="mx-1 my-3"></div>
+                    <Pagination v-if="usePage<any>().props.posts.data.length" class="mx-1 my-3" :pagedata="usePage<any>().props.posts"></Pagination>
                 </div>
 
             </div>

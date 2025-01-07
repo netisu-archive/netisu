@@ -58,14 +58,14 @@ function customRaritySort($a, $b)
     return 0;
 }
 
-function site_setting($key)
+function siteSetting($key)
 {
     // Check if the app is in production environment
     $isProduction = app()->environment('production');
 
     if ($isProduction) {
         // Check if the settings are cached
-        $settings = Cache::remember('site_settings', now()->addMinutes(30), function () {
+        $settings = Cache::remember('siteSettings', now()->addMinutes(30), function () {
             return SiteSettings::find(1); // Change to use the find() method instead of where() + first()
         });
     } else {
@@ -104,35 +104,29 @@ function remote_file_exists($url)
     }
 }
 
-function shortNum($num) {
+function shortNum($num)
+{
     if ($num < 999) {
         return $num;
-    }
-    else if ($num > 999 && $num <= 9999) {
+    } else if ($num > 999 && $num <= 9999) {
         $new_num = substr($num, 0, 1);
-        return $new_num.'K+';
-    }
-    else if ($num > 9999 && $num <= 99999) {
+        return $new_num . 'K+';
+    } else if ($num > 9999 && $num <= 99999) {
         $new_num = substr($num, 0, 2);
-        return $new_num.'K+';
-    }
-    else if ($num > 99999 && $num <= 999999) {
+        return $new_num . 'K+';
+    } else if ($num > 99999 && $num <= 999999) {
         $new_num = substr($num, 0, 3);
-        return $new_num.'K+';
-    }
-    else if ($num > 999999 && $num <= 9999999) {
+        return $new_num . 'K+';
+    } else if ($num > 999999 && $num <= 9999999) {
         $new_num = substr($num, 0, 1);
-        return $new_num.'M+';
-    }
-    else if ($num > 9999999 && $num <= 99999999) {
+        return $new_num . 'M+';
+    } else if ($num > 9999999 && $num <= 99999999) {
         $new_num = substr($num, 0, 2);
-        return $new_num.'M+';
-    }
-    else if ($num > 99999999 && $num <= 999999999) {
+        return $new_num . 'M+';
+    } else if ($num > 99999999 && $num <= 999999999) {
         $new_num = substr($num, 0, 3);
-        return $new_num.'M+';
-    }
-    else {
+        return $new_num . 'M+';
+    } else {
         return $num;
     }
 }

@@ -84,7 +84,7 @@ onMounted(() => {
             </div>
         </div>
         <div class="cell medium-3">
-            <div class="gap-2 mb-3 align-middle card card-body flex-container flex-dir-column">
+            <div class="gap-2 mb-3 align-middle  card-body flex-container flex-dir-column">
                 <v-lazy-image :src="usePage<any>().props.auth.user.thumbnail" width="200" alt="Avatar"
                     src-placeholder="assets/img/dummy.png" />
                 <div class="text-center fw-semibold text-md" style="line-height: 16px">
@@ -115,7 +115,7 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <div class="cell medium-8">
+        <div class="cell medium-9">
             <div class="section">
                 <ul class="tabs">
                     <li class="tab-item">

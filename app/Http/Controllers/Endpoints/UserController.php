@@ -246,7 +246,41 @@ class UserController extends Controller
 
     public function getUserItems($userID)
     {
-        $inventory = Inventory::where('id', $userID);
-        return response()->json($inventory);
+        $inventory = Inventory::where('user_id', $userID)->get();
+        // Changed 'first()' to 'get()' to retrieve all items
+
+        $items = $inventory->map(function ($itemData) {
+            $item = $itemData->item;
+            if ($item) {
+                $item->creator = $item->creator;
+                $item->thumbnail = $item->thumbnail();
+                return $item;
+            }
+        })->filter();
+
+        return response()->json($items);
+    }
+
+    public function getUserCurrentlyWearing($userID)
+    {
+        $avatar = Avatar::where('user_id', $userID)->first();
+
+        if (!$avatar) {
+            return response()->json(['error' => 'No avatar record found.']); // No avatar found for this user
+        }
+
+        $wearingItems = $avatar->WearingItems();
+
+        $items = [];
+        foreach ($wearingItems as $slot => $item) {
+            if ($item) {
+                $item->slot = $slot;
+                $item->creator = $item->creator;
+                $item->thumbnail = $item->thumbnail();
+                $items[] = $item;
+            }
+        }
+
+        return response()->json($items);
     }
 }

@@ -7,7 +7,7 @@ return [
     'system_account_id' => 1,
     'in_testing_phase' => true,
 
-    'version' => "vendetta",
+    'version' => "enigma",
     'frontend' => [
         'page_loader' => false,
         'sidebar_menu' => true,

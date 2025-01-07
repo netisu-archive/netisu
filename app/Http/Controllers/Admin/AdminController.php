@@ -33,6 +33,24 @@ class AdminController extends Controller
     {
         return inertia('Admin/Dashboard', [
             'stats' => [
+                'adminPoints' => $this->admin->adminPoints,                
+                'canControlMarketPurchases' => $this->admin->rolePermissions('can_enable_market_purchases') ?? false,
+                'canControlDiscussion' => $this->admin->rolePermissions('can_enable_discussion') ?? false,
+                'canControlCustomization' => $this->admin->rolePermissions('can_enable_customization') ?? false,
+                'canControlSpaces' => $this->admin->rolePermissions('can_enable_spaces') ?? false,
+                'canControlMaintenance' => $this->admin->rolePermissions('can_activate_maintenance') ?? false,
+                'canEnableAnnouncement' => $this->admin->rolePermissions('can_enable_announcement') ?? false,
+            ],
+            'siteSettings' => [
+                'inMaintenance' => siteSetting("site_maintenance"),
+            ],
+        ]);
+    }
+
+    public function ContentApprovingIndex()
+    {
+        return inertia('Admin/Assets/Approve', [
+            'stats' => [
                 'adminPoints' => $this->admin->adminPoints,
                 'canControlMaintenance' => $this->admin->rolePermissions('can_activate_maintenance') ?? false,
                 'canEnableAnnouncement' => $this->admin->rolePermissions('can_enable_announcement') ?? false,
@@ -40,16 +58,15 @@ class AdminController extends Controller
                 'avatars' => Avatar::count(),
             ],
             'siteSettings' => [
-                'inMaintenance' => site_setting("site_maintenance"),
+                'inMaintenance' => siteSetting("site_maintenance"),
                 'maintenanceMessage' => $this->admin->maintenance_message ?? ''
             ],
         ]);
     }
+
     public function messagingIndex()
     {
-        return inertia('Admin/Messaging/Index', [
-
-        ]);
+        return inertia('Admin/Messaging/Index', []);
     }
     public function UserIndex()
     {
@@ -95,9 +112,18 @@ class AdminController extends Controller
             'items' => $items
         ]);
     }
+
     public function CreateIndex()
     {
-        return inertia('Admin/Items/Create');
+        if ($this->admin->rolePermissions('can_manage_items') ?? false != false):
+            $response =  inertia('Admin/Items/Create');
+        else:
+            $response =  inertia('Admin/Error/PermissionError', [
+                'permission' => 'can_manage_items'
+            ]);
+        endif;
+
+        return $response;
     }
 
     public function uploadItem(Request $request)
@@ -106,10 +132,10 @@ class AdminController extends Controller
         $itemHashName = bin2hex(random_bytes(22));
         $previewName = "{$itemHashName}_preview";
 
-        $item = new Item;
-        $item->name = $request->name;
-        $item->description = $request->description;
-
+        $info = getimagesize($request->file('image'));
+        if ($info[2] == IMAGETYPE_JPEG) {
+            throw ValidationException::withMessages(['image' => 'This file needs to be a true PNG, none of that sneaky jpeg-in-disguise business.']);
+        }
 
         if (Auth::user()->isStaff() && $request->hasFile('modal') && $request->type === 'hat' || $request->type === 'addon' || $request->type === 'tool') {
             // Upload OBJ only if item type deals with models
@@ -122,21 +148,26 @@ class AdminController extends Controller
             throw ValidationException::withMessages(['image' => 'One of your fields are empty']);
         }
 
-        $item->hash = $itemHashName;
-        $item->creator_id = config('Values.system_account_id');
-        $item->item_type = $request->type;
-        $item->status = 'approved';
-        $item->public_view = false;
-        $item->cost_coins =  $request->price_coins;
-        $item->cost_bucks =  $request->price_bucks;
-        $item->avatar_preview = $previewName;
-        $item->onsale = true;
-        $item->save();
-
+        $item = Item::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'hash' => $itemHashName,
+            'creator_id' => config('Values.system_account_id'),
+            'item_type' => $request->type,
+            'status' => 'approved',
+            'public_view' => false,
+            'cost_coins' => $request->price_coins,
+            'cost_bucks' => $request->price_bucks,
+            'avatar_preview' => $previewName,
+            'onsale' => true,
+        ]);
+        
         $inventory = new Inventory;
-        $inventory->user_id = Auth::id();
-        $inventory->item_id = $item->id;
-        $inventory->save();
+
+        $inventory->create([
+            'user_id' => Auth::id(),
+            'item_id' => $item->id,
+        ]);
 
         if ($request->type !== 'face') {
             ItemRenderer::dispatch($item->id)->onQueue('render');
@@ -192,7 +223,7 @@ class AdminController extends Controller
         // Define a cache key for this query result
         $cacheKey = 'users_manage_' . $id;
         $user = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($id) {
-            return User::where(['id' => $id])->first()->load(['settings']);
+            return User::where(['id' => $id])->first();
         });
 
         if (!$user) {
@@ -214,6 +245,10 @@ class AdminController extends Controller
                 'coins' => $user->coins,
                 'DateHum' => $user->date_hum,
                 'joined' => $joindate,
+                'settings' => [
+                    'profile_banner_enabled' => $user->settings->profile_banner_enabled,
+                    'profile_banner_url' => $user->settings->profile_banner_url,
+                ],
             ],
             'permissions' => [
                 'canMangeUser' => $this->admin->rolePermissions('can_manage_users') ?? false,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, reactive } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { route } from "momentum-trail";
 import VLazyImage from "v-lazy-image";
@@ -8,6 +8,8 @@ import Footer from '@/Components/LayoutParts/Footer.vue';
 import Navbar from '@/Components/LayoutParts/Navbar.vue';
 import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
 import AppHead from '@/Components/AppHead.vue';
+import ItemCardSkeleton from '@/Components/ItemCardSkeleton.vue';
+import type { Ref } from 'vue';
 
 defineProps({
     user: { type: Object },
@@ -25,6 +27,78 @@ const toggleFollow = (id) => {
         // Execute the follow logic here
         followUser(id);
     }
+};
+const items = ref<any>([]);
+const CurentlyWearingItems = ref<any>([]);
+
+const ItemLoading = ref(false);
+
+var userAvatar = reactive({
+    color_head: computed<any>(
+        () => (usePage<any>().props.user.avatar as Record<string, unknown>)?.["color_head"]
+    ),
+    color_torso: computed<any>(
+        () => (usePage<any>().props.user.avatar as Record<string, unknown>)?.["color_torso"]
+    ),
+    color_left_arm: computed<any>(
+        () => (usePage<any>().props.user.avatar as Record<string, unknown>)?.["color_left_arm"]
+    ),
+    color_right_arm: computed<any>(
+        () => (usePage<any>().props.user.avatar as Record<string, unknown>)?.["color_right_arm"]
+    ),
+    color_left_leg: computed<any>(
+        () => (usePage<any>().props.user.avatar as Record<string, unknown>)?.["color_left_leg"]
+    ),
+    color_right_leg: computed<any>(
+        () => (usePage<any>().props.user.avatar as Record<string, unknown>)?.["color_right_leg"]
+    ),
+    image: computed<any>(
+        () => (usePage<any>().props.user.avatar as Record<string, unknown>)?.["thumbnail"]
+    ),
+    current_face: computed<any>(
+        () => (usePage<any>().props.user.avatar as Record<string, unknown>)?.["current_face"]
+    ),
+});
+
+function onImgErrorSmall(id) {
+    let source = document.getElementById(id) as HTMLImageElement;
+    source.src = "/assets/img/dummy-error.png";
+    source.onerror = null;
+
+    return true;
+}
+// Fetch items for the selected category
+async function fetchItems() {
+    try {
+        ItemLoading.value = true;
+        const response = await axios.get(
+            route(`api.user.inventory`, { id: usePage<any>().props.user.id })
+        );
+        items.value = response.data;
+        ItemLoading.value = false;
+    } catch (error) {
+        console.error(error);
+    }
+}
+async function fetchCurrentlyWearing() {
+    try {
+        ItemLoading.value = true;
+        const response = await axios.get(
+            route(`api.user.currently-wearing`, { id: usePage<any>().props.user.id })
+        );
+        CurentlyWearingItems.value = response.data;
+        ItemLoading.value = false;
+    } catch (error) {
+        console.error(error);
+    }
+}
+const itemRoute = (itemId) => route(`store.item`, { id: itemId });
+const creatorRoute = (username) => route(`user.profile`, { username: username });
+
+const ActiveCategory: Ref<string> = ref("Posts");
+
+function setActiveCategory(category): void {
+    ActiveCategory.value = category;
 };
 
 const showSuccessMessage = (message) => {
@@ -65,8 +139,10 @@ const unfollowUser = (id) => {
             console.error('Error unfollowing user:', error);
         });
 };
-const userAvatar = computed(() => {
-    return usePage<any>().props.user.avatar || '/assets/img/dummy.png';
+
+onMounted(() => {
+    fetchItems(),
+        fetchCurrentlyWearing()
 });
 
 watch(following, (newValue, oldValue) => {
@@ -163,18 +239,18 @@ watch(following, (newValue, oldValue) => {
         <template>
             <portal to="bannerAsset">
                 <v-lazy-image :style="usePage<any>().props.user?.settings.calling_card_enabled
-                        ? {
-                            margin: '0',
-                            'background-image':
-                                'url(' +
-                                usePage<any>().props.user?.settings.calling_card_url +
-                                ')',
-                            'background-repeat': 'no-repeat',
-                            'background-size': 'cover',
-        'box-shadow':
-            'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
-                        }
-                        : null
+                    ? {
+                        margin: '0',
+                        'background-image':
+                            'url(' +
+                            usePage<any>().props.user?.settings.calling_card_url +
+                            ')',
+                        'background-repeat': 'no-repeat',
+                        'background-size': 'cover',
+                        'box-shadow':
+                            'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
+                    }
+                    : null
                     " :src="usePage<any>().props.user.headshot" width="100" class="space-image" alt="Headshot"
                     src-placeholder="assets/img/space-error.png" />
             </portal>
@@ -228,15 +304,15 @@ watch(following, (newValue, oldValue) => {
             </div>
             <div :class="['card', 'card-body', 'mb-2', 'card-status', usePage<any>().props.user.online ? 'online' : 'offline']"
                 :style="usePage<any>().props.user.settings.calling_card_enabled
-                        ? {
-                            'background-image': 'url(' + usePage<any>().props.user.settings.calling_card_url + ')',
-                            'background-repeat': 'no-repeat',
-                            'background-size': 'cover',
-                            'box-shadow':
-                                'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
-                        }
-                        : null">
-                <v-lazy-image :src="userAvatar" src-placeholder="/assets/img/dummy.png" />
+                    ? {
+                        'background-image': 'url(' + usePage<any>().props.user.settings.calling_card_url + ')',
+                        'background-repeat': 'no-repeat',
+                        'background-size': 'cover',
+                        'box-shadow':
+                            'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
+                    }
+                    : null">
+                <v-lazy-image :src="usePage<any>().props.user.thumbnail  ? usePage<any>().props.user.thumbnail : '/assets/img/dummy.png'" src-placeholder="/assets/img/dummy.png" />
                 <div class="mt-2 text-sm text-center align-center text-info fw-semibold">
                     <div :class="usePage<any>().props.user.staff ? 'text-danger' : 'text-success'">
                         {{ usePage<any>().props.user.staff ? usePage<any>().props.user.position : 'Netizen' }}
@@ -382,95 +458,310 @@ watch(following, (newValue, oldValue) => {
                 <div class="section">
                     <ul class="tabs">
                         <li class="tab-item">
-                            <a href="#" class="tab-link active squish">Posts</a>
+                            <a class="tab-link squish" :class="{ active: 'Posts' === ActiveCategory }" @click="
+                                setActiveCategory('Posts')">Posts</a>
                         </li>
                         <li class="tab-item">
-                            <a href="#" class="tab-link squish">Inventory</a>
+                            <a class="tab-link squish" :class="{ active: 'Inventory' === ActiveCategory }"
+                                @click="setActiveCategory('Inventory')">Inventory</a>
                         </li>
                     </ul>
                 </div>
-                <div v-if="!statuses.data.length" class="section">
-                    <div class="gap-3 text-center flex-container flex-dir-column">
-                        <i class="text-5xl fad fa-face-sleeping text-muted"></i>
-                        <div style="line-height: 16px">
-                            <div class="text-xs fw-bold text-muted text-uppercase">
-                                No Posts
-                            </div>
-                            <div class="text-xs text-muted fw-semibold">
-                                {{ usePage<any>().props.user.username }} has not posted anything to their
-                                    feed.
+                <div v-if="ActiveCategory === 'Posts'">
+                    <div v-if="!statuses.data.length" class="section">
+                        <div class="gap-3 text-center flex-container flex-dir-column">
+                            <i class="text-5xl fad fa-face-sleeping text-muted"></i>
+                            <div style="line-height: 16px">
+                                <div class="text-xs fw-bold text-muted text-uppercase">
+                                    No Posts
+                                </div>
+                                <div class="text-xs text-muted fw-semibold">
+                                    {{ usePage<any>().props.user.username }} has not posted anything to their
+                                        feed.
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div v-else v-for="status in statuses.data" class="gap-3 section flex-container flex-dir-column-sm">
-                    <div class="mx-auto flex-child-grow" style="width: 100px">
-                        <a href="#" class="text-sm text-center d-block squish">
-                            <img src="/assets/img/dummy_headshot.png" class="mb-1 headshot" width="60" />
-                            <div style="line-height: 16px">
-                                <div class="text-membership text-truncate">
-                                    {{ status.dname }}
+                    <div v-else v-for="status in statuses.data" class="gap-3 section flex-container flex-dir-column-sm">
+                        <div class="mx-auto flex-child-grow" style="width: 100px">
+                            <a href="#" class="text-sm text-center d-block squish">
+                                <img src="/assets/img/dummy_headshot.png" class="mb-1 headshot" width="60" />
+                                <div style="line-height: 16px">
+                                    <div class="text-membership text-truncate">
+                                        {{ status.dname }}
+                                    </div>
+                                    <div class="text-xs text-muted text-truncate">{{ '@' + status.name }}
+                                    </div>
                                 </div>
-                                <div class="text-xs text-muted text-truncate">{{ '@' + status.name }}
+                            </a>
+                        </div>
+                        <div class="card card-body card-inner w-100">
+                            <div class="align-middle flex-container align-justify">
+                                <div class="w-100">
+                                    <div class="text-xs text-muted">
+                                        <i class="far fa-clock me-1"
+                                            style="vertical-align: middle;margin-top: -2.5px;font-size: 10px;"></i>
+                                        {{ status.DateHum }}
+                                    </div>
+                                    <div>
+                                        {{ status.message }}
+                                    </div>
+                                    <div class="text-sm" style="margin-left: -6px">
+                                        <button class="btn-like active squish">
+                                            <i class="far fa-heart"></i>1
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="dropdown ms-auto position-relative">
+                                    <button class="btn-circle" style="margin-right: -10px">
+                                        <i class="fad fa-ellipsis-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li class="dropdown-item">
+                                            <a href="#" class="dropdown-link dropdown-link-has-icon">
+                                                <i class="fad fa-flag dropdown-icon"></i> Report
+                                            </a>
+                                        </li>
+                                        <div class="align-middle flex-container">
+                                            <div class="dropdown-title">Moderation</div>
+                                            <li class="divider flex-child-grow"></li>
+                                        </div>
+                                        <li class="dropdown-item">
+                                            <a href="#" class="dropdown-link dropdown-link-has-icon text-danger">
+                                                <i class="fad fa-trash text-danger dropdown-icon"></i>
+                                                Delete
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                        </a>
+                            <div class="my-2 align-middle flex-container">
+                                <div class="text-xs fw-bold text-muted text-uppercase">
+                                    Comments
+                                </div>
+                                <div class="divider flex-child-grow"></div>
+                            </div>
+                            <div class="gap-2 mb-2 flex-container">
+                                <input type="text" class="form form-sm form-has-section-color"
+                                    placeholder="What are your thoughts on this post?" />
+                                <input type="button" class="btn btn-success btn-sm" value="Post" />
+                            </div>
+                        </div>
                     </div>
-                    <div class="card card-body card-inner w-100">
-                        <div class="align-middle flex-container align-justify">
-                            <div class="w-100">
-                                <div class="text-xs text-muted">
-                                    <i class="far fa-clock me-1"
-                                        style="vertical-align: middle;margin-top: -2.5px;font-size: 10px;"></i>
-                                    {{ status.DateHum }}
-                                </div>
-                                <div>
-                                    {{ status.message }}
-                                </div>
-                                <div class="text-sm" style="margin-left: -6px">
-                                    <button class="btn-like active squish">
-                                        <i class="far fa-heart"></i>1
+                    <Pagination v-if="statuses.data.length" v-bind:pagedata="statuses" />
+                </div>
+                <div v-else-if="ActiveCategory === 'Inventory'" class="my-2">
+                    <span class="text-xl fw-semibold">Current Outfit</span>
+                    <div class="grid-x">
+                    <div class="text-center cell large-4 align-left">
+                        <div class="text-center flex-container align-left">
+                            <div class="text-center" style="transform:scale(0.7);margin-top:-25px;">
+                                <div style="margin-bottom: 5px">
+                                    <button class="avatar-body-part" id="head" :style="{
+                                        backgroundColor: '#' + userAvatar.color_head,
+                                        padding: '5px',
+                                        borderRadius: '15px',
+                                        marginTop: '-1px',
+                                        width: '60', height: '50',
+                                    }">
+                                        <VLazyImage :src="userAvatar.current_face"
+                                            :src-placeholder="usePage<any>().props.site.production.domains.storage + '/assets/default.png'"
+                                            width="50" height="50" />
                                     </button>
                                 </div>
+                                <div style=" margin-bottom: 5px">
+                                    <button class="avatar-body-part" id="left_arm" :style="{
+                                        backgroundColor: '#' + userAvatar.color_left_arm,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                    }"></button>
+
+                                    <button class="avatar-body-part" id="torso" :style="{
+                                        backgroundColor: '#' + userAvatar.color_torso,
+                                        padding: '50px',
+                                    }"></button>
+
+                                    <button class="avatar-body-part" id="right_arm" :style="{
+                                        backgroundColor: '#' + userAvatar.color_right_arm,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                    }"></button>
+                                </div>
+                                <div class="display: flex; margin-bottom: 5px">
+                                    <button class="avatar-body-part" name="left_leg" :style="{
+                                        backgroundColor: '#' + userAvatar.color_left_leg,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                        paddingLeft: '47px',
+                                    }"></button>
+
+                                    <button class="avatar-body-part" name="right_leg" :style="{
+                                        backgroundColor: '#' + userAvatar.color_right_leg,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                        borderBottom: '15px',
+                                        paddingLeft: '47px',
+                                    }"></button>
+                                </div>
                             </div>
-                            <div class="dropdown ms-auto position-relative">
-                                <button class="btn-circle" style="margin-right: -10px">
-                                    <i class="fad fa-ellipsis-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li class="dropdown-item">
-                                        <a href="#" class="dropdown-link dropdown-link-has-icon">
-                                            <i class="fad fa-flag dropdown-icon"></i> Report
-                                        </a>
-                                    </li>
-                                    <div class="align-middle flex-container">
-                                        <div class="dropdown-title">Moderation</div>
-                                        <li class="divider flex-child-grow"></li>
+                        </div>
+                        </div>
+                        <div class="text-center cell large-8">
+                        <div
+                            class="flex-container text-start flex-row flex-nowrap overflow-x-scroll px-3 px-lg-0 mb-2 mb-lg-0">
+                            <div v-if="ItemLoading || (items && items.length > 0)"
+                                class="grid-x grid-margin-x grid-padding-y">
+                                <template v-if="ItemLoading">
+                                    <ItemCardSkeleton v-for="n in 12" :key="n" />
+                                </template>
+                                <div v-else class="cell large-4 medium-3 small-6"
+                                    v-for="(item, index) in CurentlyWearingItems" :key="index">
+                                    <Link :href="itemRoute(item.id)" class="d-block">
+                                    <div class="p-2 mb-1 card card-item position-relative">
+                                        <div style="
+                                    position: absolute;
+                                    bottom: 10px;
+                                    left: 10px;
+                                ">
+                                            <div v-if="item.in_event" class="mb-1 badge badge-warning fw-semibold">
+                                                <i class="fas fa-calendar-star" style="width: 18px"></i>Event
+                                            </div>
+                                            <div v-else-if="item.rare" class="mb-1 badge badge-info fw-semibold">
+                                                <i class="fas fa-star" style="width: 18px"></i>Rare
+                                            </div>
+                                        </div>
+                                        <img :src="item.thumbnail" :id="item.thumbnail"
+                                            @error="onImgErrorSmall(item.thumbnail)" />
                                     </div>
-                                    <li class="dropdown-item">
-                                        <a href="#" class="dropdown-link dropdown-link-has-icon text-danger">
-                                            <i class="fad fa-trash text-danger dropdown-icon"></i>
-                                            Delete
-                                        </a>
-                                    </li>
-                                </ul>
+                                    <div class="text-body fw-semibold text-truncate">
+                                        {{ item.name }}
+                                    </div>
+                                    </Link>
+                                    <div class="text-xs fw-semibold text-truncate">
+                                        <span class="text-muted">By:</span>&nbsp;
+                                        <Link :href="creatorRoute(item.creator.username)">
+                                        {{ "@" + item.creator.username
+                                        }}<i class="fas fa-shield-check text-success ms-1"></i></Link>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else-if="items.message" class="">
+                                <div class="pb-0 card-body">
+                                    <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
+                                        <i class="text-5xl fas fa-store-slash text-muted"></i>
+                                        <div style="line-height: 16px">
+                                            <div class="text-xs fw-bold text-muted">
+                                                Looks like a gremlin got into the code again!
+                                                We're sending our best programmers with bug
+                                                spray to fix the issue
+                                            </div>
+                                            <div class="text-muted fw-semibold">
+                                                <p class="text-xs">{{ items.message }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="align-center justify-center text-center flex-container">
+                                <div class="pb-0 card-body">
+                                    <div
+                                        class="gap-3 mb-2  align-center justify-center text-center flex-container flex-dir-column">
+                                        <i class="text-5xl fad fa-person text-muted"></i>
+                                        <div style="line-height: 16px">
+                                            <div class="text-muted fw-semibold">
+                                                <p class="text-xs">
+                                                    {{ usePage<any>().props.user.username }} isn't wearing anything.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="my-2 align-middle flex-container">
-                            <div class="text-xs fw-bold text-muted text-uppercase">
-                                Comments
-                            </div>
-                            <div class="divider flex-child-grow"></div>
                         </div>
-                        <div class="gap-2 mb-2 flex-container">
-                            <input type="text" class="form form-sm form-has-section-color"
-                                placeholder="What are your thoughts on this post?" />
-                            <input type="button" class="btn btn-success btn-sm" value="Post" />
+                    </div>
+                    <div class="divider mx-1 my-4" />
+                    <div>
+                        <span class="text-xl fw-semibold">Inventory</span>
+                        <div v-if="ItemLoading || (items && items.length > 0)"
+                            class="grid-x grid-margin-x grid-padding-y">
+                            <template v-if="ItemLoading">
+                                <ItemCardSkeleton v-for="n in 12" :key="n" />
+                            </template>
+                            <div v-else class="cell large-3 medium-3 small-6" v-for="(item, index) in items"
+                                :key="index">
+                                <Link :href="itemRoute(item.id)" class="d-block">
+                                <div class="p-2 mb-1 card card-item position-relative">
+                                    <div style="
+                                    position: absolute;
+                                    bottom: 10px;
+                                    left: 10px;
+                                ">
+                                        <div v-if="item.in_event" class="mb-1 badge badge-warning fw-semibold">
+                                            <i class="fas fa-calendar-star" style="width: 18px"></i>Event
+                                        </div>
+                                        <div v-else-if="item.rare" class="mb-1 badge badge-info fw-semibold">
+                                            <i class="fas fa-star" style="width: 18px"></i>Rare
+                                        </div>
+                                        <div v-else-if="item.sale_ongoing" class="mb-1 badge badge-danger fw-semibold">
+                                            <i class="fas fa-badge-percent" style="width: 18px"></i>{{
+                                                item.percent_off + "%" }} off
+                                            </div>
+                                    </div>
+                                    <img :src="item.thumbnail" :id="item.thumbnail"
+                                        @error="onImgErrorSmall(item.thumbnail)" />
+                                </div>
+                                <div class="text-body fw-semibold text-truncate">
+                                    {{ item.name }}
+                                </div>
+                                </Link>
+                                <div class="text-xs fw-semibold text-truncate">
+                                    <span class="text-muted">By:</span>&nbsp;
+                                    <Link :href="creatorRoute(item.creator.username)">
+                                    {{ "@" + item.creator.username
+                                    }}<i class="fas fa-shield-check text-success ms-1"></i></Link>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else-if="items.message" class="">
+                            <div class="pb-0 card-body">
+                                <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
+                                    <i class="text-5xl fas fa-store-slash text-muted"></i>
+                                    <div style="line-height: 16px">
+                                        <div class="text-xs fw-bold text-muted">
+                                            Looks like a gremlin got into the code again!
+                                            We're sending our best programmers with bug
+                                            spray to fix the issue
+                                        </div>
+                                        <div class="text-muted fw-semibold">
+                                            <p class="text-xs">{{ items.message }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="">
+                            <div class="pb-0 card-body">
+                                <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
+                                    <i class="text-5xl fad fa-crate-empty text-muted"></i>
+                                    <div style="line-height: 16px">
+                                        <div class="text-xs fw-bold text-muted text-uppercase">
+                                            No Items
+                                        </div>
+                                        <div class="text-muted fw-semibold">
+                                            <p class="text-xs">
+                                                {{ usePage<any>().props.user.username }} has no items in their
+                                                    inventory.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <Pagination v-if="statuses.data.length" v-bind:pagedata="statuses" />
             </div>
+
         </div>
     </Sidebar>
     <Footer />

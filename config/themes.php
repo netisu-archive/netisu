@@ -23,6 +23,13 @@ return [
             'available' => true
         ],
 
+        'galaxy' => [
+            'name' => 'Galaxy',
+            'lowercase' => 'galaxy',
+            'file' => '/css/themes/variables-galaxy.css',
+            'available' => true
+        ],
+
         'discord' => [
             'name' => 'Purple',
             'lowercase' => 'discord',

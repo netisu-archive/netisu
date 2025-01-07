@@ -3,6 +3,7 @@
 import { usePage } from "@inertiajs/vue3";
 import { computed } from "vue";
 import "../../../../css/Admin/melody.css";
+
 import { route } from "momentum-trail";
 import AdminNavLink from "@/Components/AdminNavLink.vue";
 const topbar = [
@@ -48,50 +49,48 @@ const lang = computed<any>(() => props.locale);
 const { props } = usePage<any>();
 </script>
 <template>
-<nav class="navbar is-white " role="navigation" aria-label="main navigation">
-    <div class="navbar-brand" style="background-color: #1b1b1b;">
-      <div class="navbar-item has-text-white" style="background-color: #1b1b1b;">
-        {{ usePage<any>().props.site.name }} Administration
-      </div>
-  
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
-    </div>
-  
-    <div id="navbar " class="navbar-menu">
-      <div class="navbar-start ">
-        <a class="navbar-item has-text-white" :href="usePage<any>().props.site.production.domains.main" style="background-color: #1b1b1b;">
-        <i class="fas fa-arrow-left"></i> &nbsp;
-      Return To {{ usePage<any>().props.site.name }}
-    </a>
-        <AdminNavLink
-        v-for="topbarlinks in topbar"
-        :link="topbarlinks.url"
-        :active_link="topbarlinks.active_link"
-      >
-        <i :class="topbarlinks.icon"></i> &nbsp;
-        {{ topbarlinks[lang].title }}
-      </AdminNavLink>
-      <div class="navbar-dropdown">
-  
+    <nav class="navbar" role="navigation"  aria-label="main navigation">
+        <div class="navbar-brand">
+            <div class="navbar-item has-text-white">
+                {{ usePage<any>().props.site.name }} Administration
+            </div>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
         </div>
-      </div>
+
+        <div id="navbar " class="navbar-menu">
+            <div class="navbar-start ">
+                <a class="navbar-item has-text-white" :href="usePage<any>().props.site.production.domains.main"
+                    >
+                    <i class="fas fa-arrow-left"></i> &nbsp;
+                    Return To {{ usePage<any>().props.site.name }}
+                </a>
+                <AdminNavLink v-for="topbarlinks in topbar" :link="topbarlinks.url"
+                    :active_link="topbarlinks.active_link">
+                    <i :class="topbarlinks.icon"></i> &nbsp;
+                    {{ topbarlinks[lang].title }}
+                </AdminNavLink>
+                <div class="navbar-dropdown">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <a href="report.html" class="navbar-item has-text-white">
+                    <i class="far fa-flag"></i>&nbsp;Reports&nbsp;<span class="tag is-danger">9+</span></a>
+                <a href="content.html" class="navbar-item has-text-white">
+                    <i class="far fa-folder"></i>&nbsp;Content Approval&nbsp;<span class="tag is-danger">9+</span></a>
+            </div>
+        </div>
+    </nav>
+    <br />
+    <div class="container">
+        <slot /><!-- content will be inserted here -->
     </div>
-  
-    <div class="navbar-end">
-      <div class="navbar-item">
-        <a href="report.html" class="navbar-item has-text-white">
-          <i class="far fa-flag"></i>&nbsp;Reports&nbsp;<span class="tag is-danger">9+</span></a>
-        <a href="content.html" class="navbar-item has-text-white">
-          <i class="far fa-folder"></i>&nbsp;Content Approval&nbsp;<span class="tag is-danger">9+</span></a>
-      </div>
-    </div>
-  </nav>
-  <br/>
-  <div class="container">
-    <slot/><!-- content will be inserted here -->
-  </div>
 </template>

@@ -3,6 +3,8 @@
   import { usePage } from "@inertiajs/vue3";
   import Navbar from "@/Components/LayoutParts/Admin/Navbar.vue";
   import AppHead from "@/Components/AppHead.vue";
+import AdminPagination from "@/Components/AdminPagination.vue";
+
 </script>
 
 <template>
@@ -81,6 +83,7 @@
           </div>
           <div class="media-right"></div>
         </article>
+        <AdminPagination :pagedata="usePage<any>().props.users"></AdminPagination>
         <div v-if="!usePage<any>().props.users.data.length">
             No users found
         </div>

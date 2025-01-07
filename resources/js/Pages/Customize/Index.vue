@@ -2,6 +2,7 @@
 import Navbar from "@/Components/LayoutParts/Navbar.vue";
 import Sidebar from "@/Components/LayoutParts/Sidebar.vue";
 import Footer from "@/Components/LayoutParts/Footer.vue";
+import AppHead from '@/Components/AppHead.vue';
 import { ref, onMounted, reactive, computed } from "vue";
 import axios from "axios"; // Import Axios
 import { route } from "momentum-trail";
@@ -17,30 +18,30 @@ const SelectedItemID = ref<Number>();
 const slotValue = ref<Number>();
 
 var userAvatar = reactive({
-  color_head: computed<any>(
-    () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_head"]
-  ),
-  color_torso: computed<any>(
-    () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_torso"]
-  ),
-  color_left_arm: computed<any>(
-    () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_left_arm"]
-  ),
-  color_right_arm: computed<any>(
-    () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_right_arm"]
-  ),
-  color_left_leg: computed<any>(
-    () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_left_leg"]
-  ),
-  color_right_leg: computed<any>(
-    () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_right_leg"]
-  ),
-  image: computed<any>(
-    () => (usePage<any>().props.avatar as Record<string, unknown>)?.["thumbnail"]
-  ),
-  current_face: computed<any>(
-    () => (usePage<any>().props.avatar as Record<string, unknown>)?.["current_face"]
-  ),
+    color_head: computed<any>(
+        () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_head"]
+    ),
+    color_torso: computed<any>(
+        () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_torso"]
+    ),
+    color_left_arm: computed<any>(
+        () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_left_arm"]
+    ),
+    color_right_arm: computed<any>(
+        () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_right_arm"]
+    ),
+    color_left_leg: computed<any>(
+        () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_left_leg"]
+    ),
+    color_right_leg: computed<any>(
+        () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_right_leg"]
+    ),
+    image: computed<any>(
+        () => (usePage<any>().props.avatar as Record<string, unknown>)?.["thumbnail"]
+    ),
+    current_face: computed<any>(
+        () => (usePage<any>().props.avatar as Record<string, unknown>)?.["current_face"]
+    ),
 });
 
 const selectedPart = ref<string | null>(null);
@@ -53,168 +54,196 @@ let thumbnail = "";
 
 // Function to show a modal by toggling its "active" class
 function showModal(modalId: string): void {
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.classList.toggle("active");
-  }
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.toggle("active");
+    }
 }
 
 // Mapping of internal part names to user-friendly names
 const partNames = {
-  head: "Head",
-  left_arm: "Left Arm",
-  torso: "Torso",
-  right_arm: "Right Arm",
-  left_leg: "Left Leg",
-  right_leg: "Right Leg",
+    head: "Head",
+    left_arm: "Left Arm",
+    torso: "Torso",
+    right_arm: "Right Arm",
+    left_leg: "Left Leg",
+    right_leg: "Right Leg",
 };
 // Function to submit the selected part's color to the API
 
 function VRCReset(): Promise<void> {
-  VrcRequest.value = true;
-  const requestData = {
-    action: "reset",
-  };
-  axios
-    .post(route(`avatar.update`), requestData)
-    .then((response) => {
-      // Handle the response from the server
-      console.log(response.data);
-      imageRefreshKey.value += 1;
-      thumbnail = response.data;
-      VrcRequest.value = false;
-    })
-    .catch((error) => {
-      VrcRequest.value = false;
+    VrcRequest.value = true;
+    const requestData = {
+        action: "reset",
+    };
+    axios
+        .post(route(`avatar.update`), requestData)
+        .then((response) => {
+            // Handle the response from the server
+            console.log(response.data);
+            imageRefreshKey.value += 1;
+            thumbnail = response.data;
+            VrcRequest.value = false;
+            getCurrentlyWearingItems();
+        })
+        .catch((error) => {
+            VrcRequest.value = false;
 
-      // Handle any errors
-      console.error(error);
-    });
-  console.log(`Resetting`);
+            // Handle any errors
+            console.error(error);
+        });
+    console.log(`Resetting`);
 }
 
 // Function to change the color of a body part
 function changeColor(color: string, part: string): Promise<void> {
-  if (!part) {
-    console.error("Part is null or undefined");
-    return Promise.reject("Part is null or undefined");
-  } else {
-    console.log(part);
-  }
+    if (!part) {
+        console.error("Part is null or undefined");
+        return Promise.reject("Part is null or undefined");
+    } else {
+        console.log(part);
+    }
 
-  VrcRequest.value = true;
-  const requestData = {
-    action: "color",
-    body_part: part,
-    color: color,
-  };
+    VrcRequest.value = true;
+    const requestData = {
+        action: "color",
+        body_part: part,
+        color: color,
+    };
 
-  axios
-    .post(route(`avatar.update`), requestData)
-    .then((response) => {
-      // Handle the response from the server
-      imageRefreshKey.value += 1;
-      thumbnail = response.data;
-      selectedColor.value = color;
-      VrcRequest.value = false;
-    })
-    .catch((error) => {
-      VrcRequest.value = false;
-      // Handle any errors
-      console.error(error);
-    });
+    axios
+        .post(route(`avatar.update`), requestData)
+        .then((response) => {
+            // Handle the response from the server
+            imageRefreshKey.value += 1;
+            thumbnail = response.data;
+            selectedColor.value = color;
+            VrcRequest.value = false;
+        })
+        .catch((error) => {
+            VrcRequest.value = false;
+            // Handle any errors
+            console.error(error);
+        });
 
-  const updatedUserAvatar = { ...userAvatar };
-  if (part === "head") {
-    updatedUserAvatar.color_head = color;
-  } else if (part === "left_arm") {
-    updatedUserAvatar.color_left_arm = color;
-  } else if (part === "torso") {
-    updatedUserAvatar.color_torso = color;
-  } else if (part === "right_arm") {
-    updatedUserAvatar.color_right_arm = color;
-  } else if (part === "left_leg") {
-    updatedUserAvatar.color_left_leg = color;
-  } else {
-    updatedUserAvatar.color_right_leg = color;
-  }
-  userAvatar = updatedUserAvatar;
+    const updatedUserAvatar = { ...userAvatar };
+    if (part === "head") {
+        updatedUserAvatar.color_head = color;
+    } else if (part === "left_arm") {
+        updatedUserAvatar.color_left_arm = color;
+    } else if (part === "torso") {
+        updatedUserAvatar.color_torso = color;
+    } else if (part === "right_arm") {
+        updatedUserAvatar.color_right_arm = color;
+    } else if (part === "left_leg") {
+        updatedUserAvatar.color_left_leg = color;
+    } else {
+        updatedUserAvatar.color_right_leg = color;
+    }
+    userAvatar = updatedUserAvatar;
 
-  console.log(`Changing ${part} color to: ${color}`);
+    console.log(`Changing ${part} color to: ${color}`);
 }
 
 // Function to select a body part
 function selectPart(part: string): void {
-  selectedPart.value = part;
+    selectedPart.value = part;
 }
 function setColor(color: string): void {
-  selectedColor.value = color;
+    selectedColor.value = color;
 }
 
 function handlePartSelection(part: string): void {
-  showModal("PartsModal");
-  selectPart(part);
+    showModal("PartsModal");
+    selectPart(part);
 }
 const SortItemByType = async (id: number, type: string) => {
-  if (type === "hat") {
-    SelectedItemID.value = id;
-    showModal("SlotModal");
-  } else {
-    WearItem(id, "none");
-  }
+    if (type === "hat") {
+        SelectedItemID.value = id;
+        showModal("SlotModal");
+    } else {
+        WearItem(id, "none");
+    }
 };
 
 const getItemsbyCategory = async (category) => {
-  try {
-    const response = await axios.get(route(`api.avatar.items`, { category: category }));
-    CategoryItems.value = response.data;
-    currentcat.value = category;
-  } catch (error) {
-    console.error("Error fetching all items:", error);
-    return [];
-  }
+    try {
+        const response = await axios.get(route(`api.avatar.items`, { category: category }));
+        CategoryItems.value = response.data;
+        currentcat.value = category;
+    } catch (error) {
+        console.error("Error fetching all items:", error);
+        return [];
+    }
 };
 
 const getCurrentlyWearingItems = async () => {
-  try {
-    const response = await axios.get(route(`api.avatar.wearing-items`));
-    wearingItems.value = response.data;
-  } catch (error) {
-    console.error("Error fetching currently wearing items:", error);
-    return [];
-  }
+    try {
+        const response = await axios.get(route(`api.user.currently-wearing`, { id: usePage<any>().props.auth.user.id }));
+        wearingItems.value = response.data;
+    } catch (error) {
+        console.error("Error fetching currently wearing items:", error);
+        return [];
+    }
 };
 
 const getCurrentlyWearingHats = async () => {
-  try {
-    const response = await axios.get(route(`api.avatar.wearing-hats`));
-    wearingHats.value = response.data;
-  } catch (error) {
-    console.error("Error fetching currently wearing items:", error);
-    return [];
-  }
+    try {
+        const response = await axios.get(route(`api.avatar.wearing-hats`));
+        wearingHats.value = response.data;
+    } catch (error) {
+        console.error("Error fetching currently wearing items:", error);
+        return [];
+    }
 };
 
 const WearItem = async (id, slot) => {
-  try {
-    const response = await axios.get(
-      route(`api.avatar.wear-item`, { id: id, slot: slot })
-    );
-    getCurrentlyWearingItems();
-  } catch (error) {
-    console.error("Error fetching currently wearing items:", error);
-    return [];
-  }
+    try {
+        VrcRequest.value = true;
+        const response = await axios.get(
+            route(`api.avatar.wear-item`, { id: id, slot: slot })
+        );
+        imageRefreshKey.value += 1;
+        thumbnail = response.data.thumbnail;
+        VrcRequest.value = false;
+
+        getCurrentlyWearingItems();
+    } catch (error) {
+        VrcRequest.value = false;
+
+        console.error("Error wearing item:", error);
+        return [];
+    }
 };
+const TakeOffItem = async (id, slot) => {
+    try {
+        VrcRequest.value = true;
+        const response = await axios.get(
+            route(`api.avatar.remove-item`, { id: id, slot: slot })
+        );
+        imageRefreshKey.value += 1;
+        thumbnail = response.data.thumbnail;
+        VrcRequest.value = false;
+
+        getCurrentlyWearingItems();
+    } catch (error) {
+        VrcRequest.value = false;
+
+        console.error("Error wearing item:", error);
+        return [];
+    }
+};
+
 function setSlotValue(e) {
-  slotValue.value = e.target.value;
+    slotValue.value = e.target.value;
 }
 
 onMounted(() => {
-  getCurrentlyWearingItems(), getCurrentlyWearingHats();
+    getCurrentlyWearingItems(), getCurrentlyWearingHats();
 });
 </script>
 <template>
+    <AppHead pageTitle="Customize" description="Customize your charcter." :url="route('auth.login.page')" />
     <Navbar />
     <Sidebar>
         <div class="modal" id="SlotModal">
@@ -269,15 +298,15 @@ onMounted(() => {
                 <div class="mr-2 section-borderless grid-x">
                     <div class="mr-2" v-for="(color, index) in colors" :key="index">
                         <div class="ColorPickerItem" @click="setColor(color)" :class="{
-                active:
-                  selectedColor === color ||
-                  userAvatar[`color_${selectedPart}`] === color,
-              }" :style="{
-                backgroundColor: '#' + color,
-                display: 'inline-block',
-                width: '32px',
-                height: '32px',
-              }"></div>
+                            active:
+                                selectedColor === color ||
+                                userAvatar[`color_${selectedPart}`] === color,
+                        }" :style="{
+                            backgroundColor: '#' + color,
+                            display: 'inline-block',
+                            width: '32px',
+                            height: '32px',
+                        }"></div>
                     </div>
                     <div class="text-xs text-muted fw-semibold">
                         After changing your avatar part your avatar will rerender with the changes
@@ -294,7 +323,7 @@ onMounted(() => {
             </div>
         </div>
         <div class="cell medium-3">
-            <div class="mb-3 card card-body">
+            <div class="mb-3  card card-body" style="background:transparent; border-color:transparent;">
                 <div id="avatarDiv">
                     <v-lazy-image :src="thumbnail" :src-placeholder="userAvatar.image"
                         style="display: block; margin: 0 auto !important" />
@@ -326,96 +355,118 @@ onMounted(() => {
                     <button class="btn btn-info btn-sm text-truncate w-100">Random</button>
                 </div>
             </div>
-            <div class="text-center">
-                <div class="card card-body">
-                    <div style="display:block">
-                        <div style="margin-bottom: 2.5px">
-                            <button class="avatar-body-part" id="head" :style="{
-                  backgroundColor: '#' + userAvatar.color_head,
-                  padding: '5px',
-                  borderRadius: '15px',
-                  marginTop: '-1px',
-                }" @click="handlePartSelection('head')">
-                                <VLazyImage :src="userAvatar.current_face"
-                                    :src-placeholder="usePage<any>().props.site.production.domains.storage + '/assets/default.png'"
-                                    width="50" height="50" />
-                            </button>
-                        </div>
-                        <div style="margin-bottom: 2.5px">
-                            <button class="avatar-body-part" id="left_arm" :style="{
-                  backgroundColor: '#' + userAvatar.color_left_arm,
-                  padding: '50px',
-                  paddingRight: '0px',
-                }" @click="handlePartSelection('left_arm')"></button>
 
-                            <button class="avatar-body-part" id="torso" :style="{
-                  backgroundColor: '#' + userAvatar.color_torso,
-                  padding: '50px',
-                }" @click="handlePartSelection('torso')"></button>
-
-                            <button class="avatar-body-part" id="right_arm" :style="{
-                  backgroundColor: '#' + userAvatar.color_right_arm,
-                  padding: '50px',
-                  paddingRight: '0px',
-                }" @click="handlePartSelection('right_arm')"></button>
-                        </div>
-                        <div>
-                            <button class="avatar-body-part" name="left_leg" @click="handlePartSelection('left_leg')"
-                                :style="{
-                  backgroundColor: '#' + userAvatar.color_left_leg,
-                  padding: '50px',
-                  paddingRight: '0px',
-                  paddingLeft: '47px',
-                }"></button>
-
-                            <button class="avatar-body-part" name="right_leg" @click="handlePartSelection('right_leg')"
-                                :style="{
-                  backgroundColor: '#' + userAvatar.color_right_leg,
-                  padding: '50px',
-                  paddingRight: '0px',
-                  borderBottom: '15px',
-                  paddingLeft: '47px',
-                }"></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-        <div class="cell medium-8">
-            <div class="mb-3 card card-body">
-                <div class="mb-1 align-middle flex-container align-justify">
-                    <div class="mb-1 text-xl fw-semibold">Currently Wearing</div>
-                </div>
-                <div class="section">
-                    <div class="gap-3 text-center flex-container flex-dir-column">
-                        <div class="grid-x grid-margin-x">
-                            <div v-for="item in wearingItems.data" class="cell large-2 medium-3 small-3">
-                                <div class="d-block">
-                                    <div class="p-2 mb-1 card card-inner position-relative">
-                                        <img :src="item.thumbnail" />
-                                    </div>
-                                    <Link :href="route(`store.item`, { id: item.id })"
-                                        class="text-body fw-semibold text-truncate">
-                                    {{ item.name }}
-                                    </Link>
+
+        <div class="cell medium-9">
+            <span class="text-xl fw-semibold">Current Outfit</span>
+            <div class="mb-3 card-body">
+                <div class="grid-x">
+                    <div class="text-center cell large-4 align-left">
+                        <div class="text-center flex-container align-left">
+                            <div class="text-center" style="transform:scale(0.7);margin-top:-25px;">
+                                <div style="margin-bottom: 5px">
+                                    <button class="avatar-body-part" id="head" :style="{
+                                        backgroundColor: '#' + userAvatar.color_head,
+                                        padding: '5px',
+                                        borderRadius: '15px',
+                                        marginTop: '-1px',
+                                        width: '60', height: '50',
+                                    }">
+                                        <VLazyImage :src="userAvatar.current_face"
+                                            :src-placeholder="usePage<any>().props.site.production.domains.storage + '/assets/default.png'"
+                                            width="50" height="50" />
+                                    </button>
+                                </div>
+                                <div style=" margin-bottom: 5px">
+                                    <button class="avatar-body-part" id="left_arm" :style="{
+                                        backgroundColor: '#' + userAvatar.color_left_arm,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                    }"></button>
+
+                                    <button class="avatar-body-part" id="torso" :style="{
+                                        backgroundColor: '#' + userAvatar.color_torso,
+                                        padding: '50px',
+                                    }"></button>
+
+                                    <button class="avatar-body-part" id="right_arm" :style="{
+                                        backgroundColor: '#' + userAvatar.color_right_arm,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                    }"></button>
+                                </div>
+                                <div class="display: flex; margin-bottom: 5px">
+                                    <button class="avatar-body-part" name="left_leg" :style="{
+                                        backgroundColor: '#' + userAvatar.color_left_leg,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                        paddingLeft: '47px',
+                                    }"></button>
+
+                                    <button class="avatar-body-part" name="right_leg" :style="{
+                                        backgroundColor: '#' + userAvatar.color_right_leg,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                        borderBottom: '15px',
+                                        paddingLeft: '47px',
+                                    }"></button>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div v-if="!wearingItems.length" class="gap-3 text-center flex-container flex-dir-column">
-                        <i class="text-5xl fad fa-wand-magic-sparkles text-muted"></i>
-                        <div style="line-height: 16px">
-                            <div class="text-xs fw-bold text-muted text-uppercase">No Items.</div>
-                            <div class="text-xs text-muted fw-semibold">
-                                You are not wearing any items.
+                    <div class="text-center cell large-8">
+                        <div
+                            class="flex-container text-start flex-row flex-nowrap overflow-x-scroll px-3 px-lg-0 mb-2 mb-lg-0">
+                            <div v-if="ItemLoading || (items && items.length > 0)"
+                                class="grid-x grid-margin-x grid-padding-y">
+                                <template v-if="ItemLoading">
+                                    <ItemCardSkeleton v-for="n in 12" :key="n" />
+                                </template>
+                                <div v-else class="cell large-4 medium-3 small-6"
+                                    v-for="(item, index) in CurentlyWearingItems" :key="index">
+                                    <Link :href="itemRoute(item.id)" class="d-block">
+                                    <div class="p-2 mb-1 card card-item position-relative">
+                                        <div style="
+                                    position: absolute;
+                                    bottom: 10px;
+                                    left: 10px;
+                                ">
+                                            <div v-if="item.in_event" class="mb-1 badge badge-warning fw-semibold">
+                                                <i class="fas fa-calendar-star" style="width: 18px"></i>Event
+                                            </div>
+                                            <div v-else-if="item.rare" class="mb-1 badge badge-info fw-semibold">
+                                                <i class="fas fa-star" style="width: 18px"></i>Rare
+                                            </div>
+                                        </div>
+                                        <img :src="item.thumbnail" :id="item.thumbnail"
+                                            @error="onImgErrorSmall(item.thumbnail)" />
+                                    </div>
+                                    <div class="text-body fw-semibold text-truncate">
+                                        {{ item.name }}
+                                    </div>
+                                    </Link>
+                                    <div class="text-xs fw-semibold text-truncate">
+                                        <span class="text-muted">By:</span>&nbsp;
+                                        <Link :href="creatorRoute(item.creator.username)">
+                                        {{ "@" + item.creator.username
+                                        }}<i class="fas fa-shield-check text-success ms-1"></i></Link>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="!wearingItems.length" class="gap-3 text-center flex-container flex-dir-column">
+                                <div class="text-md text-muted fw-semibold">
+                                    You are not wearing any items.
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-3 card card-body">
+
+
+            <div class="mb-3 card-body">
                 <div class="mb-2 align-middle grid-x">
                     <div class="cell large-7">
                         <div class="mb-2 text-xl fw-semibold">Inventory</div>
@@ -434,6 +485,7 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
+
                 <div class="section">
                     <div class="gap-3 text-center flex-container flex-dir-column">
                         <div class="grid-x grid-margin-x">
@@ -443,7 +495,7 @@ onMounted(() => {
                                     <div class="p-2 mb-1 card card-inner position-relative">
                                         <img :src="item.thumbnail" />
                                     </div>
-                                    <Link :href="route(`store.item`, { id: item.id })"
+                                    <Link as="p" :href="route(`store.item`, { id: item.id })"
                                         class="text-body fw-semibold text-truncate">
                                     {{ item.name }}
                                     </Link>

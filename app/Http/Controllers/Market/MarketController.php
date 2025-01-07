@@ -51,7 +51,11 @@ class MarketController extends Controller
             return Item::where('id', $id)->first();
         });
 
-        if (!$item || !$item->public_view && Auth::check() && !$authenticatedUserModel->isStaff()) {
+        if (!Auth::check()) {
+            abort(403);
+        }
+
+        if (!$item || !$item->public_view && Auth::check() && $item->creator_id != Auth::id() && !$authenticatedUserModel->isStaff()) {
             abort(404);
         }
 
@@ -77,7 +81,11 @@ class MarketController extends Controller
                 'name' => $item->name,
                 'item_type' => $item->item_type,
                 'thumbnail' => $item->thumbnail(),
-                'preview' => $item->preview(),
+                'preview' => $item->preview(),                
+                'description' => $item->description,
+                'public_view' => $item->public_view,
+                'status' => $item->status,
+                'onsale' => $item->onsale,
                 'cost_bucks' => $item->cost_bucks,
                 'cost_coins' => $item->cost_coins,
                 'DateHum' => $item->DateHum,
@@ -107,13 +115,9 @@ class MarketController extends Controller
         $itemHashName = bin2hex(random_bytes(22));
         $previewName = "{$itemHashName}_preview";
 
-        $item = new Item;
-        $item->name = $request->name;
-        $item->description = $request->description;
-
         $info = getimagesize($request->file('image'));
         if ($info[2] == IMAGETYPE_JPEG) {
-            return redirect()->route('store.item', $item->id)->with([
+            return response()->json([
                 'message' => 'This file needs to be a true PNG, none of that sneaky jpeg-in-disguise business.',
                 'type' => 'danger' // Optional: specify message type for styling
             ], 502);
@@ -121,20 +125,28 @@ class MarketController extends Controller
 
         $this->uploadImage($request->file('image'), $itemHashName);
 
-        $item->hash = $itemHashName;
-        $item->creator_id = Auth::id();
+        $item = Item::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'hash' => $itemHashName,
+            'creator_id' => Auth::id(),
+            'item_type' => $request->type,
+            'status' => 'pending',
+            'public_view' => false,
+            'cost_coins' => $request->price_coins,
+            'cost_bucks' => $request->price_bucks,
+            'avatar_preview' => $previewName,
+            'onsale' => true,
+        ]);
 
-        $item->item_type = $request->type;
-        $item->status = 'pending';
-        $item->public_view = false;
-        $item->cost_coins =  $request->price_coins;
-        $item->cost_bucks =  $request->price_bucks;
-        $item->avatar_preview = $previewName;
-        $item->onsale = true;
-        $item->save();
+        $inventory = new Inventory;
+
+        $inventory->create([
+            'user_id' => Auth::id(),
+            'item_id' => $item->id,
+        ]);
 
         ItemPreviewRenderer::dispatch($item->id, true, $itemHashName)->onQueue('render');
-
 
         return redirect()->route('store.item', $item->id)->with([
             'message' => 'Item created successfully!',

@@ -103,10 +103,10 @@ return Application::configure(basePath: dirname(__DIR__))
                     ];
                 },
                 'site_config' => [
-                    'announcement_message' => site_setting('announcement_message') ?? null,
-                    'announcement' => site_setting('announcement_enabled') ?? false,
-                    'item_creation_enabled' => site_setting('item_creation_enabled') ?? false,
-                    'in_maintenance' => site_setting('site_maintenance') ?? false,
+                    'announcement_message' => siteSetting('announcement_message') ?? null,
+                    'announcement' => siteSetting('announcement_enabled') ?? false,
+                    'item_creation_enabled' => siteSetting('item_creation_enabled') ?? false,
+                    'in_maintenance' => siteSetting('site_maintenance') ?? false,
                 ],
                 'status' => $response->getStatusCode(),
                 'message' => $messages[$response->getStatusCode()],
@@ -161,8 +161,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             \App\Http\Middleware\SiteConfigMiddleware::class, // SiteSettings
             \App\Http\Middleware\WordFilterCheck::class,
-            \App\Http\Middleware\FeatureFlags::class,
             \App\Http\Middleware\Roles::class,
+            \App\Http\Middleware\FeatureFlags::class,
             \App\Http\Middleware\UpdateOnlineStatus::class,
             \App\Http\Middleware\EnsureSettings::class,
             \App\Http\Middleware\RedirectIfBanned::class,
@@ -173,7 +173,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\VerifyAccount::class,
         ]);
         $middleware->alias([
-            'admin' =>\App\Http\Middleware\Admin::class,
+            'admin' => \App\Http\Middleware\Admin::class,
         ]);
         $middleware->redirectGuestsTo(fn(Request $request) => route('auth.login.page'));
     })->create();

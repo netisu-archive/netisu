@@ -54,11 +54,15 @@ Route::group(['as' => 'api.'], function () {
         });
         Route::get('/user-profile/{id}', [UserController::class, 'getUser'])->name('profile');
         Route::get('/online/{id}', [UserController::class, 'getStatus'])->name('online');
+        Route::get('/inventory/{id}', [UserController::class, 'getUserItems'])->name('inventory');
+        Route::get('/inventory/currently-wearing/{id}', [UserController::class, 'getUserCurrentlyWearing'])->name('currently-wearing');
+
         Route::get('/status-list', [UserController::class, 'getUserStatus'])->name('status');
         Route::get('/user/img/{id}', [UserController::class, 'getAvatar'])->name('avatar');
         Route::get('/follow/{user}', [UserController::class, 'follow'])->name('follow');
         Route::post('/unfollow/{user}', [UserController::class, 'unfollow'])->name('unfollow');
     });
+
     Route::group(['as' => 'dashboard.', 'prefix' => 'dash'], function () {
         Route::get('/', function () {
             return redirect()->to(config('Values.production.domains.main'));

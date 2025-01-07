@@ -79,6 +79,19 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
         'email',
         'password',
         'remember_token',
+        'birthdate',
+        'pm_type',        
+        'pm_last_four',
+        'trial_ends_at',
+        'latest_status',
+        'created_at',
+        'updated_at',
+        'next_reward_payout',
+        'event_currency',
+        'email_verified_at',
+        'stripe_id',
+
+
     ];
 
     /**
@@ -93,6 +106,14 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
     protected $appends = ['DateHum'];
     protected $guard = ['web', 'admin'];
 
+    public function setHiddenAttributes()
+    {
+        if ($this->isStaff()) {
+            $this->hidden = ['password'];
+        } else {
+            $this->hidden = ['password', 'email', 'birthdate'];
+        }
+    }
 
     /**
      * Meilisearch search array.
@@ -296,7 +317,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
     }
 
 
-    public function online()
+    public function online(): int
     {
         return $this->updated_at->diffInSeconds() < 300;
     }
@@ -361,8 +382,15 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
     {
         $url = env('STORAGE_URL');
         if ($this->settings->profile_picture_enabled != false) {
-            $image = ($this->settings->profile_picture_url) || $this->avatar()?->image;
-            return "{$url}/thumbnails/profile-pictures/{$image}.png";
+            $imageUrl = $this->settings->profile_picture_url;
+
+            // Check if profile_picture_url doesn't contain an external domain
+            if (!preg_match('/https?:\/\/[^\/]+/', $imageUrl)) {
+              return "{$url}/thumbnails/profile-pictures/{$imageUrl}.png";
+            } else {
+              // Return the external URL from settings if present
+              return $imageUrl;
+            }
         } else {
             $image = ($this->avatar()?->image === 'default') ? env('DEFAULT_AVATAR_FILE') : $this->avatar()?->image;
             if ($this->avatar()?->image === 'default') {
@@ -373,7 +401,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
         }
     }
 
-    public function latestStatus()
+    public function latestStatus(): HasOne
     {
         return $this->hasOne(Status::class, 'creator_id')->latest();
     }

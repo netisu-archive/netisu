@@ -40,9 +40,9 @@ class FeatureFlags
 
     private function isSiteMaintenanceEnabled($maintenancePassword, $envPass)
     {
-        return site_setting('site_maintenance')
+        return siteSetting('site_maintenance')
             && ($maintenancePassword === null || $maintenancePassword != $envPass)
-            || site_setting('site_maintenance') && $maintenancePassword !== null;
+            || siteSetting('site_maintenance') && $maintenancePassword !== null;
     }
 
     private function shouldShowMaintenancePage($route)
@@ -85,9 +85,9 @@ class FeatureFlags
 
     private function isFeatureSettingDisabled($feature)
     {
-    $settingValue = site_setting("{$feature}");
-   // var_dump($settingValue); // Add this line to debug the value of $settingValue
-    return !$settingValue;
+        $settingValue = siteSetting("{$feature}");
+        // var_dump($settingValue); // Add this line to debug the value of $settingValue
+        return !$settingValue;
     }
 
     private function handleFeatureDisabled($route, $middleware, $isPost)
@@ -98,7 +98,7 @@ class FeatureFlags
         if ($feature === 'Maintenance') {
             return redirect()->route('maintenance.page');
         } elseif ($isPost || ((!Auth::check() || (Auth::check() && !Auth::user()->isStaff())))) {
-	    return inertia('App/FeatureDisabled', ['title' => $alias]);
+            return inertia('App/FeatureDisabled', ['title' => $alias]);
         }
 
         return inertia('App/FeatureDisabled', ['title' => $alias]);

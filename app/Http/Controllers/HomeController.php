@@ -98,6 +98,12 @@ class HomeController extends Controller
                 $user = User::find(Auth::id());
                 $user->status = $request->message;
                 $user->save();
+                return response()->json(
+                    [
+                        'message' => 'Your status has been changed.',
+                        'type' => 'success'
+                    ]
+                );
             }
 
         }, 60);
@@ -107,20 +113,12 @@ class HomeController extends Controller
                 'message' => 'Too many requests. Please try again later.',
                 'type' => 'error'
             ], 429); // Use status code 429 for Too Many Requests
-          }
-
-
-        return response()->json(
-            [
-                'message' => 'Your status has been changed.',
-                'type' => 'success'
-            ]
-        );
+        }
     }
 
     private function throttleKey(): string
     {
-        return 'latest_status_' . Auth::id();
+        return 'latest_status:' . Auth::id();
     }
 
     public function ensureIsNotRateLimited()

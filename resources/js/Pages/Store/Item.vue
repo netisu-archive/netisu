@@ -19,7 +19,7 @@ defineProps<{
 }>();
 
 const JSONDATA = Array as any;
-let thumbnail = document.getElementById("thumbnail") as HTMLImageElement;
+const thumbnail = ref<HTMLImageElement>(null);
 
 let isPreview = ref(false);
 
@@ -65,9 +65,11 @@ const purchaseCoins = () => {
 
 const swap = () => {
     if (isPreview.value) {
+        const thumbnail = document.getElementById("thumbnail");
         isPreview.value = false;
         thumbnail.src = usePage<any>().props.item.thumbnail;
     } else {
+        const thumbnail = document.getElementById("thumbnail");
         isPreview.value = true;
         thumbnail.src = usePage<any>().props.item.preview;
     }
@@ -86,7 +88,7 @@ function onImgErrorSmall(id) {
         :iid="usePage<any>().props.item.id" :itime="usePage<any>().props.item.time_off_sale"
         :cover="usePage<any>().props.item.thumbnail" />
     <Navbar />
-    <Sidebar :showJsonAlert="JSONDATA ? true : false" :JSONALERT="JSONDATA">
+    <Sidebar :showJsonAlert="JSONDATA.value ? true : false" :JSONALERT="JSONDATA">
         <div class="modal" id="sell-modal">
             <div class="modal-card modal-card-body modal-card-sm">
                 <div class="section-borderless">
@@ -474,6 +476,12 @@ function onImgErrorSmall(id) {
             </div>
         </div>
         <div class="cell large-12">
+            <div v-if="!usePage<any>().props.item.public_view" class="alert alert-danger mb-3">
+            <i class="fad fa-shield"></i> This item is hidden, only you and staff can see it.
+            </div>
+            <div v-if="usePage<any>().props.item.status === 'pending'" class="alert alert-danger">
+            <i class="fad fa-clock"></i> This item is pending approval.
+            </div>
             <div class="grid-x grid-margin-x grid-padding-y">
                 <div class="cell medium-5">
                     <div class="mb-3 overflow-hidden card">
@@ -734,8 +742,11 @@ function onImgErrorSmall(id) {
                         </div>
                         <div class="mb-1 text-xs fw-bold text-muted">
 
-                            <span class="text-uppercase" v-if="usePage<any>().props.auth.user && itemOwnership != true">
+                            <span class="text-uppercase" v-if="usePage<any>().props.auth.user && itemOwnership != true && usePage<any>().props.item.onsale">
                                 Purchase With
+                            </span>
+                            <span class="text-md text-muted" v-else-if="!usePage<any>().props.item.onsale">
+                                This item is offsale.
                             </span>
                             <span class="text-md text-info" v-else-if="itemOwnership">
                                 You already own this item.
@@ -745,7 +756,7 @@ function onImgErrorSmall(id) {
                                 </Link>
                         </div>
                         <div class="gap-2 align-middle flex-container-lg"
-                            v-if="usePage<any>().props.auth.user && itemOwnership != true">
+                            v-if="usePage<any>().props.auth.user && itemOwnership != true && usePage<any>().props.item.onsale">
                             <button class="mb-2 btn btn-success btn-sm w-100"
                                 data-toggle-modal="#purchase-with-bucks-modal"
                                 @click="showModal('purchase-with-bucks-modal')">
@@ -774,7 +785,7 @@ function onImgErrorSmall(id) {
                             <div class="text-sm description-content text-muted"
                                 :style="{ height: isDescOpen ? '45px' : '20px' }">
                                 <div v-if="isDescOpen" class="mt-1 text-sm text-body fw-semibold description-body">
-                                    {{ usePage<any>().props.item.description ?? "This item does not have a description"
+                                    {{ usePage<any>().props.item.description ? usePage<any>().props.item.description : "This item does not have a description"
                                         }}
                                 </div>
                             </div>
@@ -788,7 +799,7 @@ function onImgErrorSmall(id) {
                                 Items by {{ usePage<any>().props.item.creator.username }}
                             </button>
                             <div class="text-sm description-content text-muted"
-                                :style="{ height: isOtherOpen ? 'auto' : '20px' }">
+                                :style="{ height: isOtherOpen ? '45px' : '20px' }">
                                 <div v-if="isOtherOpen"
                                     class="mt-1 mb-2 text-sm text-body fw-semibold description-body">
                                     <div v-if="recommendations.length" class="grid-x grid-margin-x">

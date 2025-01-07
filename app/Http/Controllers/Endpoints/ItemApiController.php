@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Exception;
 use App\Models\ItemReseller;
 use App\Models\ItemPurchase;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Stevebauman\Location\Facades\Location;
 
@@ -62,19 +63,17 @@ class ItemApiController extends Controller
         if (in_array($categoryData, $categoryPossibleNames)) {
             $exclusiveType = $category;
             if ($exclusiveType === "exclusive_all") {
-                $items = Item::where(['rare' => true, 'status' => 'approved'])->with('creator')->orderBy('updated_at')->get();
+                $items = Item::where(['rare' => true, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
             } else {
                 $exclusiveType = explode('exclusive_', $exclusiveType);
                 $trimmedType = $exclusiveType[1] ?? ""; // Get the second element (or empty string if not found)
 
 
-                $items = Item::where(['rare' => true, 'item_type' => $trimmedType, 'status' => 'approved'])->with('creator')->orderBy('updated_at')->get();
+                $items = Item::where(['rare' => true, 'item_type' => $trimmedType, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
             }
-
-
         } else {
             // Get items for the specific category
-            $items = Item::where(['item_type' => $category, 'status' => 'approved'])->with('creator')->orderBy('updated_at')->get();
+            $items = Item::where(['item_type' => $category, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
         }
         return response()->json(
             $items->map(function ($item) {
@@ -83,8 +82,8 @@ class ItemApiController extends Controller
                     'thumbnail' => $item->thumbnail(),
                     'name' => $item->name,
 
-                    'cost_coins' => shortNum($item->cost_coins),
-                    'cost_bucks' => shortNum($item->cost_bucks),
+                    'cost_coins' => $item->cost_coins,
+                    'cost_bucks' => $item->cost_bucks,
                     'creator' => [
                         'username' => $item->creator->username,
                         'staff' => $item->creator->isStaff(),
@@ -238,7 +237,7 @@ class ItemApiController extends Controller
             abort(403);
         }
 
-        if ($item->status != 'approved' && !Auth::user()->isStaff()) {
+        if ($item->status != 'approved' && $item->public_view != true && !Auth::user()->isStaff()) {
             return response()->json(
                 [
                     "message" => "This item is not approved.",
@@ -336,7 +335,7 @@ class ItemApiController extends Controller
             // Validate user currency
             $verifyBank = $this->validateUserCurrency($currencyType, $price);
             if ($verifyBank !== true) {
-                // Handle validation error (e.g., throw exception or return error response)
+                // Handle validation errors
                 return response()->json([
                     "message" => "You do not have enough " . $currencyType . " to purchase this item.", // Replace with actual error message
                     "type" => "danger"
@@ -344,27 +343,43 @@ class ItemApiController extends Controller
             }
             // Update seller currency and deduct buyer currency
             $myu = Auth::user();
-            $myu->{$currencyType} -= $price;
-            $myu->save();
-            // Create inventory record (if not a free item)
-            if ($currencyType !== 'free') {
-                $inventory = new Inventory;
-                $inventory->user_id = Auth::user()->id;
-                $inventory->item_id = $item->id;
-                $inventory->save();
-            }
+            // Calculate the new currency value
+            $newCurrencyValue = $myu->{$currencyType} - $price;
+
+
+            // Update the user record
+            $myu->update([
+                $currencyType => $newCurrencyValue
+            ]);
+
+            $creator = User::where('id', $item->creator_id)->first();
+            $newCurrencyCreatorValue = $creator->{$currencyType} + $price;
+
+            $creator->update([
+                $currencyType => $newCurrencyCreatorValue
+            ]);
+
+            // Create inventory record
+           $inventory = new Inventory;
+
+           $inventory->create([
+                "user_id" => Auth::user()->id,
+                "item_id" => $item->id,
+            ]);
 
             // Create purchase record
             $AgentInfo = Location::get();
-            $purchase = new ItemPurchase;
-            $purchase->seller_id = $seller->id;
-            $purchase->buyer_id = Auth::user()->id;
-            $purchase->item_id = $item->id;
-            $purchase->ip = $AgentInfo->ip;
 
-            $purchase->currency_used = $currencyType;
-            $purchase->price = $price;
-            $purchase->save();
+            $purchaseRecord = new ItemPurchase;
+            $purchaseRecord->create([
+                "seller_id" => $seller->id,
+                "buyer_id" => Auth::user()->id,
+                "item_id" => $item->id,
+                "ip" => $AgentInfo->ip,
+                "currency_used" => $currencyType,
+                "price" => $price,
+            ]);
+
 
             Auth::user()->addPoints(30);
 
@@ -411,7 +426,7 @@ class ItemApiController extends Controller
 
         if (!$copy->item->limited || ($copy->item->limited && $copy->item->stock > 0) | $isReselling) abort(404);
 
-        $this->validate($request, [
+        $request->validate($request, [
             'price' => ['required', 'numeric', 'min:1', 'max:1000000']
         ]);
 
@@ -422,7 +437,7 @@ class ItemApiController extends Controller
         $reseller->price = $request->price;
         $reseller->save();
         Auth::user()->addPoints(10);
-        return redirect()->route('catalog.item', [$copy->item->id, $copy->item->slug()])->with('success_message', 'Item has been put up for sale, You have earned 10 XP.');
+        return redirect()->route('store.item', [$copy->item->id, $copy->item->slug()])->with('success_message', 'Item has been put up for sale, You have earned 10 XP.');
     }
 
     public function makeOffsale(Request $request)

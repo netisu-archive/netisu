@@ -11,6 +11,7 @@ import SearchResultSkeleton from "../SearchResultSkeleton.vue";
 import VLazyImage from "v-lazy-image";
 import PageLoader from "../Loaders/PageLoader.vue";
 import "../../../css/style.css";
+import throttle from 'lodash/throttle';
 
 // Define the SearchResult interface
 interface SearchResult {
@@ -33,7 +34,7 @@ const search = ref("");
 // Update the type of results to be an array of SearchResult
 const results = ref<SearchResult[]>([]);
 
-const performSearch = async () => {
+const performSearch = throttle(async () => {
     if (search.value !== "") {
         SearchLoading.value = true;
         await axios
@@ -48,7 +49,7 @@ const performSearch = async () => {
         SearchLoading.value = true;
         results.value = [];
     }
-};
+}, 1000);
 
 const readAll = async () => {
     await axios
@@ -412,7 +413,7 @@ const { props } = usePage<any>();
                         <div v-if="props.auth?.user?.staff" class="mb-1 badge badge-position badge-danger fw-semibold">
                             {{ props.auth?.user?.position }}
                         </div>
-                        <div v-else-if="props.auth?.user?.settings.beta_tester"
+                        <div v-else-if="props.auth?.user?.settings?.beta_tester != false"
                             class="mb-1 badge badge-position badge-success fw-semibold">
                             Beta Tester
                         </div>
