@@ -81,7 +81,7 @@ class ItemApiController extends Controller
                     'id' => $item->id,
                     'thumbnail' => $item->thumbnail(),
                     'name' => $item->name,
-
+                    'onsale' => $item->onsale,
                     'cost_coins' => $item->cost_coins,
                     'cost_bucks' => $item->cost_bucks,
                     'creator' => [
