@@ -5,6 +5,7 @@
     bottom: 0;
     z-index: 9997;
     width: 215px;
+    border-right: 1px solid var(--section-border-color);
     padding-top: 62px;
     box-shadow: 1px 1px 5px rgb(var(--section-shadow), 0.1);
     overflow-y: auto;

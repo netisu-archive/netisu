@@ -23,18 +23,16 @@ class Roles
     public function handle(Request $request, Closure $next)
     {
         $user = Auth::user();
-        if (Auth::check() && $user->lastIP() == null) {
-            $ipLog = new IpLog;
-            $ipLog->user_id = Auth::user()->id;
-            $ipLog->ip = $request->ip();
-            $ipLog->save();
-        }
-
-        if (Auth::check() && config('Values.in_testing_phase') && $user->settings->beta_tester != false) {
-            UserSettings::updateOrCreate([
-                'beta_tester' => true
+        if (Auth::check() && is_null($user->lastIP())) {
+            IpLog::create([
+                'user_id' => Auth::id(),
+                'ip' => request()->ip(),
             ]);
         };
+
+        if (Auth::check() && config('Values.in_testing_phase') && $user->settings->beta_tester !== false) {
+            $user = UserSettings::where('id', Auth::id())->update(['beta_tester' => true]);
+        }
 
         return $next($request);
     }

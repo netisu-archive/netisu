@@ -45,6 +45,7 @@
         "predis/predis": "^2.2",
         "pusher/pusher-php-server": "^7.2",
         "simplito/elliptic-php": "^1.0",
+        "spatie/laravel-discord-alerts": "^1.6",
         "spatie/laravel-responsecache": "^7.4",
         "stevebauman/location": "^7.3",
         "symfony/http-client": "^6.3",

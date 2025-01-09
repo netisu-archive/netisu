@@ -26,25 +26,25 @@ class ForumController extends Controller
             ->where('creator_id', Auth::id())
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
-            
-            $posts = Cache::remember('topic_' . Auth::id() . '_posts', now()->addMinutes(15), function () use ($userPosts) {
-                return $userPosts->through(function ($post) {
-                    return [
-                        'id' => $post->id,
-                        'topic_id' => $post->id,
-                        'seo' => $post->slug(),
-                        'name' => $post->title,
-                        'username' => $post->creator->username,
-                        'headshot' => $post->creator->headshot(),
-                        'display_name' => $post->creator->display_name,
-                        'message' => $post->body,
-                        'pinned' => $post->is_pinned,
-                        'locked' => $post->is_locked,
-                        'deleted' => $post->is_deleted,
-                        'DateHum' => $post->DateHum,
-                    ];
-                });
+
+        $posts = Cache::remember('topic_' . Auth::id() . '_posts', now()->addMinutes(15), function () use ($userPosts) {
+            return $userPosts->through(function ($post) {
+                return [
+                    'id' => $post->id,
+                    'topic_id' => $post->id,
+                    'seo' => $post->slug(),
+                    'name' => $post->title,
+                    'username' => $post->creator->username,
+                    'headshot' => $post->creator->headshot(),
+                    'display_name' => $post->creator->display_name,
+                    'message' => $post->body,
+                    'pinned' => $post->is_pinned,
+                    'locked' => $post->is_locked,
+                    'deleted' => $post->is_deleted,
+                    'DateHum' => $post->DateHum,
+                ];
             });
+        });
 
         return inertia('Forum/MyPosts', ['posts' => $posts]);
     }
@@ -180,7 +180,7 @@ class ForumController extends Controller
             return ForumTopic::where('id', $id)->firstOrFail();
         });
 
-        if (!Auth::check() || (!Auth::user()->isStaff() && $topic->is_staff_only_posting)) {
+        if (!Auth::check() || (!Auth::user()->isStaff() && Auth::user()->CurrentPositionID() != $topic->role_required_to_post)) {
             abort(403);
         }
 
@@ -199,11 +199,23 @@ class ForumController extends Controller
         $title = $validatedData['title'];
         $body = $validatedData['body'];
 
+        $cacheKey = 'forum_lockout_' . $id;
+        $topic = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($id) {
+            return ForumTopic::where('id', $id)->firstOrFail();
+        });
+
+        if (!Auth::user()->isStaff() && Auth::user()->CurrentPositionID() != $topic->role_required_to_post) {
+            return response()->json([
+                'message' => 'Your don\'t have permission to post in' . $topic->name,
+                'type' => 'danger',
+
+            ]);
+        }
+
         // Apply BBCode parsing
         $parser = new Parser();
         $parser->addCodeDefinitionSet(new DefaultCodeDefinitionSet());
         $parsedBody = $parser->parse($body)->getAsHTML();
-
 
         $post = new ForumThread;
         $post->in_topic_id = $id;

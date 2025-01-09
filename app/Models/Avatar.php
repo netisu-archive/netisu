@@ -50,7 +50,6 @@ class Avatar extends Model
             'hat_5' => $this->hat(5),
             'hat_6' => $this->hat(6),    
             'addon' => $this->addon(),  
-            'head' => $this->addon(),      
             'face' => $this->face(),
             'tool' => $this->tool(),
             'tshirt' => $this->tshirt(),

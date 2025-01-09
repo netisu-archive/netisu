@@ -8,7 +8,8 @@
 <template>
     <AppHead pageTitle="User Index" description="Login to Vestora." :url="route('auth.login.page')" />
     <Navbar>
-        <div class="card" :style="'background:url(' + usePage<any>().props.user.settings.profile_banner_enabled ? usePage<any>().props.user.settings.profile_banner_url : null + ');'">
+        <div class="card"
+            :style="'background:url(' + usePage<any>().props.user.settings.profile_banner_enabled ? usePage<any>().props.user.settings.profile_banner_url : null + ');'">
             <div class="card-content">
 
                 <div class="columns">
@@ -27,7 +28,8 @@
 
                         </p>
                         <div class="content">
-                            <blockquote>{{ usePage<any>().props.user.about_me ?? usePage<any>().props.user.username + "does not hava a description yet."}}</blockquote>
+                            <blockquote>{{ usePage<any>().props.user.about_me ?? usePage<any>().props.user.username +
+                                        "does not hava a description yet."}}</blockquote>
                         </div>
                         <template v-if="usePage<any>().props.permissions.canMangeUser">
                             <label><strong>UID:</strong></label> <label>{{ usePage<any>().props.user.id }}</label>
@@ -44,18 +46,24 @@
                         <div v-if="usePage<any>().props.permissions.canMangeUser">
                             <label><strong>User:</strong></label>
                             <br>
-                            <a :href="route(`user.profile`, { username: usePage<any>().props.user.username })"
-                                class="button is-outlined">View Profile</a>
-                            <a href="grant.html" class="button is-outlined">Grant Achievement</a>
-                            <a href="grant.html" class="button is-outlined">Grant Item</a>
+                            <div class="buttons">
+
+                                <a :href="route(`user.profile`, { username: usePage<any>().props.user.username })"
+                                    class="button is-outlined">View Profile</a>
+                                <a href="grant.html" class="button is-outlined">Grant Achievement (not working atm)</a>
+                                <Link :href="route(`admin.users.gift-user`, {id: usePage<any>().props.user.id })"
+                                    class="button is-outlined">Gift Item</Link>
+                            </div>
                         </div>
                         <div v-if="usePage<any>().props.permissions.canMangeUserSettings">
                             <br>
                             <label><strong>Moderation Actions:</strong></label>
                             <br>
-                            <a href="purge.html" class="button is-danger is-outlined">Purge Username</a>
-                            <a href="purge.html" class="button is-danger is-outlined">Purge Bio</a>
-                            <a href="banuser.html" class="button is-danger is-outlined">Ban User</a>
+                            <div class="buttons">
+                                <a href="purge.html" class="button is-danger is-outlined">Purge Username</a>
+                                <a href="purge.html" class="button is-danger is-outlined">Purge Bio</a>
+                                <a href="banuser.html" class="button is-danger is-outlined">Ban User</a>
+                            </div>
                         </div>
                     </div>
 

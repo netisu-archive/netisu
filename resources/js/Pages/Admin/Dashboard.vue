@@ -24,7 +24,7 @@ const EnableMaintenance = async () => {
 const DisableMaintenance = async () => {
   await axios
     .post(route(`api.admin.disableMaintenance`))
-    .then( MaintenanceActive.value = 0)
+    .then(MaintenanceActive.value = 0)
     .catch((err) => console.log(err));
 };
 watch(MaintenanceActive, (newValue, oldValue) => {
@@ -124,7 +124,7 @@ watch(MaintenanceActive, (newValue, oldValue) => {
                                 </div>
                             </div>
                             <div class="column is-7">
-                                <input class="input" type="ID" placeholder="Input">
+                                <input class="input" type="ID" :placeholder="usePage<any>().props.site_config.announcement_message">
                             </div>
                             <div class="column">
                                 <a class="button is-fullwidth">Submit</a>

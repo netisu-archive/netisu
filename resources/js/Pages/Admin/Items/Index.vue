@@ -59,12 +59,12 @@
           <div class="media-content">
             <div class="content">
               <br />
-              <p class="title is-4">
+              <div class="title is-4">
                 <span class="mb-4">{{ item.name }}</span>
                 <div class="mt-4 tags">
                   <span v-if="item.isOffsale" class="tag is-dark">This item is offsale</span>
                 </div>
-              </p>
+            </div>
               <p class="subtitle is-6">{{ item.description ?? "This item does not have an description" }}</p>
               <Link class="button" :href="route(`admin.items.manage-item`, { id: item.id })">Manage Item</Link>
             </div>

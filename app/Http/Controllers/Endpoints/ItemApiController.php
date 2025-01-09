@@ -67,8 +67,7 @@ class ItemApiController extends Controller
             } else {
                 $exclusiveType = explode('exclusive_', $exclusiveType);
                 $trimmedType = $exclusiveType[1] ?? ""; // Get the second element (or empty string if not found)
-
-
+                dd($trimmedType);
                 $items = Item::where(['rare' => true, 'item_type' => $trimmedType, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
             }
         } else {

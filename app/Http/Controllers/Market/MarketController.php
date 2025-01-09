@@ -90,6 +90,7 @@ class MarketController extends Controller
                 'cost_coins' => $item->cost_coins,
                 'DateHum' => $item->DateHum,
                 'UpdateHum' => $item->UpdateHum,
+                'created_at' => $item->created_at,
 
                 'creator' => [
                     'username' => $item->creator->username,

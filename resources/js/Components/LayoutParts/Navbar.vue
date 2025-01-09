@@ -336,11 +336,10 @@ const { props } = usePage<any>();
                         <li v-else v-for="notification in props.auth?.user?.notifications" class="dropdown-item">
                             <Link :href="notification.data.route" class="dropdown-link">
                             <div class="gap-1 align-middle flex-container">
-                                <i class="text-lg text-center fad fa-comments-alt text-info flex-child-grow"
+                                <i class="text-lg text-center flex-child-grow"
+                                    :class="{ 'fad fa-gift text-warning': notification.data.type === 'gift', 'fad fa-comments-alt text-info': notification.data.type !== 'gift' }"
                                     style="width: 38px"></i>
                                 <div class="gap-2 align-middle flex-container w-100">
-                                    <img src="/assets/img/dummy_headshot.png" class="headshot flex-child-shrink"
-                                        height="40" width="40" />
                                     <div class="min-w-0" style="line-height: 16px">
                                         <div class="text-sm text-truncate">
                                             <span class="search-keyword" v-if="notification.data.object">{{

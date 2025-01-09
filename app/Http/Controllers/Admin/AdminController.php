@@ -19,6 +19,9 @@ use App\Jobs\ItemPreviewRenderer;
 use App\Jobs\ItemRenderer;
 use App\Models\Inventory;
 use Illuminate\Support\Facades\Cache;
+use Spatie\DiscordAlerts\Facades\DiscordAlert;
+use App\Services\SendItemWebhook;
+use App\Models\Space;
 
 class AdminController extends Controller
 {
@@ -33,7 +36,7 @@ class AdminController extends Controller
     {
         return inertia('Admin/Dashboard', [
             'stats' => [
-                'adminPoints' => $this->admin->adminPoints,                
+                'adminPoints' => $this->admin->adminPoints,
                 'canControlMarketPurchases' => $this->admin->rolePermissions('can_enable_market_purchases') ?? false,
                 'canControlDiscussion' => $this->admin->rolePermissions('can_enable_discussion') ?? false,
                 'canControlCustomization' => $this->admin->rolePermissions('can_enable_customization') ?? false,
@@ -43,25 +46,84 @@ class AdminController extends Controller
             ],
             'siteSettings' => [
                 'inMaintenance' => siteSetting("site_maintenance"),
+                'ForumActive' => siteSetting("discussion_enabled"),
+                'MarketActive' => siteSetting("market_enabled"),
+                'CustomizationActive' => siteSetting("market_enabled"),
+                'SpacesActive' => siteSetting("market_enabled"),
             ],
         ]);
     }
 
     public function ContentApprovingIndex()
     {
-        return inertia('Admin/Assets/Approve', [
-            'stats' => [
-                'adminPoints' => $this->admin->adminPoints,
-                'canControlMaintenance' => $this->admin->rolePermissions('can_activate_maintenance') ?? false,
-                'canEnableAnnouncement' => $this->admin->rolePermissions('can_enable_announcement') ?? false,
-                'items' => Item::count(),
-                'avatars' => Avatar::count(),
-            ],
-            'siteSettings' => [
-                'inMaintenance' => siteSetting("site_maintenance"),
-                'maintenanceMessage' => $this->admin->maintenance_message ?? ''
-            ],
+        if ($this->admin->rolePermissions('can_manage_items') ?? false != false):
+            $pendingItems = Item::where('status', 'pending')->with('creator')->get();
+
+            $pendingSpaces = Space::where('thumbnail_pending', true)->with('creator')->get();
+
+            $pendingItemsAndSpaces = $pendingItems->merge($pendingSpaces);
+
+            $results = [];
+
+            foreach ($pendingItemsAndSpaces as $itemOrSpace) {
+                if ($itemOrSpace instanceof Item) {
+                    $results[] = [
+                        'type' => 'item',
+                        'data' => [
+                            'id' => $itemOrSpace->id,
+                            'thumbnail' => $itemOrSpace->thumbnail(),
+                            'name' => $itemOrSpace->name,
+                            'description' => $itemOrSpace->description,
+                            'DateHum' => $itemOrSpace->DateHum,
+                            'creator' => [
+                                'id' => $itemOrSpace->creator->id,
+                                'username' => $itemOrSpace->creator->username,
+                            ],
+                        ],
+                    ];
+                } elseif ($itemOrSpace instanceof Space) {
+                    $results[] = [
+                        'type' => 'space',
+                        'data' => [
+                            'id' => $itemOrSpace->id,
+                            'thumbnail' => $itemOrSpace->thumbnail(),
+                            'name' => $itemOrSpace->name,
+                            'description' => $itemOrSpace->description,
+                            'DateHum' => $itemOrSpace->DateHum,
+                            'creator' => [
+                                'id' => $itemOrSpace->creator->id,
+                                'username' => $itemOrSpace->creator->username,
+                            ],
+                        ],
+                    ];
+                }
+            }
+
+            return inertia('Admin/Assets/Approve', [
+                'pendingAssets' => $results,
+            ]);
+        else:
+            $response =  inertia('Admin/Error/PermissionError', [
+                'permission' => 'can_manage_items'
+            ]);
+        endif;
+
+        return $response;
+    }
+
+    public function GiftUser($userID)
+    {
+    if ($this->admin->rolePermissions('can_gift_users') ?? false != false):
+            $response = inertia('Admin/Users/Gift', [
+                'userID' => $userID,
+            ]);
+    else:
+        $response =  inertia('Admin/Error/PermissionError', [
+            'permission' => 'can_gift_users'
         ]);
+    endif;
+
+        return $response;
     }
 
     public function messagingIndex()
@@ -161,7 +223,7 @@ class AdminController extends Controller
             'avatar_preview' => $previewName,
             'onsale' => true,
         ]);
-        
+
         $inventory = new Inventory;
 
         $inventory->create([
@@ -179,6 +241,15 @@ class AdminController extends Controller
         }
 
         $itemUrl = route('store.item', $item->id);
+
+        $formattedPrice = [
+            $request->price_coins . 'Coins',
+            $request->price_bucks . 'Bucks',
+        ];
+
+        $sendWebhook = new SendItemWebhook;
+        $sendWebhook->sendDiscordNotification($item->name, $item->description, $formattedPrice, $item->thumbnail(), $itemUrl);
+
 
         return inertia()->location($itemUrl);
     }

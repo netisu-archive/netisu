@@ -118,5 +118,6 @@ Route::group(['as' => 'api.'], function () {
     Route::group(['as' => 'admin.', 'prefix' => config('Values.version')], function () {
         Route::post('/enable-maintenance', [AdminController::class, 'enableMaintenance'])->name('enableMaintenance');
         Route::post('/disable-maintenance', [AdminController::class, 'disableMaintenance'])->name('disableMaintenance');
+        Route::post('/gift-item/{itemID}/{userID}', [AdminController::class, 'giftItem'])->name('gift-item');
     });
 });

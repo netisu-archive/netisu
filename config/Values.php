@@ -2,12 +2,12 @@
 return [
     'name' => 'Netisu',
     'logo' => '/assets/img/logo-theta.svg',
-    'icon' => '/assets/img/icon.png',
+    'icon' => '/assets/img/logo.svg',
     'in_event' => true,
     'system_account_id' => 2,
     'in_testing_phase' => true,
 
-    'version' => "enigma",
+    'version' => "enigma-content",
     'frontend' => [
         'page_loader' => false,
         'sidebar_menu' => true,

@@ -57,7 +57,7 @@ import AdminPagination from "@/Components/AdminPagination.vue";
           <div class="media-content">
             <div class="content">
               <br />
-              <p class="title is-4">
+              <div class="title is-4">
                 <span class="mb-4">{{ user.display_name }} <span class="has-text-grey">({{"@" + user.username }})</span></span>
                 <div class="mt-4 tags">
                   <span
@@ -71,8 +71,10 @@ import AdminPagination from "@/Components/AdminPagination.vue";
                   >{{ user.position }}</span
                 >
                 </div>
-              </p>
+            </div>
               <p class="subtitle is-6">{{ user.email }}</p>
+                                                  <div class="buttons">
+
               <Link class="button" :href="route(`admin.users.manage-user`, { id: user.id })">Manage User</Link>
               <a
                 class="button is-disabled is-"
@@ -80,6 +82,7 @@ import AdminPagination from "@/Components/AdminPagination.vue";
                 >Go to Profile</a
               >
             </div>
+        </div>
           </div>
           <div class="media-right"></div>
         </article>

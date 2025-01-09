@@ -271,24 +271,31 @@ const lang = computed(() => usePage<any>().props.locale);
             </div>
             <div v-if="props.site_config.in_maintenance" class="py-2 mb-4 text-center text-white alert alert-danger">
                 <div class="gap-2 align-middle flex-container align-justify">
-                    <i class="text-lg far fa-hammer pe-2"></i>
+                    <i class="text-lg fad fa-hammer pe-2"></i>
                     <div>
                         You are currently in maintenance mode.
                         <Link :href="route('maintenance.exit')" class="ml-2 text-white fw-semibold">Exit</Link>
                     </div>
-                    <i class="text-lg far fa-hammer pe-2"></i>
+                    <i class="text-lg fad fa-hammer pe-2"></i>
                 </div>
             </div>
-            <Link as="div" style="cursor:pointer;" v-if="props.auth.user && !props.auth.user.email_verified_at" :href="route('verification.notice')" class="py-2 mb-4 text-center text-white alert alert-danger">
-                <div class="gap-2 align-middle flex-container align-justify">
-                    <i class="text-lg far fa-hammer pe-2"></i>
-                    <div>
+            <Link as="div" style="cursor:pointer;" v-if="props.auth.user && props.auth.user.email_verified_at === null"
+                :href="route('verification.notice')" class="py-2 mb-4 text-center text-white alert alert-danger">
+            <div class="gap-2 align-middle flex-container align-justify">
+                <i class="text-lg fad fa-envelope pe-2"></i>
+                <div>
+                    <span v-if="props.auth.user.settings.verified_email">
+                        Please check your email at <span class="fw-semibold">{{ props.auth.user.email }}</span>.
+                        If you dont see the email, check your spam folder.
+                    </span>
+                    <span v-else class="d-block">
                         We need to verify your email at
-                        {{ props.auth.user.email }}
+                        <span class="fw-semibold">{{ props.auth.user.email }}</span>
                         to keep your account in good standing.
-                    </div>
-                    <i class="text-lg far fa-hammer pe-2"></i>
+                    </span>
                 </div>
+                <i class="text-lg fad fa-envelope pe-2"></i>
+            </div>
             </Link>
         </div>
         <div class="grid-x grid-margin-x align-center">

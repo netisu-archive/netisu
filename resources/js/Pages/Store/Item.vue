@@ -7,7 +7,7 @@ import { usePage } from '@inertiajs/vue3';
 import { route } from 'momentum-trail'
 import axios from 'axios';
 import { ref } from 'vue';
-
+import throttle from 'lodash/throttle';
 
 const isDescOpen = ref(false);
 const isOtherOpen = ref(false);
@@ -62,6 +62,20 @@ const purchaseCoins = () => {
             });
     });
 };
+
+const reRender = throttle(() => {
+    axios.get(`/sanctum/csrf-cookie`).then(() => {
+        axios.post(route(`api.item.rerender`, { id: usePage<any>().props.item.id }))
+            .then(response => {
+                const { message, type } = response.data;
+
+                JSONDATA.value = { message, type };
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+}, 5000);
 
 const swap = () => {
     if (isPreview.value) {
@@ -493,7 +507,7 @@ function onImgErrorSmall(id) {
                             ">
                                 <div v-if="usePage<any>().props.item.rare" class="mb-1">
                                     <span class="badge badge-witch fw-semibold">
-                                        <i class="fas fa-star" style="width: 18px"></i>Rare
+                                        <i class="fas fa-star" style="width: 18px"></i>Showpiece
                                     </span>
                                 </div>
                                 <div v-if="isNewItem(usePage<any>().props.item.created_at)" class="mb-1">
@@ -519,6 +533,11 @@ function onImgErrorSmall(id) {
                                 bottom: 10px;
                                 right: 10px;
                             ">
+                            <div class="ms-auto" v-if="usePage<any>().props.auth.user.pendingAssets != null">
+                                    <button class="btn btn-danger btn-xs" @click="reRender(usePage<any>().props.item.id)">
+                                        <i class="fad fa-rotate"></i> Rerender
+                                    </button>
+                                </div>
                                 <div class="ms-auto">
                                     <button v-if="usePage<any>().props.item.preview" class="btn btn-secondary btn-xs"
                                         @click="swap()">
@@ -799,7 +818,7 @@ function onImgErrorSmall(id) {
                                 Items by {{ usePage<any>().props.item.creator.username }}
                             </button>
                             <div class="text-sm description-content text-muted"
-                                :style="{ height: isOtherOpen ? '45px' : '20px' }">
+                                :style="{ height: isOtherOpen ? '180px' : '20px' }">
                                 <div v-if="isOtherOpen"
                                     class="mt-1 mb-2 text-sm text-body fw-semibold description-body">
                                     <div v-if="recommendations.length" class="grid-x grid-margin-x">

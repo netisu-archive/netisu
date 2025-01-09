@@ -21,6 +21,9 @@ use App\Http\Controllers\{
     Notification,
     MembershipController,
 };
+
+use App\Models\UserSettings;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
@@ -76,7 +79,7 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
         Route::post('/update', [GrabController::class, 'UpdateAvatar'])->name('update');
     });
 
-    Route::group(['as' => 'forum.', 'prefix' => 'discuss'], function () {
+    Route::group(['as' => 'forum.', 'prefix' => 'discuss', 'middleware' => 'verified'], function () {
         Route::get('/', function () {
             return redirect()->route('forum.page', ['id' => 1], 301);
         });
@@ -192,17 +195,27 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
 });
 
 Route::get('/verify-email', function () {
-    return inertia('App/VerifyEmail');
+    if (Auth::user()->email_verified_at) {
+        return inertia('App/Verify/EmailVerified');
+    } elseif (Auth::user()->settings->verified_email) {
+        return inertia('App/Verify/EmailSent');
+    } else {
+        return inertia('App/Verify/Email');
+    }
 })->middleware('auth')->name('verification.notice');
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    UserSettings::where('id', Auth::id())->update(['verified_email' => false]);
     $request->fulfill();
 
-    return redirect('/home');
+
+    return redirect('/my/dashboard');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
+    UserSettings::where('id', Auth::id())->update(['verified_email' => true]);
+
     $request->user()->sendEmailVerificationNotification();
 
-    return back()->with('message', 'Verification link sent!');
+    return inertia('App/Verify/EmailSent');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');

@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Item;
+use App\Models\Space;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -30,6 +32,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $pendingItems = Item::where('status', 'pending')->with('creator')->get();
+
+        $pendingSpaces = Space::where('thumbnail_pending', true)->with('creator')->get();
+
+        $pendingItemsAndSpaces = $pendingItems->merge($pendingSpaces);
+
         return array_merge(parent::share($request), [
             'site' => config('Values'),
             'locale' => function () {
@@ -43,7 +51,7 @@ class HandleInertiaRequests extends Middleware
                     resource_path('lang/' . app()->getLocale() . '.json')
                 );
             },
-            'auth' => function () use ($request) {
+            'auth' => function () use ($request, $pendingItemsAndSpaces) {
                 return [
                     'user' => $request->user() ? [
                         'id' => $request->user()->id,
@@ -51,11 +59,13 @@ class HandleInertiaRequests extends Middleware
                         'display_name' => $request->user()->display_name,
                         'email' => preg_replace('/[^@]+@([^\s]+)/', ''.substr($request->user()->email, 0, 3).'********@$1', $request->user()->email),
                         'birthdate' => $request->user()->birthdate,
+                        'email_verified_at' => $request->user()->email_verified_at,
                         'event_currency' => shortNum($request->user()->event_currency),
                         'coins' => shortNum($request->user()->coins),
                         'bucks' => shortNum($request->user()->bucks),
                         'status' => $request->user()->status,
                         'staff' => $request->user()->isStaff(),
+                        'pendingAssets' => $request->user()->isStaff() ? $pendingItemsAndSpaces->count() : null,
                         'position' => $request->user()->CurrentPosition(),
                         'about_me' => $request->user()->about_me,
                         'headshot' => $request->user()->headshot(),
