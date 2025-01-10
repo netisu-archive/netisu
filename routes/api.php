@@ -76,12 +76,15 @@ Route::group(['as' => 'api.'], function () {
         });
         Route::post('/read-all', [NotificationController::class, 'ReadAll'])->name('read-all');
     });
-
+    Route::group(['as' => 'item.', 'prefix' => 'item'], function () {
+        Route::post('/rerender/{id}', [ItemApiController::class, 'reRenderItem'])->name('rerender');
+    });
     Route::group(['as' => 'store.', 'prefix' => 'market'], function () {
         Route::get('/', function () {
             return redirect()->to(config('Values.production.domains.main'));
         });
         Route::get('/items/{category}', [ItemApiController::class, 'getItemsByCategory'])->name('items');
+
         Route::get('/items/event/{eventId}', [ItemApiController::class, 'getEventItems'])->name('event.items');
         Route::post('/item/purchase/{id}/{currencyType}', [ItemApiController::class, 'purchase'])->name('purchase');
     });

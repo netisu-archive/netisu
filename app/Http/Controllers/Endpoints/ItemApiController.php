@@ -14,6 +14,8 @@ use App\Models\ItemPurchase;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Stevebauman\Location\Facades\Location;
+use App\Jobs\ItemPreviewRenderer;
+use App\Jobs\ItemRenderer;
 
 class ItemApiController extends Controller
 {
@@ -91,6 +93,26 @@ class ItemApiController extends Controller
             })
         );
     }
+    public function reRenderItem($itemID)
+    {
+        $item = Item::where(['id' => $itemID])->first();
+
+        if ($item->item_type !== 'face') {
+            ItemRenderer::dispatch($item->id)->onQueue('render');
+            ItemPreviewRenderer::dispatch($item->id, true, $item->hash)->onQueue('render');
+        }
+
+        if ($item->item_type === 'face') {
+            ItemPreviewRenderer::dispatch($item->id, true, $item->hash)->onQueue('render');
+        }
+
+
+        return response()->json([
+            'message' => 'Item successfully rerendered.',
+            'type' => 'success'
+        ]);
+    }
+
     private function getCategoryData()
     {
         $data = config('ItemCategories');

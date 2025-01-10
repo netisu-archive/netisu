@@ -16,7 +16,7 @@ use Illuminate\Http\JsonResponse;
 
 class AvatarController extends Controller
 {
-    public function getItemsByCategory($category): JsonResponse
+    public function getItemsByCategory($category)
     {
         // Select only item IDs from inventory with matching category
         $itemIds = Inventory::where('user_id', Auth::id())
@@ -26,7 +26,7 @@ class AvatarController extends Controller
             ->pluck('item_id');
 
         // Now return Items
-        $items = Item::whereIn('id', $itemIds)->orderBy('created_at', 'asc')->paginate(12)->through(function ($item) {
+        $items = Item::whereIn('id', $itemIds)->orderBy('created_at', 'asc')->jsonPaginate(18)->through(function ($item) {
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
@@ -35,7 +35,7 @@ class AvatarController extends Controller
                 ];
             });
 
-        return response()->json($items);
+        return $items;
     }
 
     private function regenerate(): void
@@ -144,15 +144,6 @@ class AvatarController extends Controller
         ], 200);
     }
 
-    public function getWearingItems()
-    {
-        // Return Wearing Items
-        /** @var \App\Models\User $user **/
-        $user = Auth::user();
-        $items = $user->avatar()->WearingItems();
-
-        return dd($items); // returns hats in an array
-    }
 
     public function getWearingHats()
     {

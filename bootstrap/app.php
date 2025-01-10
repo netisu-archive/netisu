@@ -166,7 +166,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\UpdateOnlineStatus::class,
             \App\Http\Middleware\EnsureSettings::class,
             \App\Http\Middleware\RedirectIfBanned::class,
-            \App\Http\Middleware\PreventProxyConnections::class,
+            // \App\Http\Middleware\PreventProxyConnections::class,
             \App\Http\Middleware\GiveDailyRewards::class,
             \Illuminate\Http\Middleware\TrustHosts::class,
             \App\Http\Middleware\UpdateOnlineStatus::class,

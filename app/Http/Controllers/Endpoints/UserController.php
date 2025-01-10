@@ -281,6 +281,6 @@ class UserController extends Controller
             }
         }
 
-        return response()->json($items);
+        return $items;
     }
 }
