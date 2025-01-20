@@ -3,7 +3,8 @@ import Navbar from '@/Components/LayoutParts/Navbar.vue';
 import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
 import Footer from '@/Components/LayoutParts/Footer.vue';
 import { useForm } from '@inertiajs/vue3';
-import { route } from "momentum-trail";
+import { route } from "momentum-trail"
+
 import axios from 'axios';
 
 const props = defineProps({
@@ -19,19 +20,19 @@ const form = useForm({
 });
 
 const submit = () => {
-axios.get(`/sanctum/csrf-cookie`).then(() => {
-    form.post(route(`forum.create.validate`, {id: props.topic?.['id']}), {
-        onFinish: () => form.reset('body'),
+  axios.get(`/sanctum/csrf-cookie`).then(() => {
+    form.post(route(`forum.create.validate`, { id: props.topic?.['id'] }), {
+      onFinish: () => form.reset('body'),
     });
-});
+  });
 };
 const addText = (text) => {
   form.body += text;
 };
 </script>
 <template>
-  <Navbar/>
-<Sidebar>
+  <Navbar />
+  <Sidebar>
     <div class="card card-body">
       <div class="text-xl text-danger bg-primary">Create a Post</div>
       <div class="text-xs text-muted bg-primary">
@@ -40,10 +41,12 @@ const addText = (text) => {
       <div class="mx-1 my-3 divider"></div>
       <form @submit.prevent="submit">
         <label for="post-title" class="mb-2 text-xs fw-bold text-uppercase">Post Title</label>
-        <input id="post-title" class="mb-2 form" type="text" name="title" v-model="form.title" placeholder="Title" maxlength="64">
+        <input id="post-title" class="mb-2 form" type="text" name="title" v-model="form.title" placeholder="Title"
+          maxlength="64">
 
         <label for="post-body" class="mb-2 text-xs fw-bold text-uppercase">Post Content</label>
-        <textarea id="post-body" class="mb-2 form" name="body" v-model="form.body" placeholder="Body" maxlength="4096"></textarea>
+        <textarea id="post-body" class="mb-2 form" name="body" v-model="form.body" placeholder="Body"
+          maxlength="4096"></textarea>
 
         <button class="btn btn-success btn-block" type="submit" :disabled="form.processing">Create</button>
       </form>
@@ -53,9 +56,10 @@ const addText = (text) => {
         <button class="btn btn-success" @click="addText('[i]Italic Text[/i]')">Italic Text</button>
         <button class="btn btn-success" @click="addText('[u]Underlined Text[/u]')">Underline Text</button>
         <button class="btn btn-info" @click="addText('[img]Image Link[/img]')">Insert an Image</button>
-        <button class="btn btn-danger" @click="addText('[url=https://yourlinkhere]Link Text[/url]')">Link To Website</button>
+        <button class="btn btn-danger" @click="addText('[url=https://yourlinkhere]Link Text[/url]')">Link To
+          Website</button>
       </div>
     </div>
   </Sidebar>
-<Footer/>
+  <Footer />
 </template>

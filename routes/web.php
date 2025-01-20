@@ -3,10 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     USController,
+    Money\MoneyController,
     AuthController,
     ChatController,
     Users\UserController,
     Market\MarketController,
+    Spaces\SpaceController,
     HomeController,
     GrabController,
     Web3LoginController,
@@ -53,13 +55,14 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
     });
 
     Route::group(['as' => 'my.', 'prefix' => 'my', 'middleware' => 'auth'], function () {
-
-        Route::group(['middleware' => 'auth'], function () {
+        Route::group(['as' => 'money.', 'prefix' => 'money'], function () {
+            Route::get('/', [MoneyController::class, 'MoneyIndex'])->name('page');
+            Route::post('/', [MoneyController::class, 'MoneyVal'])->name('validate');
+        });
             Route::group(['as' => 'dashboard.', 'prefix' => 'dashboard'], function () {
                 Route::get('/', [HomeController::class, 'DashboardIndex'])->name('page');
                 Route::post('/', [HomeController::class, 'DashboardVal'])->name('validate');
             });
-        });
     });
 
     Route::group(['as' => 'user.', 'prefix' => 'user'], function () {
@@ -189,7 +192,11 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
         Route::post('/item/purchase/{id}/{currencyType}', [MarketController::class, 'purchase'])->name('purchase');
     });
     Route::group(['as' => 'spaces.', 'prefix' => 'spaces'], function () {
-        Route::get('/', [GrabController::class, 'SpacesIndex'])->name('page');
+        Route::get('/', [SpaceController::class, 'SpacesIndex'])->name('page');
+        Route::group(['as' => 'create.', 'prefix' => 'create'], function () {
+            Route::get('/', [SpaceController::class, 'SpaceCreate'])->name('page');
+            Route::post('/create/validate', [SpaceController::class, 'SpaceVal'])->name('validate');
+        });
         Route::get('/{id}/{slug}', [GrabController::class, 'SpacesView'])->name('view');
     });
 });

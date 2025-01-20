@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
-import { Link, usePage } from "@inertiajs/vue3";
+import { ref } from "vue";
+import { Link } from "@inertiajs/vue3";
 import axios from "axios";
-import { route, current } from "momentum-trail";
-import Button from "@/Components/Button.vue";
+import { route } from "momentum-trail"
+
 import Navbar from "@/Components/LayoutParts/Navbar.vue";
 import AppHead from "@/Components/AppHead.vue";
 import Footer from "@/Components/LayoutParts/Footer.vue";
@@ -46,11 +46,7 @@ const performSearch = async () => {
 };
 </script>
 <template>
-  <AppHead
-    pageTitle="Spaces"
-    description="Find a space to join or create one!"
-    :url="route(`spaces.page`)"
-  />
+  <AppHead pageTitle="Spaces" description="Find a space to join or create one!" :url="route(`spaces.page`)" />
 
   <Navbar />
   <Sidebar>
@@ -61,14 +57,8 @@ const performSearch = async () => {
         </div>
         <div class="cell large-9">
           <div class="gap-2 align-middle flex-container-lg">
-            <input
-              type="text"
-              class="mb-2 form form-xs form-has-section-color"
-              placeholder="Search..."
-              name="search"
-              v-model="search"
-              @input="performSearch"
-            />
+            <input type="text" class="mb-2 form form-xs form-has-section-color" placeholder="Search..." name="search"
+              v-model="search" @input="performSearch" />
             <select class="mb-2 form form-xs form-select form-has-section-color">
               <option value="1" selected disabled>Advanced Sorting...</option>
             </select>
@@ -76,32 +66,22 @@ const performSearch = async () => {
               <input type="submit" class="btn btn-xs btn-success w-100" value="Search" />
             </div>
             <div class="mb-2 flex-container flex-child-grow">
-              <a href="#" class="text-center btn btn-info btn-xs flex-child-grow"
-                ><i class="fad fa-hexagon-plus"></i>&nbsp; Create Space</a
-              >
+              <a href="#" class="text-center btn btn-info btn-xs flex-child-grow"><i
+                  class="fad fa-hexagon-plus"></i>&nbsp; Create Space</a>
             </div>
           </div>
         </div>
       </div>
       <div v-if="spaces.data.length" class="grid-x grid-margin-x grid-padding-y">
-        <div
-          class="cell large-3 medium-6 small-3"
-          v-for="(space, index) in spaces.data"
-          :key="index"
-        >
+        <div class="cell large-3 medium-6 small-3" v-for="(space, index) in spaces.data" :key="index">
           <a href="#" class="d-block squish">
-            <v-lazy-image
-              sizes="(max-width: 320px) 280px, 440px"
+            <v-lazy-image sizes="(max-width: 320px) 280px, 440px"
               src="https://img.freepik.com/free-vector/overlapping-forms-background_23-2148642590.jpg?size=626&ext=jpg&ga=GA1.1.1313891279.1718199690&semt=ais_user"
-              class="mb-2 space-thumbnail"
-            />
+              class="mb-2 space-thumbnail" />
             <div style="line-height: 18px">
               <div class="d-block fw-semibold text-body">
-                <Link
-                  :href="route('spaces.view', { id: space.id, slug: space.slug })"
-                  style="color: inherit; font-weight: 600"
-                  >{{ space.name }}</Link
-                >
+                <Link :href="route('spaces.view', { id: space.id, slug: space.slug })"
+                  style="color: inherit; font-weight: 600">{{ space.name }}</Link>
               </div>
               <div class="text-xs text-muted fw-semibold text-truncate">
                 {{ space.description ?? "This space does not have a description." }}

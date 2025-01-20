@@ -76,12 +76,11 @@ class RenderController extends Controller
         if ($noNameOverride) {
             $item->hash = $itemName;
             $itemPreview = "{$itemName}_preview";
-
         } else {
             $item->hash = $itemHashName;
             $itemPreview = "{$itemHashName}_preview";
         }
-        
+
         $item->avatar_preview = $itemPreview;
         $item->save();
 
@@ -109,88 +108,104 @@ class RenderController extends Controller
     private function prepareRequestData($type, $db, $hash)
     {
         $requestData = [
-            'renderType' => $type,
-            'hash' => $hash,
+            'RenderType' => $type,
+            'Hash' => $hash,
         ];
-        if ($type == 'user') {
-            $requestData['head_color'] = $this->getColor($db->color_head, 'ffffff');
-            $requestData['torso_color'] = $this->getColor($db->color_torso, '055e96');
-            $requestData['leftLeg_color'] = $this->getColor($db->color_left_leg, 'ffffff');
-            $requestData['rightLeg_color'] = $this->getColor($db->color_right_leg, 'ffffff');
-            $requestData['leftArm_color'] = $this->getColor($db->color_left_arm, 'ffffff');
-            $requestData['rightArm_color'] = $this->getColor($db->color_right_arm, 'ffffff');
 
-            for ($i = 1; $i <= 6; $i++) {
-                $key = "hat_$i";
-                $value = $db->{"hat_$i"};
-                if ($value) {
-                    $requestData[$key] = getItemHash($value);
-                }
-            }
-            if ($db->addon) {
-                $requestData['addon'] =  getItemHash($db->addon);
-            };
-            if ($db->head) {
-                $requestData['head'] =  getItemHash($db->head);
-            };
-            if ($db->face) {
-                $requestData['face'] = getItemHash($db->face);
-            } else {
-                $requestData['face'] = 'none';
-            };
-            if ($db->tool) {
-                $requestData['tool'] =  getItemHash($db->tool);
-            };
-            if ($db->tshirt) {
-                $requestData['tshirt'] =  getItemHash($db->tshirt);
-            };
-            if ($db->shirt) {
-                $requestData['shirt'] =  getItemHash($db->shirt);
-            };
-            if ($db->pants) {
-                $requestData['pants'] =  getItemHash($db->pants);
-            };
+        if ($type == 'user') {
+            $requestData['RenderJson'] = [
+                'items' => [
+                    'face' => ($db->face) ? getItemHash($db->face) : 'none',
+                    'hats' => [
+                        ($db->hat_1) ? getItemHash($db->hat_1) : 'none',
+                        ($db->hat_2) ? getItemHash($db->hat_2) : 'none',
+                        ($db->hat_3) ? getItemHash($db->hat_3) : 'none',
+                        ($db->hat_4) ? getItemHash($db->hat_4) : 'none',
+                        ($db->hat_5) ? getItemHash($db->hat_5) : 'none',
+                    ],
+                    'addon' => ($db->addon) ? getItemHash($db->addon) : 'none',
+                    'tool' => ($db->tool) ? getItemHash($db->tool) : 'none',
+                    'head' => ($db->head) ? getItemHash($db->head) : 'none',
+                    'shirt' => ($db->shirt) ? getItemHash($db->shirt) : 'none',
+                    'pants' => ($db->pants) ? getItemHash($db->pants) : 'none',
+                    'tshirt' => ($db->tshirt) ? getItemHash($db->tshirt) : 'none',
+                ],
+                'colors' => [
+                    'head_color' => $this->getColor($db->color_head, 'ffffff'),
+                    'torso_color' => $this->getColor($db->color_torso, '055e96'),
+                    'leftLeg_color' => $this->getColor($db->color_left_leg, 'ffffff'),
+                    'rightLeg_color' => $this->getColor($db->color_right_leg, 'ffffff'),
+                    'leftArm_color' => $this->getColor($db->color_left_arm, 'ffffff'),
+                    'rightArm_color' => $this->getColor($db->color_right_arm, 'ffffff')
+                ],
+            ];
         } elseif ($type == 'item') {
-            $requestData['item'] = getItemHash($db->id);
+            $requestData['RenderJson'] = [
+                    'ItemType' => $db->item_type,
+                    'Item' => getItemHash($db->id),
+                    'PathMod' => null,
+            ];
         } elseif ($type == 'item_preview') {
             if ($db->item_type == 'hat') {
-                $requestData['item'] = getItemHash($db->id);
-                $requestData['pathmod'] = true;
+                $requestData['RenderJson'] = [
+                        'ItemType' => $db->item_type,
+                        'Item' => getItemHash($db->id),
+                        'PathMod' => true,
+                ];
             } elseif ($db->item_type == 'addon') {
-                $requestData['item'] = getItemHash($db->id);
-                $requestData['pathmod'] = true;
+                $requestData['RenderJson'] = [
+                        'ItemType' => $db->item_type,
+                        'Item' => getItemHash($db->id),
+                        'PathMod' => true,
+                ];
             } elseif ($db->item_type == 'face') {
-                $requestData['item'] = getItemHash($db->id);
-                $requestData['isFace'] = true;
-                $requestData['pathmod'] = true;
+                $requestData['RenderJson'] = [
+                    'ItemType' => $db->item_type,
+
+                        'Item' => getItemHash($db->id),
+                        'PathMod' => true,
+                ];
             } elseif ($db->item_type == 'tshirt') {
-                $requestData['item'] = getItemHash($db->id);
-                $requestData['isTshirt'] = true;
-                $requestData['pathmod'] = false;
+                $requestData['RenderJson'] = [
+                        'ItemType' => $db->item_type,
+                        'Item' => getItemHash($db->id),
+                        'PathMod' => false,
+                ];
             } elseif ($db->item_type == 'tool') {
-                $requestData['item'] = getItemHash($db->id);
-                $requestData['isTool'] = true;
-                $requestData['pathmod'] = true;
+                $requestData['RenderJson'] = [
+                        'ItemType' => $db->item_type,
+                        'Item' => getItemHash($db->id),
+                        'PathMod' => true,
+                ];
             } elseif ($db->item_type == 'shirt') {
-                $requestData['item'] = getItemHash($db->id);
-                $requestData['isShirt'] = true;
-                $requestData['pathmod'] = false;
+                $requestData['RenderJson'] = [
+                        'ItemType' => $db->item_type,
+                        'Item' => getItemHash($db->id),
+                        'PathMod' => false,
+                ];
             } elseif ($db->item_type == 'pants') {
-                $requestData['item'] = getItemHash($db->id);
-                $requestData['isPants'] = true;
-                $requestData['pathmod'] = false;
-            } else {
-                $requestData['item'] = getItemHash($db->id);
+                $requestData['RenderJson'] = [
+                        'ItemType' => $db->item_type,
+                        'Item' => getItemHash($db->id),
+                        'PathMod' => false,
+                ];
+            } elseif ($db->item_type == 'head') {
+                $requestData['RenderJson'] = [
+                        'ItemType' => $db->item_type,
+                        'Item' => getItemHash($db->id),
+                        'PathMod' => false,
+                ];
             }
-        } elseif ($type == 'preview_tool') {
-            if ($db->type == 'hat') {
-                $requestData['hat_1'] = getItemHash($db->hat1);
-            } else {
-                $requestData['tool'] = getItemHash($db->tool);
+            else {
+                $requestData['RenderJson'] = [
+                        'ItemType' => $db->item_type,
+                        'Item' => getItemHash($db->id),
+                        'PathMod' => true,
+                ];
             }
         }
 
-        return $requestData;
+        return json_encode($requestData);
     }
 
     private function getColor($value, $default)
@@ -208,7 +223,10 @@ class RenderController extends Controller
         } else {
             $url =  $host;
         }
-        //dd($url, $requestData);
-        return Http::get($url, $requestData);
+
+        //return dd($url, $requestData);
+        return Http::withBody($requestData, 'application/json')->withOptions([
+            'headers' => ['Aeo-Access-Key' => env("RENDERER_KEY")]
+        ])->post($url);
     }
 }

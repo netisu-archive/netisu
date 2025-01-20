@@ -1,5 +1,4 @@
-import { defineConfig } from '@vue/cli-service';
-module.exports = defineConfig({
+module.exports = ({
   transpileDependencies: true,
   css: {
     loaderOptions: {
@@ -24,6 +23,5 @@ module.exports = defineConfig({
     manifestOptions: {
       background_color: "#ffe24a",
     }
-
   }
 })

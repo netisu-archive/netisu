@@ -1,25 +1,26 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
-import { route } from "momentum-trail";
+import { route, current } from 'momentum-trail';
+
 import SideLink from "../SideLink.vue";
 import FlashMessages from "@/Components/Messages/FlashMessages.vue";
+
 import VLazyImage from "v-lazy-image";
 import SuperBanner from "./SuperBanner.vue";
 
 interface Props {
     image?: string;
-    showJsonAlert?: boolean;
-    JSONALERT?: JsonResponse;
-    alertsEnabled?: boolean;
+    showJsonAlert: boolean;
+    JSONALERT: JsonResponse;
+    alertsEnabled: boolean;
     superBanType?: string;
     superBanAsset?: string;
     superBanName?: string;
     superBanDesc?: string;
-    superBanButtons?: BannerButtons;
-    superBanActive?: boolean;
-    OfficialImageBackground?: boolean;
-    navSpaces?: Array<any>;
+    superBanActive: boolean;
+    OfficialImageBackground: boolean;
+    navSpaces: Array<any>;
 }
 
 interface JsonResponse {
@@ -27,23 +28,15 @@ interface JsonResponse {
     type: string;
 }
 
-interface BannerButtons {
-  className: string; // Use className instead of class
-  icon: string;
-  url: string;
-  content: string;
-}
+const defaultResponse: JsonResponse = { message: 'Server Error', type: 'error' };
 
-withDefaults(defineProps<Props>(), {
-    alertsEnabled: true,
-    superBanActive: false,
-    showJsonAlert: false,
-    JSONALERT: [{
-        message: 'Server Error',
-        type: 'error',
-    }] as JsonResponse,
-    OfficialImageBackground: false,
-});
+const MainProps: Props = defineProps<Props>();
+
+MainProps.showJsonAlert = false;
+MainProps.alertsEnabled = true;
+MainProps.superBanActive = false;
+MainProps.JSONALERT = defaultResponse;
+MainProps.OfficialImageBackground = false;
 
 const chatToggle = ref(false);
 const { props } = usePage<any>();
@@ -201,8 +194,8 @@ const lang = computed(() => usePage<any>().props.locale);
                 </li>
                 <!-- Iterate over links within the current section -->
                 <SideLink class="side-item" v-for="sidelink in sidebar.filter(
-                        (link) => link.section === sidesections.en.name
-                    )" :link="sidelink.url" :ActiveLink="sidelink.active_link">
+                    (link) => link.section === sidesections.en.name
+                )" :link="sidelink.url" :ActiveLink="sidelink.active_link">
                     <i class="side-icon" :class="sidelink.icon"></i><span>{{ sidelink[lang].title }}</span>
                 </SideLink>
             </template>
@@ -245,18 +238,18 @@ const lang = computed(() => usePage<any>().props.locale);
     </nav>
     <div v-if="image" class="profile-banner">
         <img class="masoqi" :class="{ special: OfficialImageBackground }" :style="{
-        backgroundImage: `url(${image})`,
-        backgroundRepeat: OfficialImageBackground ? 'repeat-x' : 'no-repeat',
-        backgroundSize: OfficialImageBackground ? '' : 'cover',
-        backgroundPosition: 'center'
-      }" />
+            backgroundImage: `url(${image})`,
+            backgroundRepeat: OfficialImageBackground ? 'repeat-x' : 'no-repeat',
+            backgroundSize: OfficialImageBackground ? '' : 'cover',
+            backgroundPosition: 'center'
+        }" />
     </div>
-    <FlashMessages :ShowJsonAlert="showJsonAlert" :flash="JSONALERT[0]" />
+    <FlashMessages :ShowJsonAlert="showJsonAlert" :flash="JSONALERT" />
     <SuperBanner v-if="superBanActive" />
     <main :class="{
-            'container-navbar': !props.site.frontend.sidebar_menu,
-            container: props.site.frontend.sidebar_menu,
-        }">
+        'container-navbar': !props.site.frontend.sidebar_menu,
+        container: props.site.frontend.sidebar_menu,
+    }">
         <div v-if="alertsEnabled">
             <div v-if="adblock" class="py-2 mb-4 text-center alert alert-danger fw-semibold">
                 <div class="gap-2 align-middle flex-container align-justify">

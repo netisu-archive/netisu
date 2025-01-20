@@ -1,5 +1,17 @@
+<script setup lang="ts">
+import Navbar from '@/Components/LayoutParts/Navbar.vue';
+import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
+import Footer from '@/Components/LayoutParts/Footer.vue';
+import { route } from 'momentum-trail';
+
+interface Props {
+    username: string
+}
+
+const props = defineProps<Props>()
+</script>
 <template>
-<AppHead :pageTitle="props.username + '\'s Profile'" :description="'Login to' + usePage<any>().props.site.name + '.'" :url="route('auth.login.page')" />
+<AppHead :pageTitle="props.username + '\'s Profile'" :description="props.username + '\'s Profile is disabled.'" :url="route(`user.profile`, { username: props.username })" />
   <Navbar />
   <Sidebar>
     <div class="cell medium-7">
@@ -14,16 +26,3 @@
   </Sidebar>
   <Footer />
 </template>
-<script setup lang="ts">
-import Navbar from '@/Components/LayoutParts/Navbar.vue';
-import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
-import Footer from '@/Components/LayoutParts/Footer.vue';
-import { route, current } from 'momentum-trail';
-import { usePage } from '@inertiajs/vue3';
-
-interface Props {
-  username: string
-}
-
-const props = defineProps<Props>()
-</script>

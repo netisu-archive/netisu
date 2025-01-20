@@ -50,14 +50,15 @@ class MarketController extends Controller
         $item = Cache::remember($cacheKey, now()->addMinutes(15), function () use ($id) {
             return Item::where('id', $id)->first();
         });
-
-        if (!Auth::check()) {
+        
+        if (!$item || (!Auth::check() && !$item->public_view)) {
             abort(403);
         }
-
-        if (!$item || !$item->public_view && Auth::check() && $item->creator_id != Auth::id() && !$authenticatedUserModel->isStaff()) {
-            abort(404);
+        
+        if (!$item->public_view && Auth::check() && $item->creator_id != Auth::id() && !$authenticatedUserModel->isStaff()) {
+            abort(403);
         }
+        
 
         // Retrieve recommendations with caching
         $recommendations = Cache::remember($recommendationCacheKey, now()->addHours(6), function () use ($item) {
@@ -66,7 +67,7 @@ class MarketController extends Controller
                 ['public_view', true],
                 ['status', 'approved'],
                 ['creator_id', $item->creator->id]
-            ])->inRandomOrder()->take(6)->get();
+            ])->with('creator')->inRandomOrder()->take(6)->get();
         });
 
         foreach ($recommendations as $recommendation) {
@@ -81,7 +82,7 @@ class MarketController extends Controller
                 'name' => $item->name,
                 'item_type' => $item->item_type,
                 'thumbnail' => $item->thumbnail(),
-                'preview' => $item->preview(),                
+                'preview' => $item->preview(),
                 'description' => $item->description,
                 'public_view' => $item->public_view,
                 'status' => $item->status,

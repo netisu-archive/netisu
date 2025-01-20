@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Stevebauman\Location\Facades\Location;
 use App\Models\IpLog;
 use App\Models\UserSettings;
+use App\Models\Avatar;
 
 class Roles
 {
@@ -29,10 +30,16 @@ class Roles
                 'ip' => request()->ip(),
             ]);
         };
-
         if (Auth::check() && config('Values.in_testing_phase') && $user->settings->beta_tester !== false) {
             $user = UserSettings::where('id', Auth::id())->update(['beta_tester' => true]);
         }
+        
+        if (Auth::check() && !Avatar::where(['user_id' => Auth::id()])->exists()) {
+            $user = Avatar::create([
+                'user_id' => Auth::id(),
+            ]);
+        }
+
 
         return $next($request);
     }

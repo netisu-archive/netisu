@@ -78,7 +78,7 @@ class Item extends Model
 
     public function creator()
     {
-        return $this->belongsTo('App\Models\User', 'creator_id');
+        return $this->belongsTo(User::class, 'creator_id');
     }
 
     public function onsale()

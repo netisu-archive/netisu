@@ -1,26 +1,21 @@
 <script setup lang="ts">
-import { route } from "momentum-trail";
+import { route } from "momentum-trail"
+
 import { usePage } from "@inertiajs/vue3";
-import Navbar from "@/Components/LayoutParts/Admin/Navbar.vue";
+import Navbar from "@/Components/LayoutParts/Admin/AdminNavbar.vue";
 import AppHead from "@/Components/AppHead.vue";
 </script>
 
 <template>
-  <AppHead
-    pageTitle="Manage Item"
-    description="Login to Vestora."
-    :url="route('admin.items.manage-item', { id: usePage<any>().props.item.id })"
-  />
+  <AppHead pageTitle="Manage Item" description="Login to Vestora."
+    :url="route('admin.items.manage-item', { id: usePage<any>().props.item.id })" />
   <Navbar>
     <div class="card">
       <div class="card-content">
         <div class="columns">
           <div class="column is-2">
             <figure class="image">
-              <img
-                class="is-rounded"
-                :src="usePage<any>().props.item.thumbnail"
-              />
+              <img :src="usePage<any>().props.item.thumbnail" />
             </figure>
           </div>
           <div class="column is-5">
@@ -36,12 +31,8 @@ import AppHead from "@/Components/AppHead.vue";
           <div class="column">
             <label><strong>Moderation Actions:</strong></label>
             <br />
-            <a href="purgeitem.html" class="button is-danger is-outlined"
-              >Purge Item Name</a
-            >
-            <a href="purgeitem.html" class="button is-danger is-outlined"
-              >Purge Item Description</a
-            >
+            <a href="purgeitem.html" class="button is-danger is-outlined">Purge Item Name</a>
+            <a href="purgeitem.html" class="button is-danger is-outlined">Purge Item Description</a>
             <a href="purgeitem.html" class="button is-danger is-outlined">Delete Item</a>
           </div>
         </div>
@@ -83,7 +74,7 @@ import AppHead from "@/Components/AppHead.vue";
             <div>
               <p class="heading">Stock</p>
               <p class="title">{{ usePage<any>().props.item.remaining_stock }} out of
-                {{ usePage<any>().props.item.initial_stock }}</p>
+                  {{ usePage<any>().props.item.initial_stock }}</p>
             </div>
           </div>
         </nav>

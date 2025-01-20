@@ -2,7 +2,8 @@
 import { ref, computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import axios from "axios";
-import { route } from "momentum-trail";
+import { route } from 'momentum-trail';
+
 import LanguageModal from "../Modal/LanguageModal.vue";
 import SearchResult from "../SearchResult.vue";
 import NavLink from "../NavLink.vue";
@@ -10,8 +11,8 @@ import Button from "../Button.vue";
 import SearchResultSkeleton from "../SearchResultSkeleton.vue";
 import VLazyImage from "v-lazy-image";
 import PageLoader from "../Loaders/PageLoader.vue";
-import "../../../css/style.css";
 import throttle from 'lodash/throttle';
+import "../../../css/style.css";
 
 // Define the SearchResult interface
 interface SearchResult {
@@ -146,48 +147,46 @@ const { props } = usePage<any>();
     <LanguageModal />
     <div v-if="props.auth?.user" class="modal" id="profile-modal">
         <div class="modal-card modal-card-body" :style="props.auth?.user?.settings.profile_banner_enabled
-                ? {
-                    background:
-                        'url(' + props.auth?.user?.settings.profile_banner_url + ')',
-                    'background-repeat': 'no-repeat',
-                    'background-size': 'cover',
-                    'box-shadow':
-                        'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
-                }
-                : null
+            ? {
+                background:
+                    'url(' + props.auth?.user?.settings.profile_banner_url + ')',
+                'background-repeat': 'no-repeat',
+                'background-size': 'cover',
+                'box-shadow':
+                    'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
+            }
+            : null
             ">
             <div class="section-borderless">
                 <div class="gap-2 align-middle flex-container align-justify">
                     <button class="gap-2 align-middle flex-container squish">
                         <v-lazy-image :src="usePage<any>().props.auth?.user?.headshot" width="40" class="headshot"
-                            alt="Avatar" src-placeholder="assets/img/dummy_headshot.png" :style="props.auth?.user?.settings.calling_card_enabled
-                                    ? {
-                                        margin: '0',
-                                        border: '0',
-                                        'background-image':
-                                            'url(' +
-                                            props.auth?.user?.settings.calling_card_url +
-                                            ')',
-                                        'background-repeat': 'no-repeat',
-                                        'background-size': 'cover',
-                                    }
-                                    : null
+                            alt="Avatar" src-placeholder="/assets/img/dummy_headshot.png" :style="props.auth?.user?.settings.calling_card_enabled
+                                ? {
+                                    margin: '0',
+                                    border: '0',
+                                    'background-image':
+                                        'url(' +
+                                        props.auth?.user?.settings.calling_card_url +
+                                        ')',
+                                    'background-repeat': 'no-repeat',
+                                    'background-size': 'cover',
+                                }
+                                : null
                                 " />
                         <div class="text-start">
                             <div class="text-sm fw-semibold text-body">
-                                {{ props.auth?.user?.display_name }}
+                                {{ props.auth?.user?.display_name }}<span class="text-xs text-muted">
+                                    ({{ "@" + props.auth?.user?.username }} &bullet;
+                                    {{ "Lvl. " + props.auth?.user?.level }})</span>
                             </div>
-                            <div v-if="props.auth?.user?.staff" class="mt-1 mb-1 badge badge-danger fw-semibold w-100">
+                            <div v-if="props.auth?.user?.staff" class="mt-1 mb-1 badge badge-danger fw-semibold">
                                 {{ props.auth?.user?.position }}
                             </div>
 
                             <div v-else-if="props.auth?.user?.settings.beta_tester"
-                                class="mt-1 mb-1 badge badge-success fw-semibold w-100">
+                                class="mt-1 mb-1 badge badge-success fw-semibold">
                                 Beta Tester
-                            </div>
-                            <div v-else class="text-xs text-body fw-semibold">
-                                {{ "@" + props.auth?.user?.username }} &bullet;
-                                {{ "Lvl. " + props.auth?.user?.level }}
                             </div>
                         </div>
                     </button>
@@ -200,23 +199,22 @@ const { props } = usePage<any>();
             <div class="section-borderless">
                 <div class="gap-2 section flex-container">
                     <Link :href="route(`user.profile`, { username: props.auth?.user?.username })
-                        " class="min-w-0 btn btn-info btn-sm text-truncate">
+                        " class="min-w-0 btn btn-info btn-sm">
                     <i class="fad fa-user-crown"></i>
                     </Link>
 
-                    <Link :href="route(`avatar.page`)" class="min-w-0 btn btn-success btn-sm text-truncate">
+                    <Link :href="route(`avatar.page`)" class="min-w-0 btn btn-success btn-sm">
                     <i class="fad fa-palette"></i>
                     </Link>
 
-                    <Link :href="route(`user.settings.page`)" class="min-w-0 btn btn-warning btn-sm text-truncate">
+                    <Link :href="route(`user.settings.page`)" class="min-w-0 btn btn-warning btn-sm">
                     <i class="fad fa-wrench"></i>
                     </Link>
                     <a v-if="props.auth?.user && props.auth?.user?.staff" :href="route('admin.page')"
-                        class="min-w-0 btn btn-danger btn-sm text-truncate show-for-small-only">
+                        class="min-w-0 btn btn-danger btn-sm show-for-small-only">
                         <i class="fad fa-gavel"></i>
                     </a>
-                    <Link :href="route('auth.logout')" method="post" class="min-w-0 btn btn-danger btn-sm text-truncate"
-                        as="button">
+                    <Link :href="route('auth.logout')" method="post" class="min-w-0 btn btn-danger btn-sm" as="button">
                     <i class="fad fa-right-from-bracket"></i>
                     </Link>
                 </div>
@@ -279,7 +277,7 @@ const { props } = usePage<any>();
                                 <div>
                                     Show all results for "<span class="search-keyword">{{
                                         search
-                                        }}</span>"
+                                    }}</span>"
                                 </div>
                             </div>
                             <i class="px-1 fad fa-chevron-right text-muted"></i>
@@ -346,7 +344,7 @@ const { props } = usePage<any>();
                                                 notification.data.object }} &nbsp;</span>
                                             <span class="text-sm text-muted">{{
                                                 notification.data.message
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div class="text-xs text-muted">
                                             {{ notification.DateHum }}
@@ -390,7 +388,7 @@ const { props } = usePage<any>();
                 <a href="#" class="text-sm nav-link" style="line-height: 20px" v-tippy :content="props.auth?.user?.coins + '' +
                     ` Coin${props.auth?.user?.coins > 1 ? 's' : ''} & ` +
                     props.auth?.user?.bucks +
-                    ` Buck ${props.auth?.user?.bucks > 1 ? 's' : ''} `
+                    ` Buck${props.auth?.user?.bucks > 1 ? 's' : ''} `
                     " data-tooltip-placement="bottom">
                     <div class="text-warning">
                         <i class="fad fa-coins" style="width: 22px"></i>{{ props.auth?.user?.coins }}

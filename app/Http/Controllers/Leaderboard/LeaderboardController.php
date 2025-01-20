@@ -16,7 +16,7 @@ class LeaderboardController extends Controller
     {
 
         $leaderboardService = new LeaderboardService();
-        $leaderboard = $leaderboardService->generate();
+        $leaderboard = $leaderboardService->generate()->take(10);
         $bucksLeaderboard = User::orderBy('bucks', 'desc')->take(10)->get();
         $bucksData = [];
 

@@ -15,7 +15,8 @@ defineProps<{
 <template>
     <div class="section">
         <a :href="link" class="d-block squish">
-            <v-lazy-image sizes="(max-width: 320px) 280px, 440px" :src="image" class="mb-2 blog-thumbnail" />
+            <v-lazy-image style="
+    max-height: 100%; max-width: 100%; display: block;" :src="image" class="mb-2 blog-thumbnail" />
             <div style="line-height: 18px">
                 <div class="d-block fw-semibold text-body">
                     {{ title }}

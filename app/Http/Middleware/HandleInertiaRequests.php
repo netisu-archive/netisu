@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 use App\Models\Item;
 use App\Models\Space;
+use Illuminate\Support\Carbon;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -61,6 +62,7 @@ class HandleInertiaRequests extends Middleware
                         'birthdate' => $request->user()->birthdate,
                         'email_verified_at' => $request->user()->email_verified_at,
                         'event_currency' => shortNum($request->user()->event_currency),
+                        'next_currency_payout' => Carbon::parse($request->user()->next_reward_payout)->diffForHumans(),
                         'coins' => shortNum($request->user()->coins),
                         'bucks' => shortNum($request->user()->bucks),
                         'status' => $request->user()->status,

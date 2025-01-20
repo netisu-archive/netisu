@@ -69,7 +69,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->wantsJson() || $request->isJson() && !Auth::check()) {
                 return response()->json([
                     'type' => 'error',
-                    'message' => 'login nigga'
+                    'message' => 'Unauthentiated.'
                 ], 403);
             }
 
@@ -153,6 +153,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Fahlisaputra\Minify\Middleware\MinifyHtml::class,
             \Fahlisaputra\Minify\Middleware\MinifyCss::class,
             \App\Http\Middleware\CompressResponse::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \Fahlisaputra\Minify\Middleware\MinifyJavascript::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
             \App\Http\Middleware\Localization::class,
@@ -170,7 +171,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\GiveDailyRewards::class,
             \Illuminate\Http\Middleware\TrustHosts::class,
             \App\Http\Middleware\UpdateOnlineStatus::class,
-            \App\Http\Middleware\VerifyAccount::class,
+            \Inertia\EncryptHistoryMiddleware::class,
         ]);
         $middleware->alias([
             'admin' => \App\Http\Middleware\Admin::class,

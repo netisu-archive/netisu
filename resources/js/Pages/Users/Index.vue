@@ -3,9 +3,8 @@ import Navbar from '@/Components/LayoutParts/Navbar.vue';
 import AppHead from '@/Components/AppHead.vue';
 import Footer from '@/Components/LayoutParts/Footer.vue';
 import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
-import { route, current } from "momentum-trail";
-import axios from 'axios';
-import { ref, watch } from 'vue';
+import { route } from "momentum-trail"
+
 import { Link, usePage } from '@inertiajs/vue3';
 import VLazyImage from "v-lazy-image";
 </script>
@@ -43,9 +42,11 @@ import VLazyImage from "v-lazy-image";
                     </div>
                 </div>
             </div>
-            <div v-if="!usePage<any>().props.users.data?.['length']" class="text-danger fw-semibold">ERR T100: No users found</div>
+            <div v-if="!usePage<any>().props.users.data?.['length']" class="text-danger fw-semibold">ERR T100: No users
+                found</div>
             <div v-if="usePage<any>().props.users.data?.['length']" class="mx-3 my-3 divider"></div>
-            <Pagination v-if="usePage<any>().props.users.data?.['length']" v-bind:pagedata="usePage<any>().props.users"></Pagination>
+            <Pagination v-if="usePage<any>().props.users.data?.['length']" v-bind:pagedata="usePage<any>().props.users">
+            </Pagination>
         </div>
     </Sidebar>
     <Footer />

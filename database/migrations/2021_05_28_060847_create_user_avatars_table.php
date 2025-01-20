@@ -17,14 +17,13 @@ class CreateUserAvatarsTable extends Migration
             $table->bigInteger('user_id')->unsigned();
 
             $table->string('image')->default('default');
-            $table->timestamp('flood')->nullable();
-
             $table->integer('hat_1')->nullable();
             $table->integer('hat_2')->nullable();
             $table->integer('hat_3')->nullable();
             $table->integer('hat_4')->nullable();
             $table->integer('hat_5')->nullable();
             $table->integer('hat_6')->nullable();
+            
             $table->integer('addon')->nullable();
             $table->integer('head')->nullable();
             $table->integer('face')->nullable();

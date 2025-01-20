@@ -6,7 +6,8 @@ import { ref, computed } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import AppHead from '@/Components/AppHead.vue';
 import axios from 'axios';
-import { route, current } from "momentum-trail";
+import { route } from "momentum-trail"
+
 
 const form = useForm({
    email: '',
@@ -68,7 +69,8 @@ const submit = () => {
 </script>
 
 <template>
-   <AppHead pageTitle="Reset Password" :description="'Reset your ' + usePage<any>().props.site.name + ' account password'"
+   <AppHead pageTitle="Reset Password"
+      :description="'Reset your ' + usePage<any>().props.site.name + ' account password'"
       :url="route('auth.register.page')" />
    <Navbar />
    <Sidebar>
@@ -117,11 +119,13 @@ const submit = () => {
                            :class="{ disabled: isPreviousButtonDisabled }">
                            Previous
                         </button>
-                        <button v-if="currentStep === 1" class="px-4 btn btn-success" @click="nextStep" :disabled="form.processing">
+                        <button v-if="currentStep === 1" class="px-4 btn btn-success" @click="nextStep"
+                           :disabled="form.processing">
                            Send Email
                         </button>
                      </div>
-                     <Link class="text-xs fw-bold text-muted text-uppercase" :href="route('auth.login.page')">Already have
+                     <Link class="text-xs fw-bold text-muted text-uppercase" :href="route('auth.login.page')">Already
+                     have
                      an
                      account?</Link>
                   </div>

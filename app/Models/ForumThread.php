@@ -29,49 +29,33 @@ class ForumThread extends Model
 
     public function creator()
     {
-        return $this->belongsTo('App\Models\User', 'creator_id');
+        return $this->belongsTo(User::class);
     }
 
     public function topic()
     {
-        return $this->belongsTo('App\Models\ForumTopic', 'topic_id');
+        return $this->belongsTo(ForumTopic::class);
     }
 
-    public function replies($perPage = 4)
+    public function replies()
     {
-    // Validate and check if the thread exists
-    $thread = ForumThread::findOrFail($this->id);
-
-    $query = ForumReply::with('creator')->where('thread_id', '=', $thread->id)->orderBy('created_at', 'ASC');
-
-    // Filter based on user permissions
-    if (!Auth::check() || !Auth::user()->isstaff()) {
-        $query->where('is_deleted', false);
-    }
-
-    // Apply pagination using dedicated methods for clarity
-    return $query->paginate($perPage);
-    }
-
-    public function lastReply()
-    {
-        return ForumReply::where('thread_id', '=', $this->id)->orderBy('created_at', 'DESC')->first();
+        return $this->hasMany(ForumReply::class, 'thread_id');
     }
 
     public function slug(): string
     {
-    $text = $this->title;
+        $text = $this->title;
 
-    // Convert to lowercase and replace spaces with a separator
-    $text = strtolower(trim(preg_replace('/\s+/', '-', $text)));
+        // Convert to lowercase and replace spaces with a separator
+        $text = strtolower(trim(preg_replace('/\s+/', '-', $text)));
 
-    $allowedChars = 'a-z0-9-'; // Adjust this to include desired characters
-    $text = preg_replace('/[^' . $allowedChars . ']/', '', $text);
-    $text = preg_replace('/-{2,}/', '-', $text);
+        $allowedChars = 'a-z0-9-'; // Adjust this to include desired characters
+        $text = preg_replace('/[^' . $allowedChars . ']/', '', $text);
+        $text = preg_replace('/-{2,}/', '-', $text);
 
-    // Handle trailing separators
-    $text = trim($text, '-');
+        // Handle trailing separators
+        $text = trim($text, '-');
 
-    return $text;
+        return $text;
     }
 }

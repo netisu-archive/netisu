@@ -39,47 +39,6 @@ class GrabController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-
-    public function SpacesIndex(Request $request)
-    {
-        $search = $request->input('search', '');
-
-        $spaces = Space::where([
-
-            ['thumbnail_pending', '!=', true],
-            ['name', 'like', "%$search%"]
-
-        ])->orderBy('created_at', 'desc')->paginate(12)->through(function ($space) {
-            return [
-                'name' => $space->name,
-                'id' => $space->id,
-                'slug' => $space->slug(),
-                'name' => $space->name,
-                'creator' => $space->creator->display_name,
-                'timecreated' => $space->created_at,
-                'description' => $space->description,
-                'DateHum' => $space->DateHum,
-                'member_count' => $space->member_count,
-                'thumbnail' => $space->thumbnail(),
-            ];
-        });
-
-
-        return inertia('Spaces/Index', [
-            'spaces' => $spaces,
-            'search' => $search,
-        ]);
-    }
-
-    public function SpacesView(Request $request, $id)
-    {
-        $space = Space::where('id', $id)->with(['creator'])->first();
-
-        return inertia('Spaces/View', [
-            'space' => $space,
-        ]);
-    }
-
     public function customizeIndex()
     {
         $colors = config('avatar_colors'); // Assuming you've defined the colors in a config file.

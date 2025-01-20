@@ -22,7 +22,7 @@ function applyTheme(theme) {
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    const theme = localStorage.getItem('theme') || 'light';
+    const theme = localStorage.getItem('theme') || 's08nj';
     applyTheme(theme);
 
     const lightThemeBtn = document.getElementById('light-theme-btn');
@@ -30,11 +30,11 @@ function applyTheme(theme) {
 
     if (lightThemeBtn && darkThemeBtn) {
       lightThemeBtn.addEventListener('click', function () {
-        setTheme('light');
+        setTheme('s08nj');
       });
 
       darkThemeBtn.addEventListener('click', function () {
-        setTheme('dark');
+        setTheme('t4ri1');
       });
     }
   });

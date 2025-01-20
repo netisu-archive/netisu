@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { route } from "momentum-trail";
+import { route } from 'momentum-trail';
+
 import { usePage, router } from "@inertiajs/vue3";
 
 const locale_active = usePage().props?.['locale'];

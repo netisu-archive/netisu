@@ -82,15 +82,21 @@ class AuthController extends Controller
 
     public function RegisterIndex()
     {
-        $items = Cache::remember('obtainable_items', 60, function () {
-            return $this->getItemData(config('ObtainableItems.starter_item_ids'));
+        $tester = Cache::remember('tester', 60, function () {
+            return User::whereHas('settings', function ($query) {
+                $query->where('beta_tester', 1);
+            })->inRandomOrder()->first();
         });
 
         return inertia('Authentication/Create', [
             'themes' => array_filter(config('themes.roster'), function ($theme) {
                 return $theme['available'];
             }),
-            'items' => $items,
+            'tester' => [
+                'username' => $tester->username,
+                'avatar' => $tester->thumbnail(),
+
+            ]
         ]);
     }
     private function getItemData(array $itemIds): array
@@ -248,6 +254,8 @@ class AuthController extends Controller
         } else {
             Auth::guard('web')->logout();
         }
+        
+        Inertia::clearHistory();
 
         return redirect()->intended(route("auth.login.page"))->with([
             'type' => 'success',

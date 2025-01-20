@@ -1,8 +1,9 @@
 <script setup lang="ts">
-  import { route } from "momentum-trail";
-  import { usePage } from "@inertiajs/vue3";
-  import Navbar from "@/Components/LayoutParts/Admin/Navbar.vue";
-  import AppHead from "@/Components/AppHead.vue";
+import { route } from "momentum-trail"
+
+import { usePage } from "@inertiajs/vue3";
+import Navbar from "@/Components/LayoutParts/Admin/AdminNavbar.vue";
+import AppHead from "@/Components/AppHead.vue";
 </script>
 
 <template>
@@ -29,7 +30,7 @@
                         </p>
                         <div class="content">
                             <blockquote>{{ usePage<any>().props.user.about_me ?? usePage<any>().props.user.username +
-                                        "does not hava a description yet."}}</blockquote>
+                                        "does not hava a description yet." }}</blockquote>
                         </div>
                         <template v-if="usePage<any>().props.permissions.canMangeUser">
                             <label><strong>UID:</strong></label> <label>{{ usePage<any>().props.user.id }}</label>
@@ -51,7 +52,7 @@
                                 <a :href="route(`user.profile`, { username: usePage<any>().props.user.username })"
                                     class="button is-outlined">View Profile</a>
                                 <a href="grant.html" class="button is-outlined">Grant Achievement (not working atm)</a>
-                                <Link :href="route(`admin.users.gift-user`, {id: usePage<any>().props.user.id })"
+                                <Link :href="route(`admin.users.gift-user`, { id: usePage<any>().props.user.id })"
                                     class="button is-outlined">Gift Item</Link>
                             </div>
                         </div>

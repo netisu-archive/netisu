@@ -17,7 +17,7 @@ defineProps<{
         <div class="mx-auto flex-child-grow" style="width: 100px">
             <Link :href="route(`user.profile`, { username: name})" class="text-sm text-center d-block squish">
                 <v-lazy-image :src="Thumbnail" width="60" class="headshot" alt="Avatar"
-                    src-placeholder="assets/img/dummy_headshot.png" />
+                    src-placeholder="/assets/img/dummy_headshot.png" />
                 <div style="line-height: 16px">
                     <div class="text-truncate">{{ DisplayName }}</div>
                     <div class="text-xs text-muted text-truncate">

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Status;
 use App\Http\Controllers\Controller;
+use App\Models\Followers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -130,9 +131,9 @@ class UserController extends Controller
                     'thumbnail' => $user->thumbnail(),
                     'headshot' => $user->headshot(),
                     'level' => $user->getLevel(),
-                    'following' => $user->following()->get(),
+                    'following' => $userFollowing,
                     'friends' => $friends,
-                    'followers' => $user->followers()->get(),
+                    'followers' => $userFollowers,
                     'staff' => $user->isStaff(),
                     'position' => $user->CurrentPosition(),
                     'followsYou' => $thisFollowing,

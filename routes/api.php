@@ -52,6 +52,9 @@ Route::group(['as' => 'api.'], function () {
         Route::get('/', function () {
             return redirect()->to(config('Values.production.domains.main'));
         });
+        Route::get('/name-availability', [UserController::class, 'UsernameAvailability'])->name('name-availability');
+        Route::get('/validate-email', [UserController::class, 'ValidateEmail'])->name('email-validate');
+
         Route::get('/user-profile/{id}', [UserController::class, 'getUser'])->name('profile');
         Route::get('/online/{id}', [UserController::class, 'getStatus'])->name('online');
         Route::get('/inventory/{id}', [UserController::class, 'getUserItems'])->name('inventory');

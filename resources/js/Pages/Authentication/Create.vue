@@ -3,11 +3,13 @@ import { ref, reactive, computed, watch } from "vue";
 import { useForm, usePage } from "@inertiajs/vue3";
 import Navbar from "@/Components/LayoutParts/Navbar.vue";
 import Sidebar from "@/Components/LayoutParts/Sidebar.vue";
-import { route } from "momentum-trail";
+import { route } from "momentum-trail"
+
 import AppHead from "@/Components/AppHead.vue";
 import Footer from "@/Components/LayoutParts/Footer.vue";
 import axios from "axios";
-
+import throttle from "lodash/throttle";
+import VLazyImage from "v-lazy-image";
 const form = useForm({
     username: "",
     displayname: "",
@@ -31,16 +33,59 @@ defineProps<{
 const currentTheme = localStorage.getItem("theme");
 
 let currentStep = ref(1);
+const isStepOk = ref(false);
 
-const totalSteps = 7;
+const totalSteps = 6;
 
 const site = computed(() => usePage<any>().props.site);
 
 const nextStep = () => {
     if (currentStep.value < totalSteps) {
         currentStep.value++;
+        isStepOk.value = false;
     }
 };
+const checkStepOne = throttle(async (name) => {
+    try {
+        await axios.get(`/sanctum/csrf-cookie`);
+        const response = await axios.get(route(`api.user.email-validate`, { email: name }));
+        if (response.data.error === true && response.data.message) {
+            // Set ForumError value here (assuming response.data.json.message contains the error message)
+            formError.value = response.data.message;
+            isStepOk.value = false;
+
+        } else {
+            // Handle successful response (e.g., set isStepOk.value to true)
+            formError.value = "";
+            isStepOk.value = true;
+        }
+    } catch (error) {
+        // Handle errors during API call or CSRF token retrieval
+        console.error("Error checking email :", error);
+        // You can display an error message to the user here
+    }
+}, 1000);
+
+const checkStepTwo = throttle(async (name) => {
+    try {
+        await axios.get(`/sanctum/csrf-cookie`);
+        const response = await axios.get(route(`api.user.name-availability`, { name: name }));
+        if (response.data.error === true && response.data.message) {
+            // Set ForumError value here (assuming response.data.json.message contains the error message)
+            formError.value = response.data.message;
+            isStepOk.value = false;
+
+        } else {
+            // Handle successful response (e.g., set isStepOk.value to true)
+            formError.value = "";
+            isStepOk.value = true;
+        }
+    } catch (error) {
+        // Handle errors during API call or CSRF token retrieval
+        console.error("Error checking name availability:", error);
+        // You can display an error message to the user here
+    }
+}, 1000);
 
 const isPreviousButtonDisabled = computed(() => {
     return currentStep.value === 1;
@@ -48,6 +93,7 @@ const isPreviousButtonDisabled = computed(() => {
 
 const previousStep = () => {
     currentStep.value--;
+    isStepOk.value = true;
 };
 
 const getProgressWidth = () => {
@@ -57,7 +103,7 @@ const getProgressWidth = () => {
 
 const getStepText = () => {
     if (currentStep.value === 1) {
-        return "My Name is Nat and I will be guiding you through the sign-up process!";
+        return `My Name is ${usePage<any>().props.tester.username} and I will be guiding you through the sign-up process!`;
     } else if (currentStep.value === 2) {
         return "Great! Now, what should we call you?";
     } else if (currentStep.value === 3) {
@@ -67,8 +113,6 @@ const getStepText = () => {
     } else if (currentStep.value === 5) {
         return "Choose a website theme.";
     } else if (currentStep.value === 6) {
-        return "Express Yourself! Choose a starting item.";
-    } else if (currentStep.value === 7) {
         return 'By clicking the "Sign Me Up!" button below, you agree to our Terms of Service and Privacy Policy.';
     }
 };
@@ -83,8 +127,6 @@ const getStepDesc = () => {
     } else if (currentStep.value === 5) {
         return "Choose a theme that is comfortable for your viewing experience, this can be changed anytime later from your account settings.";
     } else if (currentStep.value === 6) {
-        return "Dont worry about picking the wrong one, you can get the entire set for FREE after sign up!";
-    } else if (currentStep.value === 7) {
         return "You can review our Terms of Service and/or Privacy Policy below.";
     }
 };
@@ -107,7 +149,7 @@ const submit = () => {
     });
 };
 
-const days = reactive(
+var days = reactive(
     [...Array(31).keys()].map((day) => ({
         value: day + 1,
         label: (day + 1).toString(),
@@ -136,21 +178,13 @@ const years = [...Array(currentYear - 1919 + 1).keys()]
     .reverse();
 
 function updateDays() {
-    const selectedMonth = form.birthdate.month;
-    const daysLimit = selectedMonth === 2 ? 28 : 30;
+    const selectedMonthNumber = Number(form.birthdate.month);
+    const daysLimit = selectedMonthNumber === 2 ? 28 : 30;
 
-    form.days = [...Array(daysLimit).keys()].map((day) => ({
+    days = [...Array(daysLimit).keys()].map((day) => ({
         value: day + 1,
         label: (day + 1).toString(),
     }));
-}
-
-function onImgErrorSmall(id) {
-    let source = document.getElementById(id) as HTMLImageElement;
-    source.src = "/assets/img/dummy-error.png";
-    source.onerror = null;
-
-    return true;
 }
 
 updateDays(); // Call the function initially to set the days based on the default month
@@ -160,47 +194,36 @@ watch(() => form.birthdate.month, updateDays);
 </script>
 
 <template>
-    <AppHead
-        pageTitle="Register"
-        :description="'Register to ' + usePage<any>().props.site.name + ''"
-        :url="route('auth.register.page')"
-    />
+    <AppHead pageTitle="Register" :description="'Register to ' + usePage<any>().props.site.name + ''"
+        :url="route('auth.register.page')" />
     <Navbar />
     <Sidebar>
         <div class="cell large-8 medium-10">
+            <div v-if="formError" class="alert alert-danger mb-2">
+                {{ formError }}
+            </div>
             <div class="card">
                 <div class="card-body">
                     <div class="progress-bar">
-                        <span
-                            class="progress"
-                            :style="{ width: getProgressWidth() }"
-                        ></span>
+                        <span class="progress" :style="{ width: getProgressWidth() }"></span>
                     </div>
                     <div v-if="form.errors.length" class="alert alert-danger mt-2">
-                    {{ form.errors }}
+                        {{ form.errors }}
                     </div>
+
                     <div class="mx-1 my-3 divider"></div>
                     <div class="grid-x grid-margin-x grid-padding-y">
                         <div class="text-center cell medium-3">
-                            <img
-                                src="/assets/img/earl_placeholder.png"
-                                class="show-for-medium"
-                                alt="earl"
-                            />
-                            <img
-                                src="/assets/img/earl_placeholder.png"
-                                alt="earl"
-                                style="max-width: 180px"
-                                class="show-for-small-only"
-                            />
+                            <v-lazy-image :src="usePage<any>().props.tester.avatar" class="show-for-medium"
+                                alt="earl" />
+                            <v-lazy-image :src="usePage<any>().props.tester.avatar" alt="earl" style="max-width: 180px"
+                                class="show-for-small-only" />
                         </div>
                         <div class="cell medium-9">
                             <div class="text-2xl fw-semibold">
                                 Welcome to {{ site.name }}!
                             </div>
-                            <div
-                                class="gap-1 mb-2 flex-container flex-dir-column"
-                            >
+                            <div class="gap-1 mb-2 flex-container flex-dir-column">
                                 <div class="text-sm text-muted fw-semibold">
                                     {{ getStepText() }}
                                 </div>
@@ -214,65 +237,37 @@ watch(() => form.birthdate.month, updateDays);
                             <form @submit.prevent="submit">
                                 <div v-if="currentStep === 1">
                                     <!-- First section content -->
-                                    <div
-                                        class="text-xs fw-bold text-muted text-uppercase"
-                                    >
+                                    <div class="text-xs fw-bold text-muted text-uppercase">
                                         Email Address
                                     </div>
-                                    <input
-                                        v-model="form.email"
-                                        type="text"
-                                        class="form"
-                                        placeholder="Email Address..."
-                                    />
+                                    <input v-model="form.email" @input="checkStepOne(form.email)" type="text"
+                                        class="form" placeholder="Email Address..." />
                                 </div>
                                 <div v-else-if="currentStep === 2">
                                     <!-- Second section content -->
                                     <div class="mb-2">
-                                        <div
-                                            :class="{
-                                                'text-danger':
-                                                    form.errors.username,
-                                            }"
-                                            class="text-xs fw-bold text-danger text-uppercase"
-                                        >
+                                        <div :class="{
+                                            'text-danger':
+                                                form.errors.username,
+                                        }" class="text-xs fw-bold text-danger text-uppercase">
                                             Username
                                         </div>
-                                        <input
-                                            type="text"
-                                            v-model="form.username"
-                                            name="username"
-                                            class="form"
-                                            placeholder="@Username..."
-                                        />
-                                        <div
-                                            v-if="form.errors.username"
-                                            class="text-xs text-danger fw-semibold"
-                                        >
+                                        <input type="text" v-model="form.username" name="username" class="form"
+                                            placeholder="@Username..." @input="checkStepTwo(form.username)" />
+                                        <div v-if="form.errors.username" class="text-xs text-danger fw-semibold">
                                             {{ form.errors.username }}
                                         </div>
                                     </div>
                                     <div class="mt-2">
-                                        <div
-                                            :class="{
-                                                'text-danger':
-                                                    form.errors.displayname,
-                                            }"
-                                            class="text-xs fw-bold text-muted text-uppercase"
-                                        >
+                                        <div :class="{
+                                            'text-danger':
+                                                form.errors.displayname,
+                                        }" class="text-xs fw-bold text-muted text-uppercase">
                                             Display Name
                                         </div>
-                                        <input
-                                            type="text"
-                                            v-model="form.displayname"
-                                            name="displayname"
-                                            class="form"
-                                            placeholder="Display Name..."
-                                        />
-                                        <div
-                                            v-if="form.errors.displayname"
-                                            class="text-xs text-danger fw-semibold"
-                                        >
+                                        <input type="text" v-model="form.displayname" name="displayname" class="form"
+                                            placeholder="Display Name..." />
+                                        <div v-if="form.errors.displayname" class="text-xs text-danger fw-semibold">
                                             {{ form.errors.displayname }}
                                         </div>
                                     </div>
@@ -281,106 +276,62 @@ watch(() => form.birthdate.month, updateDays);
                                 <div v-else-if="currentStep === 3">
                                     <!-- Third section content -->
                                     <div class="mb-2">
-                                        <div
-                                            class="text-xs fw-bold text-muted text-uppercase"
-                                        >
+                                        <div class="text-xs fw-bold text-muted text-uppercase">
                                             Password
                                         </div>
-                                        <input
-                                            class="form"
-                                            placeholder="Password..."
-                                            v-model="form.password"
-                                            type="password"
-                                            name="password"
-                                        />
+                                        <input class="form" placeholder="Password..." v-model="form.password"
+                                            type="password" name="password" />
                                     </div>
                                     <div class="mt-2">
-                                        <div
-                                            class="text-xs fw-bold text-muted text-uppercase"
-                                        >
+                                        <div class="text-xs fw-bold text-muted text-uppercase">
                                             Confirm Password
                                         </div>
-                                        <input
-                                            class="form"
-                                            placeholder="Confirm Password..."
-                                            v-model="form.password_confirmation"
-                                            type="password"
-                                            name="password_confirmation"
-                                        />
+                                        <input class="form" placeholder="Confirm Password..."
+                                            v-model="form.password_confirmation" type="password"
+                                            name="password_confirmation" />
                                     </div>
                                 </div>
                                 <div v-else-if="currentStep === 4">
                                     <!-- Fourth section content -->
-                                    <div
-                                        class="grid-x grid-margin-x grid-padding-y"
-                                    >
+                                    <div class="grid-x grid-margin-x grid-padding-y">
                                         <div class="cell medium-4">
-                                            <div
-                                                class="mb-1 text-xs fw-bold text-muted text-uppercase"
-                                            >
+                                            <div class="mb-1 text-xs fw-bold text-muted text-uppercase">
                                                 Month
                                             </div>
-                                            <select
-                                                v-model="form.birthdate.month"
-                                                class="form form-select"
-                                                name="birth_month"
-                                                @change="updateDays"
-                                            >
+                                            <select v-model="form.birthdate.month" class="form form-select"
+                                                name="birth_month" @change="updateDays">
                                                 <option value="">
                                                     Select Month
                                                 </option>
-                                                <option
-                                                    v-for="month in months"
-                                                    :key="month.value"
-                                                    :value="month.value"
-                                                >
+                                                <option v-for="month in months" :key="month.value" :value="month.value">
                                                     {{ month.label }}
                                                 </option>
                                             </select>
                                         </div>
                                         <div class="cell medium-4">
-                                            <div
-                                                class="mb-1 text-xs fw-bold text-muted text-uppercase"
-                                            >
+                                            <div class="mb-1 text-xs fw-bold text-muted text-uppercase">
                                                 Day
                                             </div>
-                                            <select
-                                                v-model="form.birthdate.day"
-                                                class="form form-select"
-                                                name="birth_day"
-                                            >
+                                            <select v-model="form.birthdate.day" class="form form-select"
+                                                name="birth_day">
                                                 <option value="">
                                                     Select Day
                                                 </option>
-                                                <option
-                                                    v-for="day in days"
-                                                    :key="day.value"
-                                                    :value="day.value"
-                                                >
+                                                <option v-for="day in days" :key="day.value" :value="day.value">
                                                     {{ day.label }}
                                                 </option>
                                             </select>
                                         </div>
                                         <div class="cell medium-4">
-                                            <div
-                                                class="mb-1 text-xs fw-bold text-muted text-uppercase"
-                                            >
+                                            <div class="mb-1 text-xs fw-bold text-muted text-uppercase">
                                                 Year
                                             </div>
-                                            <select
-                                                v-model="form.birthdate.year"
-                                                class="form form-select"
-                                                name="birth_year"
-                                                @change="updateDays()"
-                                            >
+                                            <select v-model="form.birthdate.year" class="form form-select"
+                                                name="birth_year" @change="updateDays()">
                                                 <option value="">
                                                     Select Year
                                                 </option>
-                                                <option
-                                                    v-for="year in years"
-                                                    :key="year.value"
-                                                    :value="year.value"
-                                                >
+                                                <option v-for="year in years" :key="year.value" :value="year.value">
                                                     {{ year.label }}
                                                 </option>
                                             </select>
@@ -389,114 +340,52 @@ watch(() => form.birthdate.month, updateDays);
                                 </div>
                                 <div v-else-if="currentStep === 5">
                                     <!-- Fifth section content -->
-                                    <div
-                                        class="grid-x grid-margin-x grid-padding-y"
-                                    >
-                                        <div
-                                            class="cell large-6"
-                                            v-for="(
+                                    <div class="grid-x grid-margin-x grid-padding-y">
+                                        <div class="cell large-6" v-for="(
                                                 theme, index
-                                            ) in themes"
-                                            :key="index"
-                                        >
-                                            <div
-
-                                                :class="{
-                                                    active:
-                                                        currentTheme ===
-                                                        theme.lowercase,
-                                                }"
+                                            ) in themes" :key="index">
+                                            <div :class="{
+                                                active:
+                                                    currentTheme ===
+                                                    theme.lowercase,
+                                            }"
                                                 class="mb-2 theme-selection squish card card-body card-inner mb-lg-0"
-                                                :id="
-                                                    theme.lowercase +
+                                                :id="theme.lowercase +
                                                     '-theme-btn'
-                                                "
-                                                @click="
+                                                    " @click="
                                                     setTheme(theme.lowercase)
-                                                "
-                                            >
-                                                <div
-                                                    class="gap-4 align-middle flex-container"
-                                                >
-                                                    <div
-                                                        class="selection-circle flex-child-grow show-for-large"
-                                                    ></div>
-                                                    <div
-                                                        class="gap-1 align-middle flex-container flex-dir-column"
-                                                        style="min-width: 0"
-                                                    >
-                                                        <div
-                                                            :class="
-                                                                'theme-circle ' +
-                                                                theme.lowercase
-                                                            "
-                                                        ></div>
-                                                        <div
-                                                            class="text-lg fw-semibold text-truncate"
-                                                        >
+                                                    ">
+                                                <div class="gap-4 align-middle flex-container">
+                                                    <div class="selection-circle flex-child-grow show-for-large"></div>
+                                                    <div class="gap-1 align-middle flex-container flex-dir-column"
+                                                        style="min-width: 0">
+                                                        <div :class="'theme-circle ' +
+                                                            theme.lowercase
+                                                            "></div>
+                                                        <div class="text-lg fw-semibold text-truncate">
                                                             {{
                                                                 theme.name
                                                             }}
                                                         </div>
                                                         <div
-                                                            class="selection-circle flex-child-grow show-for-small hide-for-large"
-                                                        ></div>
+                                                            class="selection-circle flex-child-grow show-for-small hide-for-large">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div v-else-if="currentStep === 6">
-                                    <!-- Sixth section content -->
-                                    <div
-                                    class="grid-x grid-margin-x grid-padding-y"
-                                >
-                                    <div
-                                        class="cell large-4 medium-4 small-4"
-                                        v-for="(item, index) in items"
-                                        :key="index"
-                                    >
-                                        <div class="d-block">
-                                            <div
-                                                class="p-2 mb-1 card card-item position-relative"
-                                            >
-                                                <img
-                                                    :src="item.thumbnail"
-                                                    :id="item.thumbnail"
-                                                    @error="
-                                                        onImgErrorSmall(
-                                                            item.thumbnail
-                                                        )
-                                                    "
-                                                />
-                                            </div>
-                                            <div
-                                                class="text-body text-center fw-semibold text-truncate"
-                                            >
-                                                {{ item.name }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                                <div v-else-if="currentStep === 7">
                                     <!-- Seventh section content -->
                                     <div class="gap-2 flex-container-lg">
-                                        <button
-                                            class="mb-2 btn btn-gray btn-block mb-lg-0"
-                                        >
-                                            <i
-                                                class="fas fa-scroll text-muted me-1"
-                                            ></i>
+                                        <button class="mb-2 btn btn-gray btn-block mb-lg-0">
+                                            <i class="fas fa-scroll text-muted me-1"></i>
                                             Terms of Service
                                         </button>
-                                        <button
-                                            class="mb-2 btn btn-gray btn-block mb-lg-0"
-                                        >
-                                            <i
-                                                class="fas fa-user-secret text-muted me-1"
-                                            ></i>
+                                        <button class="mb-2 btn btn-gray btn-block mb-lg-0">
+                                            <i class="fas fa-user-secret text-muted me-1"></i>
                                             Privacy Policy
                                         </button>
                                     </div>
@@ -504,77 +393,45 @@ watch(() => form.birthdate.month, updateDays);
 
                                 <!-- Add more sections as needed -->
                                 <div v-if="currentStep === 1">
-                                    <div
-                                        class="gap-1 mt-2 mb-2 flex-container flex-dir-column"
-                                    >
-                                        <div
-                                            class="text-xs text-muted fw-semibold"
-                                        >
+                                    <div class="gap-1 mt-2 mb-2 flex-container flex-dir-column">
+                                        <div class="text-xs text-muted fw-semibold">
                                             You can skip this step by signing up
                                             with Google or Discord!
                                         </div>
                                     </div>
                                     <div class="gap-2 mb-3 flex-container-lg">
-                                        <button
-                                            class="mb-2 btn btn-gray btn-block mb-lg-0"
-                                        >
-                                            <img
-                                                src="/assets/img/google.png"
-                                                width="20"
-                                                alt="google_logo"
-                                                class="me-1"
+                                        <button class="mb-2 btn btn-gray btn-block mb-lg-0">
+                                            <img src="/assets/img/google.png" width="20" alt="google_logo" class="me-1"
                                                 style="
                                                     margin-top: -3px;
                                                     filter: drop-shadow(
                                                         0 1px 1px
                                                             rgb(0, 0, 0, 0.2)
                                                     );
-                                                "
-                                            />
+                                                " />
                                             Sign Up with Google
                                         </button>
-                                        <button
-                                            class="btn btn-discord btn-block"
-                                        >
+                                        <button class="btn btn-discord btn-block">
                                             <i class="fab fa-discord me-1"></i>
                                             Sign Up with Discord
                                         </button>
                                     </div>
                                 </div>
                                 <div class="mx-1 my-3 divider"></div>
-                                <div
-                                    v-if="formError"
-                                    class="text-xs text-danger fw-bold mini-text"
-                                >
-                                    {{ formError }}
-                                </div>
                                 <div class="flex-container align-justify">
-                                    <button
-                                        type="button"
-                                        v-if="currentStep > 1"
-                                        @click="previousStep"
-                                        class="px-4 btn btn-danger"
-                                        :class="{
+                                    <button type="button" v-if="currentStep > 1" @click="previousStep"
+                                        class="px-4 btn btn-danger" :class="{
                                             disabled: isPreviousButtonDisabled,
-                                        }"
-                                    >
+                                        }">
                                         Previous
                                     </button>
-                                    <button
-                                        type="button"
-                                        v-if="currentStep !== totalSteps"
-                                        class="px-4 btn btn-success"
-                                        @click="nextStep"
-                                    >
+                                    <button type="button" v-if="currentStep !== totalSteps" class="px-4 btn btn-success"
+                                        @click="nextStep" :disabled="!isStepOk">
                                         Next
                                     </button>
 
-                                    <button
-                                        v-if="currentStep === totalSteps"
-                                        type="submit"
-                                        class="px-4 btn btn-success"
-                                        :disabled="form.processing"
-                                    >
+                                    <button v-if="currentStep === totalSteps" type="submit" class="px-4 btn btn-success"
+                                        :disabled="form.processing">
                                         Sign Me Up!
                                     </button>
                                 </div>

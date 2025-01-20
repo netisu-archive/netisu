@@ -9,8 +9,6 @@ import axios from 'axios';
 import { ref } from 'vue';
 import throttle from 'lodash/throttle';
 
-const isDescOpen = ref(false);
-const isOtherOpen = ref(false);
 
 defineProps<{
     item?: { type: Object, default: null },
@@ -79,15 +77,17 @@ const reRender = throttle(() => {
 
 const swap = () => {
     if (isPreview.value) {
-        const thumbnail = document.getElementById("thumbnail");
         isPreview.value = false;
-        thumbnail.src = usePage<any>().props.item.thumbnail;
     } else {
-        const thumbnail = document.getElementById("thumbnail");
         isPreview.value = true;
-        thumbnail.src = usePage<any>().props.item.preview;
     }
-}
+
+    const thumbnail = document.getElementById("thumbnail") as HTMLImageElement;
+    thumbnail.src = isPreview.value
+        ? usePage<any>().props.item.preview
+        : usePage<any>().props.item.thumbnail;
+};
+
 function onImgErrorSmall(id) {
     let source = document.getElementById(id) as HTMLImageElement;
     source.src = "/assets/img/dummy-error.png";
@@ -491,14 +491,14 @@ function onImgErrorSmall(id) {
         </div>
         <div class="cell large-12">
             <div v-if="!usePage<any>().props.item.public_view" class="alert alert-danger mb-3">
-            <i class="fad fa-shield"></i> This item is hidden, only you and staff can see it.
+                <i class="fad fa-shield"></i> This item is hidden, only you and staff can see it.
             </div>
             <div v-if="usePage<any>().props.item.status === 'pending'" class="alert alert-danger">
-            <i class="fad fa-clock"></i> This item is pending approval.
+                <i class="fad fa-clock"></i> This item is pending approval.
             </div>
             <div class="grid-x grid-margin-x grid-padding-y">
-                <div class="cell medium-5">
-                    <div class="mb-3 overflow-hidden card">
+                <div class="cell large-4">
+                    <div class="mb-3 overflow-hidden">
                         <div class="p-4 position-relative">
                             <div style="
                                 position: absolute;
@@ -533,8 +533,10 @@ function onImgErrorSmall(id) {
                                 bottom: 10px;
                                 right: 10px;
                             ">
-                            <div class="ms-auto" v-if="usePage<any>().props.auth.user.pendingAssets != null">
-                                    <button class="btn btn-danger btn-xs" @click="reRender(usePage<any>().props.item.id)">
+                                <div class="ms-auto"
+                                    v-if="usePage<any>().props.auth.user && usePage<any>().props.auth.user.pendingAssets != null">
+                                    <button class="btn btn-danger btn-xs"
+                                        @click="reRender(usePage<any>().props.item.id)">
                                         <i class="fad fa-rotate"></i> Rerender
                                     </button>
                                 </div>
@@ -551,9 +553,8 @@ function onImgErrorSmall(id) {
                                     </button>
                                 </div>
                             </div>
-                            <img :src="usePage<any>().props.item.thumbnail"
-                                @error="onImgErrorSmall('thumbnail')" class="mx-auto d-block" id="thumbnail"
-                                ref="thumbnail" width="512" height="512">
+                            <img :src="usePage<any>().props.item.thumbnail" @error="onImgErrorSmall('thumbnail')"
+                                class="mx-auto d-block" id="thumbnail" ref="thumbnail" width="512" height="512">
                         </div>
                         <div v-if="itemOwnership"
                             class="gap-2 py-2 overflow-hidden text-sm text-center align-middle flex-container align-center bg-success fw-semibold">
@@ -575,45 +576,7 @@ function onImgErrorSmall(id) {
                             <i class="fad fa-question-circle"></i>
                         </button>
                     </div>
-                    <div class="mb-1 text-xl fw-semibold">
-                        Statistics
-                    </div>
-                    <div class="p-3 mb-3 card">
-                        <div class="grid-x grid-margin-x">
-                            <div class="mb-2 cell large-6">
-                                <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
-                                    Date Created
-                                </div>
-                                <div class="fw-semibold text-truncate">
-                                    {{ usePage<any>().props.item.DateHum }}
-                                </div>
-                            </div>
-                            <div class="mb-2 cell large-6">
-                                <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
-                                    Last Updated
-                                </div>
-                                <div class="fw-semibold text-truncate">
-                                    {{ usePage<any>().props.item.UpdateHum }}
-                                </div>
-                            </div>
-                            <div class="mb-2 cell large-6 mb-md-0">
-                                <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
-                                    Type
-                                </div>
-                                <div class="fw-semibold text-capitalize text-truncate">
-                                    {{ capitalizeFirstLetter(usePage<any>().props.item.item_type) }}
-                                </div>
-                            </div>
-                            <div class="cell large-6">
-                                <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
-                                    Owners
-                                </div>
-                                <div class="fw-semibold text-truncate">
-                                    {{ usePage<any>().props.item.owners }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                     <div v-if="usePage<any>().props.item.rare">
                         <div class="mb-1 text-xl fw-semibold">
                             Private Sellers
@@ -704,8 +667,8 @@ function onImgErrorSmall(id) {
                         </div>
                     </div>
                 </div>
-                <div class="cell medium-7">
-                    <div class="mb-3 card card-body">
+                <div class="cell large-8">
+                    <div class="card-body">
                         <div class="gap-2 mb-2 align-middle flex-container align-justify">
                             <div class="text-3xl fw-semibold">
                                 {{ usePage<any>().props.item.name }}
@@ -761,7 +724,8 @@ function onImgErrorSmall(id) {
                         </div>
                         <div class="mb-1 text-xs fw-bold text-muted">
 
-                            <span class="text-uppercase" v-if="usePage<any>().props.auth.user && itemOwnership != true && usePage<any>().props.item.onsale">
+                            <span class="text-uppercase"
+                                v-if="usePage<any>().props.auth.user && itemOwnership != true && usePage<any>().props.item.onsale">
                                 Purchase With
                             </span>
                             <span class="text-md text-muted" v-else-if="!usePage<any>().props.item.onsale">
@@ -794,49 +758,38 @@ function onImgErrorSmall(id) {
                             </button>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="description-parent">
-                            <button class="mt-3 description fw-semibold text-body"
-                                :class="{ active: isDescOpen ? 'active' : '' }" @click="isDescOpen = !isDescOpen">
-                                <i class="me-2 fad fa-comments"></i>
-                                Description
-                            </button>
-                            <div class="text-sm description-content text-muted"
-                                :style="{ height: isDescOpen ? '45px' : '20px' }">
-                                <div v-if="isDescOpen" class="mt-1 text-sm text-body fw-semibold description-body">
-                                    {{ usePage<any>().props.item.description ? usePage<any>().props.item.description : "This item does not have a description"
-                                        }}
+                    <div class="p-3 mb-3">
+                        <div class="grid-x grid-margin-x">
+                            <div class="mb-2 cell large-6">
+                                <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
+                                    Date Created
+                                </div>
+                                <div class="fw-semibold text-truncate">
+                                    {{ usePage<any>().props.item.DateHum }}
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="description-parent">
-                            <button class="mt-3 description fw-semibold text-body"
-                                :class="{ active: isOtherOpen ? 'active' : '' }" @click="isOtherOpen = !isOtherOpen">
-                                <i class="me-2 fad fa-layer-plus"></i>
-                                Items by {{ usePage<any>().props.item.creator.username }}
-                            </button>
-                            <div class="text-sm description-content text-muted"
-                                :style="{ height: isOtherOpen ? '180px' : '20px' }">
-                                <div v-if="isOtherOpen"
-                                    class="mt-1 mb-2 text-sm text-body fw-semibold description-body">
-                                    <div v-if="recommendations.length" class="grid-x grid-margin-x">
-                                        <div class="cell large-3 medium-4 small-6"
-                                            v-for="suggestion in recommendations">
-                                            <Link :href="route('store.item', { id: suggestion.id })" class="d-block">
-                                            <div class="p-2 mb-1 card card-inner position-relative">
-                                                <img :src="suggestion.thumbnail">
-                                            </div>
-                                            <div class="text-body fw-semibold text-truncate">
-                                                {{ suggestion.name }}
-                                            </div>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                    <div v-else class="text-sm fw-bold text-muted">
-                                        There is no other items from this creator
-                                    </div>
+                            <div class="mb-2 cell large-6">
+                                <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
+                                    Last Updated
+                                </div>
+                                <div class="fw-semibold text-truncate">
+                                    {{ usePage<any>().props.item.UpdateHum }}
+                                </div>
+                            </div>
+                            <div class="mb-2 cell large-6 mb-md-0">
+                                <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
+                                    Type
+                                </div>
+                                <div class="fw-semibold text-capitalize text-truncate">
+                                    {{ capitalizeFirstLetter(usePage<any>().props.item.item_type) }}
+                                </div>
+                            </div>
+                            <div class="cell large-6">
+                                <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
+                                    Owners
+                                </div>
+                                <div class="fw-semibold text-truncate">
+                                    {{ usePage<any>().props.item.owners }}
                                 </div>
                             </div>
                         </div>
@@ -850,6 +803,36 @@ function onImgErrorSmall(id) {
                                 PRICE CHART GOES HERE
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-1 text-xl fw-semibold">
+                Description
+            </div>
+            <div class="divider mx-1 my-2" />
+            <div class="mb-3 text-md">
+                {{ usePage<any>().props.item.description ? usePage<any>().props.item.description : 'This item does not have a description.' }}
+            </div>
+            <div class="mb-1 text-xl fw-semibold">
+                Items by {{ usePage<any>().props.item.creator.username }}
+            </div>
+            <div class="divider mx-1 my-2" />
+            <div class="text-sm text-muted mt-2">
+                <div class="mb-2 text-sm text-body fw-semibold">
+                    <div v-if="recommendations.length" class="grid-x grid-margin-x">
+                        <div class="cell large-2 medium-3 small-6" v-for="suggestion in recommendations">
+                            <Link :href="route('store.item', { id: suggestion.id })" class="d-block">
+                            <div class="p-2 mb-1 card card-inner position-relative">
+                                <img :src="suggestion.thumbnail">
+                            </div>
+                            <div class="text-body text-md fw-semibold text-truncate">
+                                {{ suggestion.name }}
+                            </div>
+                            </Link>
+                        </div>
+                    </div>
+                    <div v-else class="text-sm fw-bold text-muted">
+                        There is no other items from this creator
                     </div>
                 </div>
             </div>

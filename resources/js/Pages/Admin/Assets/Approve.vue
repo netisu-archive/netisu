@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import axios from "axios";
-import { route } from "momentum-trail";
-import { usePage } from "@inertiajs/vue3";
-import Navbar from "@/Components/LayoutParts/Admin/Navbar.vue";
-import AppHead from "@/Components/AppHead.vue";
-import { ref, watch } from "vue";
+import { route } from "momentum-trail"
 
-const EnableMaintenance = async () => {
+import { usePage } from "@inertiajs/vue3";
+import Navbar from "@/Components/LayoutParts/Admin/AdminNavbar.vue";
+import AppHead from "@/Components/AppHead.vue";
+
+const ApproveAsset = async () => {
     await axios
         .post(route(`api.admin.enableMaintenance`))
         .catch((err) => console.log(err));
 };
 
-const DisableMaintenance = async () => {
+const DenyAsset = async () => {
     await axios
         .post(route(`api.admin.disableMaintenance`))
         .catch((err) => console.log(err));
@@ -31,8 +31,7 @@ const DisableMaintenance = async () => {
                 <article class="media" v-for="item in usePage<any>().props.pendingAssets">
                     <figure class="media-left">
                         <p class="image is-128x128">
-                            <img
-                                :src="item.data.thumbnail" />
+                            <img :src="item.data.thumbnail" />
                         </p>
                     </figure>
                     <div class="media-content">
@@ -48,12 +47,15 @@ const DisableMaintenance = async () => {
                     <div class="media-right">
                         <p class="title is-6">Type: {{ item.type }}</p>
                         <p class="title is-6">Created: {{ item.data.DateHum }}</p>
-                        <p class="subtitle is-6">Created by: <Link :href="route('admin.users.manage-user', { id: item.data.creator.id })" class="has-text-link">{{
-                                item.data.creator.username }}</Link></p>
+                        <p class="subtitle is-6">Created by:
+                            <Link :href="route('admin.users.manage-user', { id: item.data.creator.id })"
+                                class="has-text-link">{{
+                                    item.data.creator.username }}</Link>
+                        </p>
                         <div class="media-content">
                             <div class="content">
                                 <Link class="button" :href="route(`admin.items.manage-item`, { id: item.data.id })">View
-                                    Item</Link>
+                                Item</Link>
                             </div>
                         </div>
                     </div>

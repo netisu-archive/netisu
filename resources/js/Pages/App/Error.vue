@@ -2,8 +2,7 @@
 import Navbar from '@/Components/LayoutParts/Navbar.vue';
 import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
 import Footer from '@/Components/LayoutParts/Footer.vue';
-import { route, current } from 'momentum-trail';
-import { usePage } from '@inertiajs/vue3';
+import { route } from 'momentum-trail';
 
 defineProps<{
     status: number

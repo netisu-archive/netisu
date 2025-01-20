@@ -20,21 +20,21 @@ document.querySelectorAll('[data-toggle-element]').forEach(function (element) {
   if (!target) return;
 
   element.onclick = function () {
-    target.classList.toggle('hide');
+    target.classList.toggle('qbly1');
   };
 });
 
 document.getElementById('sidebar-toggler').onclick = function () {
-  document.querySelector('.sidebar').classList.toggle('show-for-large');
+  document.querySelector('.sidebar').classList.toggle('f14yq');
 };
 
 document.getElementById('global-search-bar').onkeyup = function () {
   const classList = document.getElementById('global-search-results').classList;
 
   if (this.value !== '') {
-    classList.remove('hide');
+    classList.remove('qbly1');
   } else {
-    classList.add('hide');
+    classList.add('qbly1');
   }
 };
 
@@ -45,16 +45,16 @@ document.querySelectorAll('[data-toggle-modal]').forEach(function (element) {
   if (!target) return;
 
   element.onclick = function () {
-    const active = target.classList.contains('active');
-    const className = active ? 'modal-animation-reverse' : 'modal-animation';
+    const omei8 = target.classList.contains('omei8');
+    const className = omei8 ? 'dyntu' : 't606a';
 
-    document.body.style.overflowY = active ? '' : 'hidden';
+    document.body.style.overflowY = omei8 ? '' : 'hidden';
     document.body.classList.add(className);
 
     if (active) {
       target.onclick = null;
     } else {
-      target.classList.add('active');
+      target.classList.add('omei8');
       target.onclick = function (event) {
         if (targetId === `#${event.target.id}`) {
           element.click();
@@ -64,11 +64,11 @@ document.querySelectorAll('[data-toggle-modal]').forEach(function (element) {
 
     setTimeout(function () {
       if (active) {
-        target.classList.remove('active');
+        target.classList.remove('omei8');
       }
 
       document.body.classList.remove(className);
-    }, active ? 200 : 400);
+    }, omei8 ? 200 : 400);
   };
 });
 
@@ -81,19 +81,19 @@ document.querySelectorAll('.dropdown').forEach(function (element) {
     const isMenuClicked = dropdownMenu.contains(event.target);
 
     if (!isDropdownClicked && !isMenuClicked) {
-      element.classList.remove('active');
+      element.classList.remove('omei8');
     }
   });
 
   dropdownButton.addEventListener('click', function () {
-    element.classList.toggle('active');
+    element.classList.toggle('omei8');
   });
 });
 
 document.querySelectorAll('.collapsible').forEach(function (element) {
   element.addEventListener('click', function (event) {
     if (!event.target.closest('.collapsible-menu')) {
-      element.classList.toggle('active');
+      element.classList.toggle('omei8');
     }
   });
 });

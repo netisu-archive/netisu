@@ -113,15 +113,15 @@ class AdminController extends Controller
 
     public function GiftUser($userID)
     {
-    if ($this->admin->rolePermissions('can_gift_users') ?? false != false):
+        if ($this->admin->rolePermissions('can_gift_users') ?? false != false):
             $response = inertia('Admin/Users/Gift', [
                 'userID' => $userID,
             ]);
-    else:
-        $response =  inertia('Admin/Error/PermissionError', [
-            'permission' => 'can_gift_users'
-        ]);
-    endif;
+        else:
+            $response =  inertia('Admin/Error/PermissionError', [
+                'permission' => 'can_gift_users'
+            ]);
+        endif;
 
         return $response;
     }
@@ -194,11 +194,12 @@ class AdminController extends Controller
         $itemHashName = bin2hex(random_bytes(22));
         $previewName = "{$itemHashName}_preview";
 
-        $info = getimagesize($request->file('image'));
-        if ($info[2] == IMAGETYPE_JPEG) {
-            throw ValidationException::withMessages(['image' => 'This file needs to be a true PNG, none of that sneaky jpeg-in-disguise business.']);
+        if ($request->type != 'head') {
+            $info = getimagesize($request->file('image'));
+            if ($info[2] == IMAGETYPE_JPEG) {
+                throw ValidationException::withMessages(['image' => 'This file needs to be a true PNG, none of that sneaky jpeg-in-disguise business.']);
+            }
         }
-
         if (Auth::user()->isStaff() && $request->hasFile('modal') && $request->type === 'hat' || $request->type === 'addon' || $request->type === 'tool') {
             // Upload OBJ only if item type deals with models
             $this->uploadOBJ($request->file('modal'), $itemHashName);
@@ -206,6 +207,8 @@ class AdminController extends Controller
         } elseif ($request->type === 'face') {
             $this->uploadToThumbnails($request->file('image'), $itemHashName);
             $this->uploadImage($request->file('image'), $itemHashName);
+        } elseif ($request->type === 'head') {
+            $this->uploadOBJ($request->file('modal'), $itemHashName);
         } else {
             throw ValidationException::withMessages(['image' => 'One of your fields are empty']);
         }
@@ -279,7 +282,7 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:50',
             'description' => 'string|max:255',
-            'type' => 'required|string|in:hat,addon,tool,face', // Allowed item types
+            'type' => 'required|string|in:hat,addon,tool,face,head', // Allowed item types
             'image' => 'required|image|mimes:png|max:2048', // Validate PNG image
             'modal' => 'required|file|mimes:text/plain|max:2048', // Validate Object
         ]);

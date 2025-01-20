@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import axios from "axios"; // Import Axios
-import { route } from "momentum-trail";
+import { route } from "momentum-trail"
+
 import AppHead from "@/Components/AppHead.vue";
 import { usePage } from "@inertiajs/vue3";
 import "../../../css/style.css";
@@ -8,24 +9,17 @@ import "../../../css/style.css";
 const { props } = usePage<any>();
 </script>
 <template>
-  <AppHead
-    pageTitle="Maintenence"
+  <AppHead pageTitle="Maintenence"
     :description="'We are working on ' + usePage<any>().props.site.name + ', We\'ll be back soon.'"
-    :url="route(`maintenance.page`)"
-    :maintenance="true"
-  />
+    :url="route(`maintenance.page`)" :maintenance="true" />
   <div class="modal" id="DeveloperCode">
     <form @submit.prevent="submitPassword">
       <div class="modal-card modal-card-body modal-card-sm">
         <div class="section-borderless">
           <div class="gap-2 align-middle flex-container align-justify">
             <div class="text-lg fw-semibold">Developer Access</div>
-            <button
-              @click="showModal('DeveloperCode')"
-              class="btn-circle"
-              data-toggle-modal="#DeveloperCode"
-              style="margin-right: -10px"
-            >
+            <button @click="showModal('DeveloperCode')" class="btn-circle" data-toggle-modal="#DeveloperCode"
+              style="margin-right: -10px">
               <i class="fas fa-times"></i>
             </button>
           </div>
@@ -35,23 +29,16 @@ const { props } = usePage<any>();
             <div class="text-xs fw-bold text-muted text-uppercase">
               Enter Your Developer Code
             </div>
-            <input
-              class="form"
-              type="password"
-              placeholder="Developer Code"
-              v-model="password"
-            />
+            <input class="form" type="password" placeholder="Developer Code" v-model="password" />
           </div>
           <div v-if="showError" class="text-xs text-danger fw-semibold">
             {{ errorMsg }}
           </div>
-          <div  class="text-xs text-muted fw-semibold">
+          <div class="text-xs text-muted fw-semibold">
             {{ usePage<any>().props.disclaimer }}
           </div>
         </div>
-        <div
-          class="flex-wrap gap-2 flex-container justify-content-end section-borderless"
-        >
+        <div class="flex-wrap gap-2 flex-container justify-content-end section-borderless">
           <button class="btn btn-secondary" @click="showModal('DeveloperCode')">
             Cancel
           </button>
@@ -61,61 +48,29 @@ const { props } = usePage<any>();
     </form>
   </div>
   <main class="container px-4 text-center flex-dir-column loading-page">
-    <i
-      class="fas fa-screwdriver-wrench text-7xl text-info"
-      focusable="false"
-      id="icon"
-      @click="countClicks"
-    ></i>
+    <i class="fas fa-screwdriver-wrench text-7xl text-info" focusable="false" id="icon" @click="countClicks"></i>
     <h1 class="mt-3 mb-0">We'll be back soon!</h1>
     <h3 class="mt-0 text-muted">We're performing some maintenance at the moment.</h3>
 
-    <div
-      class="flex-wrap gap-2 flex-container justify-content-center align-center section-borderless"
-    >
-      <a
-        v-if="props.site.socials.discord"
-        :href="props.site.socials.discord"
-        class="text-2xl footer-media text-muted"
-        content="Join us on Discord"
-        v-tippy
-      >
+    <div class="flex-wrap gap-2 flex-container justify-content-center align-center section-borderless">
+      <a v-if="props.site.socials.discord" :href="props.site.socials.discord" class="text-2xl footer-media text-muted"
+        content="Join us on Discord" v-tippy>
         <i class="fab fa-discord"></i>
       </a>
-      <a
-        v-if="props.site.socials.twitter"
-        :href="props.site.socials.twitter"
-        class="text-2xl footer-media text-muted"
-        content="Follow us on Twitter"
-        v-tippy
-      >
+      <a v-if="props.site.socials.twitter" :href="props.site.socials.twitter" class="text-2xl footer-media text-muted"
+        content="Follow us on Twitter" v-tippy>
         <i class="fab fa-twitter"></i>
       </a>
-      <a
-        v-if="props.site.socials.twitch"
-        :href="props.site.socials.twitch"
-        class="text-2xl footer-media text-muted"
-        content="Follow us on Twitch"
-        v-tippy
-      >
+      <a v-if="props.site.socials.twitch" :href="props.site.socials.twitch" class="text-2xl footer-media text-muted"
+        content="Follow us on Twitch" v-tippy>
         <i class="fab fa-twitch"></i>
       </a>
-      <a
-        v-if="props.site.socials.tiktok"
-        :href="props.site.socials.tiktok"
-        class="text-2xl footer-media text-muted"
-        content="Follow us on TikTok"
-        v-tippy
-      >
+      <a v-if="props.site.socials.tiktok" :href="props.site.socials.tiktok" class="text-2xl footer-media text-muted"
+        content="Follow us on TikTok" v-tippy>
         <i class="fab fa-tiktok"></i>
       </a>
-      <a
-        v-if="props.site.socials.facebook"
-        :href="props.site.socials.facebook"
-        class="text-2xl footer-media text-muted"
-        content="Follow us on Facebook"
-        v-tippy
-      >
+      <a v-if="props.site.socials.facebook" :href="props.site.socials.facebook" class="text-2xl footer-media text-muted"
+        content="Follow us on Facebook" v-tippy>
         <i class="fab fa-facebook"></i>
       </a>
     </div>

@@ -24,6 +24,11 @@ return [
 		'coon',
 		'crap',
 		'cumshot',
+        'creampie',
+        'creampied',
+        'crmpie',
+        'cum',
+        'creamed',
 		'damm',
 		'dammit',
 		'damn',
@@ -222,7 +227,6 @@ return [
   'routes' => [
     'forum.create.validate',
     'forum.create.validate'
-
   ],
   'api_urls' => [
     // ... Your API URL mappings with filterable fields

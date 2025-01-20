@@ -18,8 +18,9 @@ class UpdateOnlineStatus
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && (strtotime(Auth::user()->updated_at) + 150) < time()) {
+        if(Auth::check() && Carbon::parse(Auth::user()->updated_at)->addMinute()->isPast()) {
             $user = Auth::user();
+
             $user->updated_at = Carbon::now()->toDateTimeString();
             $user->save();
         }

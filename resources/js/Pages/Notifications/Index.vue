@@ -3,11 +3,12 @@
   import Sidebar from "@/Components/LayoutParts/Sidebar.vue";
   import Footer from "@/Components/LayoutParts/Footer.vue";
   import { usePage } from "@inertiajs/vue3";
-  import { route, current } from "momentum-trail";
 
   function typeIcon(type: string): string | null {
     const iconMap = {
-      user: "fas fa-user",
+        user: "fad fa-user",
+        gift: "fad fa-gift",
+
       // Add more icon mappings here
     };
 
@@ -50,16 +51,11 @@
           <Link :href="notification.data.route" class="dropdown-link">
             <div class="gap-1 align-middle flex-container">
               <i
-                class="text-lg text-center fas fa-comments-alt text-info flex-child-grow"
+                class="text-lg text-center fas fa-comments-alt flex-child-grow"
                 style="width: 38px"
+                :class="typeIcon(notification.data.type)"
               ></i>
               <div class="gap-2 align-middle flex-container w-100">
-                <img
-                  src="/assets/img/dummy_headshot.png"
-                  class="headshot flex-child-shrink"
-                  height="40"
-                  width="40"
-                />
                 <div class="min-w-0" style="line-height: 16px">
                   <div class="text-sm text-truncate">
                     <span class="search-keyword" v-if="notification.data.object"

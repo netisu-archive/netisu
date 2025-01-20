@@ -128,47 +128,56 @@ class ForumController extends Controller
 
     public function ForumPost($id, $slug, BBCodeService $bbcodeService)
     {
-        // Define a cache key for this forum post
-        $cacheKey = 'forum_post_' . $id;
-        $cacheRepliesKey = 'forum_replies_' . $id;
+        // Find the forum post
+        $post = ForumThread::find($id);
 
-        // Attempt to retrieve the forum post from cache
-        $post = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($id) {
-            if (ForumThread::find($id)) {
-                return ForumThread::where('id', '=', $id)->with('creator')->first();
-            } else {
-                abort(404);
-            }
-        });
-        // Fetch the associated topic
-        $topic = ForumTopic::findOrFail($post->in_topic_id);
-
-        // Fetch replies based on staff status
-        $replies = Cache::remember($cacheRepliesKey, now()->addMinutes(10), function () use ($id) {
-            return ForumReply::where('thread_id', '=', $id)->with('creator')->paginate(10);
-        });
-
-
-
-        // Parse the post body using BBCodeService
-        $post->body = $bbcodeService->parse($post->body);
-
-        // Check conditions for displaying the post
-        if ($slug != $post->slug() || $topic->is_staff_only_viewing || $post->is_deleted) {
+        // Handle missing post
+        if (!$post->exists()) {
             abort(404);
         }
 
+        if ($slug != $post->slug() || $post->is_staff_only_viewing || $post->is_deleted) {
+            abort(404);
+        }
+
+        // Cache the post
+        $post = Cache::remember('forum_post_' . $id, now()->addMinutes(10), fn() => $post);
+
+        // Parse the post body
+        $post->body = $bbcodeService->parse($post->body);
+
+
+        // Cache the paginated replies
+
         return inertia('Forum/Post', [
-            'topic' => $topic,
-            'post' => $post,
-            'creator' => [
-                'thumbnail' => $post->creator->thumbnail(),
-                'headshot' => $post->creator->headshot(),
+            'post' => [
+                'id' => $post->id,
+                'title' => $post->title,
+                'body' => $post->body,
+                'is_pinned' => $post->is_pinned,
+                'is_locked' => $post->is_locked,
+                'is_deleted' => $post->is_deleted,
+                'creator' => [
+                    'username' => $post->creator->username,
+                    'display_name' => $post->creator->display_name,
+                    'thumbnail' => $post->creator->thumbnail(),
+                    'headshot' => $post->creator->headshot(),
+                ],
             ],
-            'replies' => $replies,
+            'replies' => $post->replies()->paginate(10)->through(function ($reply) use ($bbcodeService) {
+                return [
+                    'body' => $bbcodeService->parse($reply->body),
+                    'is_deleted' => $reply->is_deleted,
+                    'creator' => [
+                        'username' => $reply->creator->username,
+                        'display_name' => $reply->creator->display_name,
+                        'thumbnail' => $reply->creator->thumbnail(),
+                        'headshot' => $reply->creator->headshot(),
+                    ],
+                ];
+            }),
         ]);
     }
-
 
     public function ForumCreate($id)
     {
@@ -206,9 +215,8 @@ class ForumController extends Controller
 
         if (!Auth::user()->isStaff() && Auth::user()->CurrentPositionID() != $topic->role_required_to_post) {
             return response()->json([
-                'message' => 'Your don\'t have permission to post in' . $topic->name,
+                'message' => 'You don\'t have permission to post in ' . $topic->name,
                 'type' => 'danger',
-
             ]);
         }
 

@@ -4,7 +4,7 @@ import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
 import Footer from '@/Components/LayoutParts/Footer.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
+// import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 import Upload from '@/Components/Upload.vue';
 import { usePage } from '@inertiajs/vue3';
 import { route } from 'momentum-trail'

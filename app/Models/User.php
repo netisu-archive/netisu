@@ -195,29 +195,6 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
         return $this->isFollowing($user) && $user->isFollowing($user); // Check mutual following
     }
 
-    public function Friends(User $user1, User $user2)
-{
-    // Check if both users are following each other
-    $isFollowing1 = $user1->follows->contains($user2->id);
-    $isFollowing2 = $user2->follows->contains($user1->id);
-
-    if ($isFollowing1 && $isFollowing2) {
-        // Create a friendship (you might have a separate friendships table or a flag in the users table)
-        // For example, if you have a 'friends' pivot table:
-        $user1->friends()->attach($user2);
-        $user2->friends()->attach($user1);
-
-        // Or, if you have a 'is_friend' boolean flag in the User model:
-        $user1->is_friend = true;
-        $user1->save();
-
-        $user2->is_friend = true;
-        $user2->save();
-
-        // Notify the users or perform other actions as needed
-    }
-}
-
     public function posts(): HasMany
     {
         return $this->hasMany(ForumThread::class, 'creator_id');
@@ -237,7 +214,9 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Message::class, 'receiving_id');
     }
-
+    public function TotalSales() {
+        return ItemPurchase::where('seller_id', '=', $this->id)->count();
+    }
     public function ownsItem($id)
     {
         return Inventory::where([

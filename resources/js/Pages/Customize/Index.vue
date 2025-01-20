@@ -5,7 +5,8 @@ import Footer from "@/Components/LayoutParts/Footer.vue";
 import AppHead from '@/Components/AppHead.vue';
 import { ref, onMounted, reactive, computed } from "vue";
 import axios from "axios"; // Import Axios
-import { route } from "momentum-trail";
+import { route } from "momentum-trail"
+
 import { usePage } from "@inertiajs/vue3";
 import VLazyImage from "v-lazy-image";
 
@@ -71,7 +72,7 @@ const partNames = {
 };
 // Function to submit the selected part's color to the API
 
-function VRCReset(): Promise<void> {
+function VRCReset() {
     VrcRequest.value = true;
     const requestData = {
         action: "reset",
@@ -96,7 +97,7 @@ function VRCReset(): Promise<void> {
 }
 
 // Function to change the color of a body part
-function changeColor(color: string, part: string): Promise<void> {
+function changeColor(color: string, part: string) {
     if (!part) {
         console.error("Part is null or undefined");
         return Promise.reject("Part is null or undefined");
@@ -423,7 +424,7 @@ onMounted(() => {
                                             width="50" height="50" />
                                     </button>
                                 </div>
-                                <div style=" margin-bottom: 5px">
+                                <div style="display: flex; margin-bottom: 5px">
                                     <button class="avatar-body-part" @click="handlePartSelection('left_arm')"
                                         id="left_arm" :style="{
                                             backgroundColor: '#' + userAvatar.color_left_arm,
@@ -516,10 +517,8 @@ onMounted(() => {
                             <select @change="getItemsbyCategory($event.target.value)"
                                 class="mb-2 form form-xs form-select form-has-section-color">
                                 <option v-for="category in usePage<any>().props.categories" :key="category.internal"
-                                    :value="category.internal">
-                                    <span class="tab-link squish" :class="{ active: currentcat === category.internal }">
-                                        {{ category.name }}
-                                    </span>
+                                    :value="category.internal" :active="currentcat === category.internal">
+                                    {{ category.name }}
                                 </option>
                             </select>
                         </div>

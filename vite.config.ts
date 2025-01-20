@@ -1,27 +1,30 @@
-/** @type {import('vite').UserConfig} */
-import { defineConfig } from "vite";
+import type { UserConfig } from 'vite'
 import laravel from "laravel-vite-plugin";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import { watch } from "vite-plugin-watch";
-import { splitVendorChunkPlugin } from "vite";
 import { obfuscator } from "rollup-obfuscator";
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import { viteObfuscateFile } from "vite-plugin-obfuscator";
 import { VitePWA } from "vite-plugin-pwa";
 import { templateCompilerOptions } from '@tresjs/core'
-import ClassMangler from 'vite-plugin-class-mangler';
-import viteCompression from 'vite-plugin-compression'
+import compression from 'vite-plugin-compression2'
+import autoprefixer from "autoprefixer";
+import postcssNested from "postcss-nested";
+import postcssObfuscator from "postcss-obfuscator";
 
-export default defineConfig({
+export default {
     root: "", // Specify the root directory for development
     base: "/",
+    build: {
+        sourcemap: true,
+        cssCodeSplit: true,
+    },
     optimizeDeps: {
         exclude: ["brotli-wasm", "brotli-wasm/pkg.bundler/brotli_wasm_bg.wasm"],
     },
     server: {
         host: '100.115.92.195',
-        https: true,
         cors: true,
         hmr: {
             host: '100.115.92.195',
@@ -34,9 +37,26 @@ export default defineConfig({
         modules: {
             generateScopedName: "[hash:base64:5]",
         },
-    },
-    build: {
-        sourcemap: true,
+        postcss: {
+            plugins: [
+                autoprefixer(),
+                postcssNested(),
+                // postcssObfuscator({
+                //        enable: true, // Force Run on Dev Env or when srcPath equals desPath.
+                //        ids: true, //  Obfuscate #IdNames.
+                //        jsonsPath: 'css-obfuscator',
+                //        srcPath: "resources", // Source of your files.
+                //        desPath: "public", // Destination for obfuscated html/js/.. files.
+                //        extensions: ['.html', '.css', '.php', '.ts', '.vue'],
+                //        formatJson: true, // Format obfuscation data JSON file.
+                //        showConfig: true,
+                //        fresh: true,
+                //        keepData: true,
+                //        multi: true,
+                // }),
+            ],
+        },
+
     },
     plugins: [
         VitePWA({
@@ -45,15 +65,7 @@ export default defineConfig({
                 enabled: true,
             },
         }),
-        ClassMangler({
-            dev: true,
-            min: 2,
-            max: 6,
-            length: 8,
-            suffixes: ['.vue', '.html']
-        }),
-        viteCompression(),
-        splitVendorChunkPlugin(),
+        compression(),
         obfuscator({
             compact: true,
             controlFlowFlattening: false,
@@ -118,21 +130,7 @@ export default defineConfig({
         watch({
             pattern: "routes/*.php",
             command: "php artisan trail:generate",
-        }),
-        laravel({
-            input: ["resources/js/app.ts"],
-            ssr: "resources/js/ssr.ts",
-            /*
-            refresh: [
-              "resources/routes/**",
-              "app/Http/**",
-              "public/assets/js/**",
-              "public/assets/img/**",
-              "routes/**",
-
-            ],*/
-        }),
-        vue({
+        }),vue({
             ...templateCompilerOptions,
             template: {
                 transformAssetUrls: {
@@ -151,13 +149,27 @@ export default defineConfig({
                 },
             },
         }),
+        laravel({
+            input: ["resources/js/app.ts"],
+            ssr: "resources/js/ssr.ts",
+            /*
+            refresh: [
+              "resources/routes/**",
+              "app/Http/**",
+              "public/assets/js/**",
+              "public/assets/img/**",
+              "routes/**",
+
+            ],*/
+        }),
+        
         viteObfuscateFile({}),
         basicSsl(),
     ],
     resolve: {
-        extensions: [".ts", ".tsx", ".js"],
+        extensions: [".ts", ".tsx", ".js", ".json"],
         alias: {
             "@": path.resolve(__dirname, "resources/js"),
         },
     },
-});
+} satisfies UserConfig;

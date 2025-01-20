@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Models\Inventory;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Illuminate\Support\Arr; 
 
 class UserController extends Controller
 {
@@ -242,6 +243,72 @@ class UserController extends Controller
         $loggedInUser->following()->detach($user->id);
 
         return response()->json(['message' => 'Successfully unfollowed.']);
+    }
+    public function UsernameAvailability(Request $request)
+    {
+        $name = $request->input('name');
+
+        $userExists = User::where('username', $name)->exists();
+
+        // Basic Validation
+        if (empty($name)) {
+            return response()->json(['error' => true, 'message' => 'Your username is empty!']);
+        }
+
+        if (strtolower($name) === strtolower(config('Values.name'))) {
+            return response()->json(['error' => true, 'message' => 'You cannot sign up with the same name as the site.']);
+        }
+
+        if (strlen($name) < 3) {
+            return response()->json(['error' => true, 'message' => 'Your username must be at least 3 characters!']);
+        }
+
+        if (strlen($name) > 20) {
+            return response()->json(['error' => true, 'message' => 'Your username must be at most 20 characters!']);
+        }
+
+        if (!preg_match('/^[a-zA-Z\d]+$/', $name)) {
+            return response()->json(['error' => true, 'message' => 'Your username contains special characters!']);
+        }
+
+        $profanityList = Arr::wrap(config('filter.blacklist'));
+
+        // Normalize username
+        $normalizedName = strtolower(preg_replace('/[^\p{L}\p{N}]/u', '', $name));
+
+        foreach ($profanityList as $word) {
+            if (stripos($normalizedName, $word) !== false) {
+                return response()->json(['error' => true, 'message' => "Your username contains profanity. Please remove '$word' and try again."]);
+            }
+        }
+
+        // Check for Existing User
+        $userExists = User::where('username', $name)->exists();
+
+        if ($userExists) {
+            $newname = $name . rand(1, 999);
+            return response()->json(['error' => true, 'message' => "This username is already taken! Try {$newname} instead!"]);
+        }
+
+        return response()->json(['error' => false, 'message' => 'OK'], 200);
+    }
+    
+    public function ValidateEmail(Request $request)
+    {
+        $email = $request->input('email');
+        $filteredEmail = filter_var($email, FILTER_SANITIZE_EMAIL);
+
+        if (!filter_var($filteredEmail, FILTER_VALIDATE_EMAIL)) {
+            return response()->json(['error' => true, 'message' => "Your email is invalid."]);
+        }
+
+        $userHasEmail = User::where('email', $email)->exists();
+        
+        if ($userHasEmail) {
+            return response()->json(['error' => true, 'message' => "Your email is already linked to another account."]);
+        }
+
+        return response()->json(['error' => false, 'message' => 'OK'], 200);
     }
 
     public function getUserItems($userID)

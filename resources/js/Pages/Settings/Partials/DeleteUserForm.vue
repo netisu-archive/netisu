@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
-import { route, current } from "momentum-trail";
+import { route } from "momentum-trail"
+
 
 const confirmingUserDeletion = ref(false);
 const passwordInput = ref(null);
@@ -50,7 +51,8 @@ const closeModal = () => {
                 </div>
                 <div class="section-borderless">
                     <div class="mb-2">
-                        <p class="fw-semibold text-warning text-md mb-1">Are you sure you want to delete your account?</p>
+                        <p class="fw-semibold text-warning text-md mb-1">Are you sure you want to delete your account?
+                        </p>
                         <div class="text-xs text-muted fw-semibold mb-2">
                             Please enter your password to confirm you would like to permanently delete your account.
                         </div>

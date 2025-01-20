@@ -34,7 +34,7 @@ defineProps({
                 </div>
                 <div class="cell large-6">
                     <div class="mb-1 text-lg fw-semibold mb-lg-0">
-                        Copyright &copy; 2023
+                        Copyright &copy; {{ new Date().getFullYear() }}
                         {{ props.site.name }}. All rights reserved.
                     </div>
                     <div class="mb-2 flex-container-lg mb-lg-0">

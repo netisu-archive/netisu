@@ -41,8 +41,8 @@ class HomeController extends Controller
             });
         });
 
-        $landingPosts = Cache::remember($cacheKeyPosts, now()->addHours(1), function () use ($bbcodeService)  {
-            return ForumThread::inRandomOrder()->paginate(4)->through(function ($post) use ($bbcodeService){
+        $landingPosts = Cache::remember($cacheKeyPosts, now()->addHours(1), function () use ($bbcodeService) {
+            return ForumThread::inRandomOrder()->paginate(4)->through(function ($post) use ($bbcodeService) {
                 return [
                     'id' => $post->id,
                     'title' => $post->title,
@@ -67,6 +67,9 @@ class HomeController extends Controller
         return inertia('Dashboard', [
             'nextlevelxp' => Auth::user()->getNextLevelExp(),
             'position' => Auth::user()->CurrentPosition(),
+            'totalSales' => Auth::user()->TotalSales(),
+            'totalFollowers' => Auth::user()->followers()->count(),
+            'totalPosts' => Auth::user()->posts()->count(),
         ]);
     }
 
@@ -77,57 +80,34 @@ class HomeController extends Controller
             'message' => ['max:124']
         ]);
 
-        $this->ensureIsNotRateLimited();
-        $limit = 5; // Allow 5 requests per minute (adjust as needed)
-        $key = $this->throttleKey();
+        $maxAttempts = 5; // Allow 5 requests per two minutes (adjust as needed)
+        $key = 'latest-status:' . Auth::id();
 
-        $executed = RateLimiter::attempt(
-            $key,
-            $limit,
-            function () use ($request) {
-            if ($request->message != Auth::user()->latestStatus) {
-                // Logging
-                $status = new Status;
-                $status->creator_id = Auth::id();
-                $status->message = $request->message;
-                $status->save();
+        if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
+            $seconds = RateLimiter::availableIn($key);
 
-                // Clear the cache for the latest status
-                Cache::forget('latest_status_' . Auth::id());
-
-                $user = User::find(Auth::id());
-                $user->status = $request->message;
-                $user->save();
-                return response()->json(
-                    [
-                        'message' => 'Your status has been changed.',
-                        'type' => 'success'
-                    ]
-                );
-            }
-
-        }, 60);
-
-        if (!$executed) {
             return response()->json([
-                'message' => 'Too many requests. Please try again later.',
+                'message' => 'Too many requests. You may try again in '.$seconds.' seconds.',
                 'type' => 'error'
-            ], 429); // Use status code 429 for Too Many Requests
+            ], 429);
         }
-    }
 
-    private function throttleKey(): string
-    {
-        return 'latest_status:' . Auth::id();
-    }
+        RateLimiter::increment($key);
 
-    public function ensureIsNotRateLimited()
-    {
-        if (RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if ($request->message != Auth::user()->latestStatus) {
+            // Logging
+            $status = new Status;
+            $status->creator_id = Auth::id();
+            $status->message = $request->message;
+            $status->save();
+
+            $user = User::find(Auth::id());
+            $user->status = $request->message;
+            $user->save();
             return response()->json(
                 [
-                    'message' => 'You have posted too many times, try again later.',
-                    'type' => 'danger'
+                    'message' => 'Your status has been changed.',
+                    'type' => 'success'
                 ]
             );
         }

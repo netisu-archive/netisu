@@ -48,8 +48,9 @@ class Avatar extends Model
             'hat_3' => $this->hat(3),
             'hat_4' => $this->hat(4),
             'hat_5' => $this->hat(5),
-            'hat_6' => $this->hat(6),    
-            'addon' => $this->addon(),  
+            'hat_6' => $this->hat(6),
+            'head' => $this->head(),
+            'addon' => $this->addon(),
             'face' => $this->face(),
             'tool' => $this->tool(),
             'tshirt' => $this->tshirt(),
@@ -78,6 +79,11 @@ class Avatar extends Model
     public function tshirt()
     {
         return Item::where('id', '=', $this->tshirt)->first();
+    }
+    
+    public function head()
+    {
+        return Item::where('id', '=', $this->head)->first();
     }
 
     public function addon()

@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Laravel\Cashier\Cashier;
+use Illuminate\Support\Facades\Vite;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,7 +43,8 @@ class AppServiceProvider extends ServiceProvider
         if (!$this->app->environment('local')) {
             $url->forceScheme('https');
         }
-        
+        Vite::prefetch(concurrency: 3);
+
         Cashier::calculateTaxes();
 
         RedirectIfAuthenticated::redirectUsing(function () {

@@ -1,39 +1,40 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import axios from "axios";
-import { route } from "momentum-trail";
+import { route } from "momentum-trail"
+
 import { useForm } from "@inertiajs/vue3";
-import Navbar from "@/Components/LayoutParts/Admin/Navbar.vue";
+import Navbar from "@/Components/LayoutParts/Admin/AdminNavbar.vue";
 import AppHead from "@/Components/AppHead.vue";
 
 const Uploading = ref(false);
 
 const form = useForm({
-  type: "",
-  name: "",
-  description: "",
-  price_coins: "",
-  price_bucks: "",
-  image: null,
-  modal: null,
+    type: "",
+    name: "",
+    description: "",
+    price_coins: "",
+    price_bucks: "",
+    image: null,
+    modal: null,
 });
 const submit = () => {
-  axios.get(`/sanctum/csrf-cookie`).then(() => {
-    form.post(route(`admin.items.create.validate`), {
-      onFinish: () => form.reset("description"),
+    axios.get(`/sanctum/csrf-cookie`).then(() => {
+        form.post(route(`admin.items.create.validate`), {
+            onFinish: () => form.reset("description"),
+        });
     });
-  });
 };
 
 const AttemptUpload = () => {
-  Uploading.value = true;
+    Uploading.value = true;
 };
 const handleImageUpload = (event) => {
     form.image = event.target.files[0];
-  };
-  const handleModalUpload =(event) => {
+};
+const handleModalUpload = (event) => {
     form.modal = event.target.files[0];
-  };
+};
 </script>
 
 <template>
@@ -56,6 +57,7 @@ const handleImageUpload = (event) => {
                                     <option value="addon">Add-on</option>
                                     <option value="tool">Tool</option>
                                     <option value="face">Face</option>
+                                    <option value="head">Head</option>
                                 </select>
                                 <div v-if="form.errors.type" class="subtitle text-danger">
                                     {{ form.errors.type }}

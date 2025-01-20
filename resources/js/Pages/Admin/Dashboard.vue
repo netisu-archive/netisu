@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import axios from "axios";
-import { route } from "momentum-trail";
+import { route } from "momentum-trail"
+
 import { usePage } from "@inertiajs/vue3";
-import Navbar from "@/Components/LayoutParts/Admin/Navbar.vue";
+import Navbar from "@/Components/LayoutParts/Admin/AdminNavbar.vue";
 import AppHead from "@/Components/AppHead.vue";
 import { ref, watch } from "vue";
 
 
-const MaintenanceActive = ref(usePage<any>().props.siteSettings.inMaintenance);
+let MaintenanceActive = ref(usePage<any>().props.siteSettings.inMaintenance);
 const ForumActive = ref(usePage<any>().props.siteSettings.discussion_enabled);
 const MarketActive = ref(usePage<any>().props.siteSettings.market_enabled);
 const CustomizationActive = ref(usePage<any>().props.siteSettings.customization_enabled);
@@ -15,20 +16,24 @@ const SpacesActive = ref(usePage<any>().props.siteSettings.spaces_enabled);
 
 
 const EnableMaintenance = async () => {
-  await axios
-    .post(route(`api.admin.enableMaintenance`))
-    .then(MaintenanceActive.value = 1)
-    .catch((err) => console.log(err));
+    try {
+        await axios.post(route(`api.admin.enableMaintenance`));
+        MaintenanceActive.value = 1;
+    } catch (err) {
+        console.error(err);
+    }
 };
 
 const DisableMaintenance = async () => {
-  await axios
-    .post(route(`api.admin.disableMaintenance`))
-    .then(MaintenanceActive.value = 0)
-    .catch((err) => console.log(err));
+    try {
+        await axios.post(route(`api.admin.disableMaintenance`));
+        MaintenanceActive.value = 0;
+    } catch (err) {
+        console.error(err);
+    }
 };
 watch(MaintenanceActive, (newValue, oldValue) => {
-  console.log("Maintenance variable changed from", oldValue, "to", newValue);
+    console.log("Maintenance variable changed from", oldValue, "to", newValue);
 });
 </script>
 
@@ -47,7 +52,7 @@ watch(MaintenanceActive, (newValue, oldValue) => {
                         <br />
 
                         <p class="title is-2" style="margin-bottom:0.5rem;">Welcome back, {{ usePage<any>
-                                ().props.auth?.user?.username }}</p>
+                            ().props.auth?.user?.username }}</p>
                         <span class="tag is-danger is-medium">{{ usePage<any>().props.auth?.user?.position }}</span>
                     </div>
                 </div>
@@ -83,7 +88,7 @@ watch(MaintenanceActive, (newValue, oldValue) => {
                 <a v-if="usePage<any>().props.stats.canControlMaintenance" class="button"
                     :class="{ 'is-active': MaintenanceActive ? true : false }"
                     @click="!MaintenanceActive ? EnableMaintenance() : DisableMaintenance()">Turn Maintenance {{
-                    !MaintenanceActive ? "ON" : "OFF" }}</a>
+                        !MaintenanceActive ? "ON" : "OFF" }}</a>
             </div>
         </div>
         <br />
@@ -94,19 +99,19 @@ watch(MaintenanceActive, (newValue, oldValue) => {
                         <div class="buttons">
                             <button v-if="usePage<any>().props.stats.canControlMarketPurchases"
                                 :class="{ 'is-active': MarketActive ? true : false }" class="button">{{ MarketActive ?
-                                'Enable' : 'Disable' }}
+                                    'Enable' : 'Disable' }}
                                 Market</button>
                             <button v-if="usePage<any>().props.stats.canControlDiscussion"
                                 :class="{ 'is-active': ForumActive ? true : false }" class="button">{{ ForumActive ?
-                                'Enable' : 'Disable' }}
+                                    'Enable' : 'Disable' }}
                                 Discussion</button>
                             <button v-if="usePage<any>().props.stats.canControlCustomization"
                                 :class="{ 'is-active': CustomizationActive ? true : false }" class="button">{{
-                                CustomizationActive ?
-                                'Enable' : 'Disable' }} Customization</button>
+                                    CustomizationActive ?
+                                        'Enable' : 'Disable' }} Customization</button>
                             <button v-if="usePage<any>().props.stats.canControlSpaces"
                                 :class="{ 'is-active': SpacesActive ? true : false }" class="button">{{ SpacesActive ?
-                                'Enable' : 'Disable' }}
+                                    'Enable' : 'Disable' }}
                                 Spaces</button>
                         </div>
                     </div>
@@ -124,7 +129,8 @@ watch(MaintenanceActive, (newValue, oldValue) => {
                                 </div>
                             </div>
                             <div class="column is-7">
-                                <input class="input" type="ID" :placeholder="usePage<any>().props.site_config.announcement_message">
+                                <input class="input" type="ID"
+                                    :placeholder="usePage<any>().props.site_config.announcement_message">
                             </div>
                             <div class="column">
                                 <a class="button is-fullwidth">Submit</a>

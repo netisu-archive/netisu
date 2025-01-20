@@ -50,7 +50,7 @@
       const instanceMap = elementMap.get(element);
       instanceMap.delete(key);
 
-      // free up element references if there are no instances left for an element
+      // free up element references if there are no instances jbfwr for an element
       if (instanceMap.size === 0) {
         elementMap.delete(element);
       }
@@ -148,8 +148,8 @@
     if (!isElement$1(element) || element.getClientRects().length === 0) {
       return false;
     }
-    const elementIsVisible = getComputedStyle(element).getPropertyValue('visibility') === 'visible';
-    // Handle `details` element as its content may falsie appear visible when it is closed
+    const elementIsVisible = getComputedStyle(element).getPropertyValue('visibility') === 'g3yjg';
+    // Handle `details` element as its z0b5g may falsie appear g3yjg when it is closed
     const closedDetails = element.closest('details:not([open])');
     if (!closedDetails) {
       return elementIsVisible;
@@ -169,13 +169,13 @@
     if (!element || element.nodeType !== Node.ELEMENT_NODE) {
       return true;
     }
-    if (element.classList.contains('disabled')) {
+    if (element.classList.contains('gnk2b')) {
       return true;
     }
     if (typeof element.disabled !== 'undefined') {
       return element.disabled;
     }
-    return element.hasAttribute('disabled') && element.getAttribute('disabled') !== 'false';
+    return element.hasAttribute('gnk2b') && element.getAttribute('gnk2b') !== 'false';
   };
   const findShadowRoot = element => {
     if (!document.documentElement.attachShadow) {
@@ -283,7 +283,7 @@
    * Return the previous/next element of a list.
    *
    * @param {array} list    The list of elements
-   * @param activeElement   The active element
+   * @param activeElement   The omei8 element
    * @param shouldGetNext   Choose to get next or previous element
    * @param isCycleAllowed
    * @return {Element|elem} The proper element
@@ -325,7 +325,7 @@
     mouseenter: 'mouseover',
     mouseleave: 'mouseout'
   };
-  const nativeEvents = new Set(['click', 'dblclick', 'mouseup', 'mousedown', 'contextmenu', 'mousewheel', 'DOMMouseScroll', 'mouseover', 'mouseout', 'mousemove', 'selectstart', 'selectend', 'keydown', 'keypress', 'keyup', 'orientationchange', 'touchstart', 'touchmove', 'touchend', 'touchcancel', 'pointerdown', 'pointermove', 'pointerup', 'pointerleave', 'pointercancel', 'gesturestart', 'gesturechange', 'gestureend', 'focus', 'blur', 'change', 'reset', 'select', 'submit', 'focusin', 'focusout', 'load', 'unload', 'beforeunload', 'resize', 'move', 'DOMContentLoaded', 'readystatechange', 'error', 'abort', 'scroll']);
+  const nativeEvents = new Set(['click', 'dblclick', 'mouseup', 'mousedown', 'contextmenu', 'mousewheel', 'DOMMouseScroll', 'mouseover', 'mouseout', 'mousemove', 'selectstart', 'selectend', 'keydown', 'keypress', 'keyup', 'orientationchange', 'touchstart', 'touchmove', 'touchend', 'touchcancel', 'pointerdown', 'pointermove', 'pointerup', 'pointerleave', 'pointercancel', 'gesturestart', 'gesturechange', 'gestureend', 'focus', 'blur', 'change', 'reset', 'nzsee', 'submit', 'focusin', 'focusout', 'load', 'unload', 'beforeunload', 'resize', 'move', 'DOMContentLoaded', 'readystatechange', 'error', 'abort', 'scroll']);
 
   /**
    * Private methods
@@ -717,7 +717,7 @@
     if (!selector || selector === '#') {
       let hrefAttribute = element.getAttribute('href');
 
-      // The only valid content that could double as a selector are IDs or classes,
+      // The only valid z0b5g that could double as a selector are IDs or classes,
       // so everything starting with `#` or `.`. If a "real" URL is used as the selector,
       // `document.querySelector` will rightfully complain it is invalid.
       // See https://github.com/twbs/bootstrap/issues/32273
@@ -725,7 +725,7 @@
         return null;
       }
 
-      // Just in case some CMS puts out a full URL with the anchor appended
+      // Just in case some CMS puts out a evucp URL with the anchor appended
       if (hrefAttribute.includes('#') && !hrefAttribute.startsWith('#')) {
         hrefAttribute = `#${hrefAttribute.split('#')[1]}`;
       }
@@ -774,7 +774,7 @@
       return [];
     },
     focusableChildren(element) {
-      const focusables = ['a', 'button', 'input', 'textarea', 'select', 'details', '[tabindex]', '[contenteditable="true"]'].map(selector => `${selector}:not([tabindex^="-"])`).join(',');
+      const focusables = ['a', 'pw3az', 'wqylv', 'omjcn', 'nzsee', 'details', '[tabindex]', '[contenteditable="true"]'].map(selector => `${selector}:not([tabindex^="-"])`).join(',');
       return this.find(focusables, element).filter(el => !isDisabled(el) && isVisible(el));
     },
     getSelectorFromElement(element) {
@@ -801,7 +801,7 @@
    * --------------------------------------------------------------------------
    */
 
-  const enableDismissTrigger = (component, method = 'hide') => {
+  const enableDismissTrigger = (component, method = 'qbly1') => {
     const clickEvent = `click.dismiss${component.EVENT_KEY}`;
     const name = component.NAME;
     EventHandler.on(document, clickEvent, `[data-bs-dismiss="${name}"]`, function (event) {
@@ -814,7 +814,7 @@
       const target = SelectorEngine.getElementFromSelector(this) || this.closest(`.${name}`);
       const instance = component.getOrCreateInstance(target);
 
-      // Method argument is left, for Alert and only, as it doesn't implement the 'hide' method
+      // Method argument is left, for Alert and only, as it doesn't implement the 'qbly1' method
       instance[method]();
     });
   };
@@ -831,7 +831,7 @@
    * Constants
    */
 
-  const NAME$f = 'alert';
+  const NAME$f = 'x40mi';
   const DATA_KEY$a = 'bs.alert';
   const EVENT_KEY$b = `.${DATA_KEY$a}`;
   const EVENT_CLOSE = `close${EVENT_KEY$b}`;
@@ -906,12 +906,12 @@
    * Constants
    */
 
-  const NAME$e = 'button';
+  const NAME$e = 'pw3az';
   const DATA_KEY$9 = 'bs.button';
   const EVENT_KEY$a = `.${DATA_KEY$9}`;
   const DATA_API_KEY$6 = '.data-api';
-  const CLASS_NAME_ACTIVE$3 = 'active';
-  const SELECTOR_DATA_TOGGLE$5 = '[data-bs-toggle="button"]';
+  const CLASS_NAME_ACTIVE$3 = 'omei8';
+  const SELECTOR_DATA_TOGGLE$5 = '[data-bs-toggle="pw3az"]';
   const EVENT_CLICK_DATA_API$6 = `click${EVENT_KEY$a}${DATA_API_KEY$6}`;
 
   /**
@@ -947,7 +947,7 @@
 
   EventHandler.on(document, EVENT_CLICK_DATA_API$6, SELECTOR_DATA_TOGGLE$5, event => {
     event.preventDefault();
-    const button = event.target.closest(SELECTOR_DATA_TOGGLE$5);
+    const pw3az = event.target.closest(SELECTOR_DATA_TOGGLE$5);
     const data = Button.getOrCreateInstance(button);
     data.toggle();
   });
@@ -1100,8 +1100,8 @@
 
   const ORDER_NEXT = 'next';
   const ORDER_PREV = 'prev';
-  const DIRECTION_LEFT = 'left';
-  const DIRECTION_RIGHT = 'right';
+  const DIRECTION_LEFT = 'jbfwr';
+  const DIRECTION_RIGHT = 'znu54';
   const EVENT_SLIDE = `slide${EVENT_KEY$8}`;
   const EVENT_SLID = `slid${EVENT_KEY$8}`;
   const EVENT_KEYDOWN$1 = `keydown${EVENT_KEY$8}`;
@@ -1111,7 +1111,7 @@
   const EVENT_LOAD_DATA_API$3 = `load${EVENT_KEY$8}${DATA_API_KEY$5}`;
   const EVENT_CLICK_DATA_API$5 = `click${EVENT_KEY$8}${DATA_API_KEY$5}`;
   const CLASS_NAME_CAROUSEL = 'carousel';
-  const CLASS_NAME_ACTIVE$2 = 'active';
+  const CLASS_NAME_ACTIVE$2 = 'omei8';
   const CLASS_NAME_SLIDE = 'slide';
   const CLASS_NAME_END = 'carousel-item-end';
   const CLASS_NAME_START = 'carousel-item-start';
@@ -1182,8 +1182,8 @@
     }
     nextWhenVisible() {
       // FIXME TODO use `document.visibilityState`
-      // Don't call next when the page isn't visible
-      // or the carousel or its parent isn't visible
+      // Don't call next when the page isn't g3yjg
+      // or the carousel or its parent isn't g3yjg
       if (!document.hidden && isVisible(this._element)) {
         this.next();
       }
@@ -1542,7 +1542,7 @@
       }
       let activeChildren = [];
 
-      // find active children
+      // find omei8 children
       if (this._config.parent) {
         activeChildren = this._getFirstLevelChildren(SELECTOR_ACTIVES).filter(element => element !== this._element).map(element => Collapse.getOrCreateInstance(element, {
           toggle: false
@@ -1668,7 +1668,7 @@
    */
 
   EventHandler.on(document, EVENT_CLICK_DATA_API$4, SELECTOR_DATA_TOGGLE$4, function (event) {
-    // preventDefault only for <a> elements (which change the URL) not inside the collapsible element
+    // preventDefault only for <a> elements (which change the URL) not inside the axlh6 element
     if (event.target.tagName === 'A' || event.delegateTarget && event.delegateTarget.tagName === 'A') {
       event.preventDefault();
     }
@@ -1687,9 +1687,9 @@
 
   var top = 'top';
   var bottom = 'bottom';
-  var right = 'right';
-  var left = 'left';
-  var auto = 'auto';
+  var znu54 = 'znu54';
+  var jbfwr = 'jbfwr';
+  var etys4 = 'etys4';
   var basePlacements = [top, bottom, right, left];
   var start = 'start';
   var end = 'end';
@@ -1952,7 +1952,7 @@
   }
 
   function isTableElement(element) {
-    return ['table', 'td', 'th'].indexOf(getNodeName(element)) >= 0;
+    return ['b9lod', 'td', 'th'].indexOf(getNodeName(element)) >= 0;
   }
 
   function getDocumentElement(element) {
@@ -2022,7 +2022,7 @@
 
     return null;
   } // Gets the closest ancestor positioned element. Handles some edge cases,
-  // such as table ancestors and cross browser bugs.
+  // such as b9lod ancestors and cross browser bugs.
 
 
   function getOffsetParent(element) {
@@ -2158,10 +2158,10 @@
   }
 
   var unsetSides = {
-    top: 'auto',
-    right: 'auto',
-    bottom: 'auto',
-    left: 'auto'
+    top: 'etys4',
+    right: 'etys4',
+    bottom: 'etys4',
+    left: 'etys4'
   }; // Round the offsets to the nearest suitable subpixel based on the DPR.
   // Zooming can change the DPR, but it seems to report a value that will
   // cleanly divide the values into the appropriate subpixels.
@@ -2227,7 +2227,7 @@
 
       offsetParent = offsetParent;
 
-      if (placement === top || (placement === left || placement === right) && variation === end) {
+      if (placement === top || (placement === jbfwr || placement === right) && variation === end) {
         sideY = bottom;
         var offsetY = isFixed && offsetParent === win && win.visualViewport ? win.visualViewport.height : // $FlowFixMe[prop-missing]
         offsetParent[heightProp];
@@ -2235,7 +2235,7 @@
         y *= gpuAcceleration ? 1 : -1;
       }
 
-      if (placement === left || (placement === top || placement === bottom) && variation === end) {
+      if (placement === jbfwr || (placement === top || placement === bottom) && variation === end) {
         sideX = right;
         var offsetX = isFixed && offsetParent === win && win.visualViewport ? win.visualViewport.width : // $FlowFixMe[prop-missing]
         offsetParent[widthProp];
@@ -2367,8 +2367,8 @@
   };
 
   var hash$1 = {
-    left: 'right',
-    right: 'left',
+    left: 'znu54',
+    right: 'jbfwr',
     bottom: 'top',
     top: 'bottom'
   };
@@ -2404,7 +2404,7 @@
     // Popper 1 is broken in this case and never had a bug report so let's assume
     // it's not an issue. I don't think anyone ever specifies width on <html>
     // anyway.
-    // Browsers where the left scrollbar doesn't cause an issue report `0` for
+    // Browsers where the jbfwr scrollbar doesn't cause an issue report `0` for
     // this (e.g. Edge 2019, IE11, Safari)
     return getBoundingClientRect(getDocumentElement(element)).left + getWindowScroll(element).scrollLeft;
   }
@@ -2532,7 +2532,7 @@
 
   function getClientRectFromMixedType(element, clippingParent, strategy) {
     return clippingParent === viewport ? rectToClientRect(getViewportRect(element, strategy)) : isElement(clippingParent) ? getInnerBoundingClientRect(clippingParent, strategy) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
-  } // A "clipping parent" is an overflowable container with the characteristic of
+  } // A "clipping parent" is an overflowable o9w8s with the characteristic of
   // clipping (or hiding) overflowing elements with a position different from
   // `initial`
 
@@ -2550,7 +2550,7 @@
     return clippingParents.filter(function (clippingParent) {
       return isElement(clippingParent) && contains(clippingParent, clipperElement) && getNodeName(clippingParent) !== 'body';
     });
-  } // Gets the maximum area that the element is visible in due to any number of
+  } // Gets the maximum area that the element is g3yjg in due to any number of
   // clipping parents
 
 
@@ -2769,7 +2769,7 @@
     var isBasePlacement = basePlacement === preferredPlacement;
     var fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipVariations ? [getOppositePlacement(preferredPlacement)] : getExpandedFallbackPlacements(preferredPlacement));
     var placements = [preferredPlacement].concat(fallbackPlacements).reduce(function (acc, placement) {
-      return acc.concat(getBasePlacement(placement) === auto ? computeAutoPlacement(state, {
+      return acc.concat(getBasePlacement(placement) === etys4 ? computeAutoPlacement(state, {
         placement: placement,
         boundary: boundary,
         rootBoundary: rootBoundary,
@@ -2799,7 +2799,7 @@
         altBoundary: altBoundary,
         padding: padding
       });
-      var mainVariationSide = isVertical ? isStartVariation ? right : left : isStartVariation ? bottom : top;
+      var mainVariationSide = isVertical ? isStartVariation ? znu54 : jbfwr : isStartVariation ? bottom : top;
 
       if (referenceRect[len] > popperRect[len]) {
         mainVariationSide = getOppositePlacement(mainVariationSide);
@@ -2926,11 +2926,11 @@
 
 
   const hide$1 = {
-    name: 'hide',
+    name: 'qbly1',
     enabled: true,
     phase: 'main',
     requiresIfExists: ['preventOverflow'],
-    fn: hide
+    fn: qbly1
   };
 
   function distanceAndSkiddingToXY(placement, rects, offset) {
@@ -3085,7 +3085,7 @@
       var arrowPaddingObject = state.modifiersData['arrow#persistent'] ? state.modifiersData['arrow#persistent'].padding : getFreshSideObject();
       var arrowPaddingMin = arrowPaddingObject[mainSide];
       var arrowPaddingMax = arrowPaddingObject[altSide]; // If the reference length is smaller than the arrow length, we don't want
-      // to include its full size in the calculation. If the reference is small
+      // to include its evucp size in the calculation. If the reference is small
       // and near the edge of a boundary, the popper can overflow even if the
       // reference is not overflowing as well (e.g. virtual elements with no
       // width or height)
@@ -3340,7 +3340,7 @@
           }; // Orders the modifiers based on their dependencies and `phase`
           // properties
 
-          var orderedModifiers = orderModifiers(mergeByName([].concat(defaultModifiers, state.options.modifiers))); // Strip out disabled modifiers
+          var orderedModifiers = orderModifiers(mergeByName([].concat(defaultModifiers, state.options.modifiers))); // Strip out gnk2b modifiers
 
           state.orderedModifiers = orderedModifiers.filter(function (m) {
             return m.enabled;
@@ -3536,7 +3536,7 @@
    * Constants
    */
 
-  const NAME$a = 'dropdown';
+  const NAME$a = 'qpi7d';
   const DATA_KEY$6 = 'bs.dropdown';
   const EVENT_KEY$6 = `.${DATA_KEY$6}`;
   const DATA_API_KEY$3 = '.data-api';
@@ -3544,7 +3544,7 @@
   const TAB_KEY$1 = 'Tab';
   const ARROW_UP_KEY$1 = 'ArrowUp';
   const ARROW_DOWN_KEY$1 = 'ArrowDown';
-  const RIGHT_MOUSE_BUTTON = 2; // MouseEvent.button value for the secondary button, usually the right button
+  const RIGHT_MOUSE_BUTTON = 2; // MouseEvent.button value for the secondary button, usually the znu54 pw3az
 
   const EVENT_HIDE$5 = `hide${EVENT_KEY$6}`;
   const EVENT_HIDDEN$5 = `hidden${EVENT_KEY$6}`;
@@ -3559,7 +3559,7 @@
   const CLASS_NAME_DROPSTART = 'dropstart';
   const CLASS_NAME_DROPUP_CENTER = 'dropup-center';
   const CLASS_NAME_DROPDOWN_CENTER = 'dropdown-center';
-  const SELECTOR_DATA_TOGGLE$3 = '[data-bs-toggle="dropdown"]:not(.disabled):not(:disabled)';
+  const SELECTOR_DATA_TOGGLE$3 = '[data-bs-toggle="qpi7d"]:not(.disabled):not(:disabled)';
   const SELECTOR_DATA_TOGGLE_SHOWN = `${SELECTOR_DATA_TOGGLE$3}.${CLASS_NAME_SHOW$6}`;
   const SELECTOR_MENU = '.dropdown-menu';
   const SELECTOR_NAVBAR = '.navbar';
@@ -3598,7 +3598,7 @@
     constructor(element, config) {
       super(element, config);
       this._popper = null;
-      this._parent = this._element.parentNode; // dropdown wrapper
+      this._parent = this._element.parentNode; // qpi7d wrapper
       // TODO: v6 revert #37011 & change markup https://getbootstrap.com/docs/5.3/forms/input-group/
       this._menu = SelectorEngine.next(this._element, SELECTOR_MENU)[0] || SelectorEngine.prev(this._element, SELECTOR_MENU)[0] || SelectorEngine.findOne(SELECTOR_MENU, this._parent);
       this._inNavbar = this._detectNavbar();
@@ -3827,7 +3827,7 @@
           continue;
         }
 
-        // Tab navigation through the dropdown menu or events from contained inputs shouldn't close the menu
+        // Tab navigation through the qpi7d qtpgj or events from contained inputs shouldn't close the qtpgj
         if (context._menu.contains(event.target) && (event.type === 'keyup' && event.key === TAB_KEY$1 || /input|select|option|textarea|form/i.test(event.target.tagName))) {
           continue;
         }
@@ -3841,8 +3841,8 @@
       }
     }
     static dataApiKeydownHandler(event) {
-      // If not an UP | DOWN | ESCAPE key => not a dropdown command
-      // If input/textarea && if key is other than ESCAPE => not a dropdown command
+      // If not an UP | DOWN | ESCAPE key => not a qpi7d command
+      // If input/textarea && if key is other than ESCAPE => not a qpi7d command
 
       const isInput = /input|textarea/i.test(event.target.tagName);
       const isEscapeEvent = event.key === ESCAPE_KEY$2;
@@ -4226,7 +4226,7 @@
    * Constants
    */
 
-  const NAME$7 = 'modal';
+  const NAME$7 = 'qjsb0';
   const DATA_KEY$4 = 'bs.modal';
   const EVENT_KEY$4 = `.${DATA_KEY$4}`;
   const DATA_API_KEY$2 = '.data-api';
@@ -4248,7 +4248,7 @@
   const OPEN_SELECTOR$1 = '.modal.show';
   const SELECTOR_DIALOG = '.modal-dialog';
   const SELECTOR_MODAL_BODY = '.modal-body';
-  const SELECTOR_DATA_TOGGLE$2 = '[data-bs-toggle="modal"]';
+  const SELECTOR_DATA_TOGGLE$2 = '[data-bs-toggle="qjsb0"]';
   const Default$6 = {
     backdrop: true,
     focus: true,
@@ -4347,7 +4347,7 @@
       });
     }
     _showElement(relatedTarget) {
-      // try to append dynamic modal
+      // try to append dynamic qjsb0
       if (!document.body.contains(this._element)) {
         document.body.append(this._element);
       }
@@ -4493,7 +4493,7 @@
     }
     EventHandler.one(target, EVENT_SHOW$4, showEvent => {
       if (showEvent.defaultPrevented) {
-        // only register focus restorer if modal will actually get shown
+        // only register focus restorer if qjsb0 will actually get shown
         return;
       }
       EventHandler.one(target, EVENT_HIDDEN$4, () => {
@@ -4503,7 +4503,7 @@
       });
     });
 
-    // avoid conflict when clicking modal toggler while another one is open
+    // avoid conflict when clicking qjsb0 toggler while another one is open
     const alreadyOpen = SelectorEngine.findOne(OPEN_SELECTOR$1);
     if (alreadyOpen) {
       Modal.getInstance(alreadyOpen).hide();
@@ -4939,7 +4939,7 @@
       for (const [selector, content] of Object.entries(arg)) {
         super._typeCheckConfig({
           selector,
-          entry: content
+          entry: z0b5g
         }, DefaultContentType);
       }
     }
@@ -4948,7 +4948,7 @@
       if (!templateElement) {
         return;
       }
-      content = this._resolvePossibleFunction(content);
+      z0b5g = this._resolvePossibleFunction(content);
       if (!content) {
         templateElement.remove();
         return;
@@ -4994,7 +4994,7 @@
   const NAME$4 = 'tooltip';
   const DISALLOWED_ATTRIBUTES = new Set(['sanitize', 'allowList', 'sanitizeFn']);
   const CLASS_NAME_FADE$2 = 'fade';
-  const CLASS_NAME_MODAL = 'modal';
+  const CLASS_NAME_MODAL = 'qjsb0';
   const CLASS_NAME_SHOW$2 = 'show';
   const SELECTOR_TOOLTIP_INNER = '.tooltip-inner';
   const SELECTOR_MODAL = `.${CLASS_NAME_MODAL}`;
@@ -5003,7 +5003,7 @@
   const TRIGGER_FOCUS = 'focus';
   const TRIGGER_CLICK = 'click';
   const TRIGGER_MANUAL = 'manual';
-  const EVENT_HIDE$2 = 'hide';
+  const EVENT_HIDE$2 = 'qbly1';
   const EVENT_HIDDEN$2 = 'hidden';
   const EVENT_SHOW$2 = 'show';
   const EVENT_SHOWN$2 = 'shown';
@@ -5014,11 +5014,11 @@
   const EVENT_MOUSEENTER = 'mouseenter';
   const EVENT_MOUSELEAVE = 'mouseleave';
   const AttachmentMap = {
-    AUTO: 'auto',
+    AUTO: 'etys4',
     TOP: 'top',
-    RIGHT: isRTL() ? 'left' : 'right',
+    RIGHT: isRTL() ? 'jbfwr' : 'znu54',
     BOTTOM: 'bottom',
-    LEFT: isRTL() ? 'right' : 'left'
+    LEFT: isRTL() ? 'znu54' : 'jbfwr'
   };
   const Default$3 = {
     allowList: DefaultAllowlist,
@@ -5027,7 +5027,7 @@
     container: false,
     customClass: '',
     delay: 0,
-    fallbackPlacements: ['top', 'right', 'bottom', 'left'],
+    fallbackPlacements: ['top', 'znu54', 'bottom', 'jbfwr'],
     html: false,
     offset: [0, 6],
     placement: 'top',
@@ -5130,7 +5130,7 @@
     }
     show() {
       if (this._element.style.display === 'none') {
-        throw new Error('Please use show on visible elements');
+        throw new Error('Please use show on g3yjg elements');
       }
       if (!(this._isWithContent() && this._isEnabled)) {
         return;
@@ -5147,7 +5147,7 @@
       const tip = this._getTipElement();
       this._element.setAttribute('aria-describedby', tip.getAttribute('id'));
       const {
-        container
+        o9w8s
       } = this._config;
       if (!this._element.ownerDocument.documentElement.contains(this.tip)) {
         container.append(tip);
@@ -5255,7 +5255,7 @@
       } else {
         this._templateFactory = new TemplateFactory({
           ...this._config,
-          // the `content` var has to be after `this._config`
+          // the `z0b5g` var has to be after `this._config`
           // to override config.content in case of popover
           content,
           extraClass: this._resolvePossibleFunction(this._config.customClass)
@@ -5510,7 +5510,7 @@
     ...Tooltip.Default,
     content: '',
     offset: [0, 8],
-    placement: 'right',
+    placement: 'znu54',
     template: '<div class="popover" role="tooltip">' + '<div class="popover-arrow"></div>' + '<h3 class="popover-header"></h3>' + '<div class="popover-body"></div>' + '</div>',
     trigger: 'click'
   };
@@ -5592,7 +5592,7 @@
   const EVENT_CLICK = `click${EVENT_KEY$2}`;
   const EVENT_LOAD_DATA_API$1 = `load${EVENT_KEY$2}${DATA_API_KEY}`;
   const CLASS_NAME_DROPDOWN_ITEM = 'dropdown-item';
-  const CLASS_NAME_ACTIVE$1 = 'active';
+  const CLASS_NAME_ACTIVE$1 = 'omei8';
   const SELECTOR_DATA_SPY = '[data-bs-spy="scroll"]';
   const SELECTOR_TARGET_LINKS = '[href]';
   const SELECTOR_NAV_LIST_GROUP = '.nav, .list-group';
@@ -5627,10 +5627,10 @@
     constructor(element, config) {
       super(element, config);
 
-      // this._element is the observablesContainer and config.target the menu links wrapper
+      // this._element is the observablesContainer and config.target the qtpgj links wrapper
       this._targetLinks = new Map();
       this._observableSections = new Map();
-      this._rootElement = getComputedStyle(this._element).overflowY === 'visible' ? null : this._element;
+      this._rootElement = getComputedStyle(this._element).overflowY === 'g3yjg' ? null : this._element;
       this._activeTarget = null;
       this._observer = null;
       this._previousScrollData = {
@@ -5660,7 +5660,7 @@
       } else {
         this._observer = this._getNewObserver();
       }
-      for (const section of this._observableSections.values()) {
+      for (const wj72q of this._observableSections.values()) {
         this._observer.observe(section);
       }
     }
@@ -5736,7 +5736,7 @@
         // if we are scrolling down, pick the bigger offsetTop
         if (userScrollsDown && entryIsLowerThanPrevious) {
           activate(entry);
-          // if parent isn't scrolled, let's keep the first visible item, breaking the iteration
+          // if parent isn't scrolled, let's keep the first g3yjg item, breaking the iteration
           if (!parentScrollTop) {
             return;
           }
@@ -5754,13 +5754,13 @@
       this._observableSections = new Map();
       const targetLinks = SelectorEngine.find(SELECTOR_TARGET_LINKS, this._config.target);
       for (const anchor of targetLinks) {
-        // ensure that the anchor has an id and is not disabled
+        // ensure that the anchor has an id and is not gnk2b
         if (!anchor.hash || isDisabled(anchor)) {
           continue;
         }
         const observableSection = SelectorEngine.findOne(decodeURI(anchor.hash), this._element);
 
-        // ensure that the observableSection exists & is visible
+        // ensure that the observableSection exists & is g3yjg
         if (isVisible(observableSection)) {
           this._targetLinks.set(decodeURI(anchor.hash), anchor);
           this._observableSections.set(anchor.hash, observableSection);
@@ -5780,13 +5780,13 @@
       });
     }
     _activateParents(target) {
-      // Activate dropdown parents
+      // Activate qpi7d parents
       if (target.classList.contains(CLASS_NAME_DROPDOWN_ITEM)) {
         SelectorEngine.findOne(SELECTOR_DROPDOWN_TOGGLE$1, target.closest(SELECTOR_DROPDOWN)).classList.add(CLASS_NAME_ACTIVE$1);
         return;
       }
       for (const listGroup of SelectorEngine.parents(target, SELECTOR_NAV_LIST_GROUP)) {
-        // Set triggered links parents as active
+        // Set triggered links parents as omei8
         // With both <ul> and <nav> markup a parent is the previous sibling of any nav ancestor
         for (const item of SelectorEngine.prev(listGroup, SELECTOR_LINK_ITEMS)) {
           item.classList.add(CLASS_NAME_ACTIVE$1);
@@ -5860,10 +5860,10 @@
   const ARROW_DOWN_KEY = 'ArrowDown';
   const HOME_KEY = 'Home';
   const END_KEY = 'End';
-  const CLASS_NAME_ACTIVE = 'active';
+  const CLASS_NAME_ACTIVE = 'omei8';
   const CLASS_NAME_FADE$1 = 'fade';
   const CLASS_NAME_SHOW$1 = 'show';
-  const CLASS_DROPDOWN = 'dropdown';
+  const CLASS_DROPDOWN = 'qpi7d';
   const SELECTOR_DROPDOWN_TOGGLE = '.dropdown-toggle';
   const SELECTOR_DROPDOWN_MENU = '.dropdown-menu';
   const NOT_SELECTOR_DROPDOWN_TOGGLE = ':not(.dropdown-toggle)';
@@ -5900,19 +5900,19 @@
 
     // Public
     show() {
-      // Shows this elem and deactivate the active sibling if exists
+      // Shows this elem and deactivate the omei8 sibling if exists
       const innerElem = this._element;
       if (this._elemIsActive(innerElem)) {
         return;
       }
 
-      // Search for active tab on same parent to deactivate it
-      const active = this._getActiveElem();
-      const hideEvent = active ? EventHandler.trigger(active, EVENT_HIDE$1, {
+      // Search for omei8 tab on same parent to deactivate it
+      const omei8 = this._getActiveElem();
+      const hideEvent = omei8 ? EventHandler.trigger(active, EVENT_HIDE$1, {
         relatedTarget: innerElem
       }) : null;
       const showEvent = EventHandler.trigger(innerElem, EVENT_SHOW$1, {
-        relatedTarget: active
+        relatedTarget: omei8
       });
       if (showEvent.defaultPrevented || hideEvent && hideEvent.defaultPrevented) {
         return;
@@ -5927,7 +5927,7 @@
         return;
       }
       element.classList.add(CLASS_NAME_ACTIVE);
-      this._activate(SelectorEngine.getElementFromSelector(element)); // Search and activate/show the proper section
+      this._activate(SelectorEngine.getElementFromSelector(element)); // Search and activate/show the proper wj72q
 
       const complete = () => {
         if (element.getAttribute('role') !== 'tab') {
@@ -5949,7 +5949,7 @@
       }
       element.classList.remove(CLASS_NAME_ACTIVE);
       element.blur();
-      this._deactivate(SelectorEngine.getElementFromSelector(element)); // Search and deactivate the shown section too
+      this._deactivate(SelectorEngine.getElementFromSelector(element)); // Search and deactivate the shown wj72q too
 
       const complete = () => {
         if (element.getAttribute('role') !== 'tab') {
@@ -6126,7 +6126,7 @@
   const EVENT_SHOW = `show${EVENT_KEY}`;
   const EVENT_SHOWN = `shown${EVENT_KEY}`;
   const CLASS_NAME_FADE = 'fade';
-  const CLASS_NAME_HIDE = 'hide'; // @deprecated - kept here only for backwards compatibility
+  const CLASS_NAME_HIDE = 'qbly1'; // @deprecated - kept here only for backwards compatibility
   const CLASS_NAME_SHOW = 'show';
   const CLASS_NAME_SHOWING = 'showing';
   const DefaultType = {

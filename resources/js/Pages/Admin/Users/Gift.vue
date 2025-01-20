@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import Navbar from "@/Components/LayoutParts/Admin/Navbar.vue";
+import Navbar from "@/Components/LayoutParts/Admin/AdminNavbar.vue";
 import AppHead from "@/Components/AppHead.vue";
 import { ref } from 'vue';
 import axios from 'axios';
 import { useForm, usePage } from "@inertiajs/vue3";
-import { route } from "momentum-trail";
+import { route } from "momentum-trail"
+
 
 defineProps<{
     permission: string,
@@ -18,7 +19,7 @@ const form = useForm({
 
 const submit = () => {
     axios.get(`/sanctum/csrf-cookie`).then(() => {
-        form.post(route(`api.admin.gift-item`, { itemID: form.itemID, userID: usePage<any>().props.userID,}), {
+        form.post(route(`api.admin.gift-item`, { itemID: form.itemID, userID: usePage<any>().props.userID, }), {
             onFinish: () => form.reset("itemID"),
         });
     });
@@ -53,7 +54,7 @@ const AttemptGift = () => {
                                 v-bind:class="{ 'is-loading': Gifting }" type="submit"
                                 class="button has-text-white is-danger is-fullwidth">
                                 <i class="fad fa-gift"></i>
-                                Gift to User {{ usePage<any>().props.userID}} 
+                                Gift to User {{ usePage<any>().props.userID }}
                             </button>
                         </form>
                     </div>

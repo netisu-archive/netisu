@@ -96,7 +96,7 @@ const submit = () => {
                 <div class="cell large-7" v-if="usePage<any>().props.auth.user">
                     <div class="gap-2 align-middle flex-container-lg">
                         <input type="text" class="flex-container mb-2 form form-xs form-has-section-color"
-                            placeholder="Search..." name="search" v-model="search" @input="performSearch" />
+                            placeholder="Search..." name="search" />
 
                         <div class="mb-2 flex-container flex-child-grow">
                             <Link :href="route(`forum.your.posts`)" as="button"

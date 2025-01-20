@@ -97,12 +97,13 @@ class ItemApiController extends Controller
     {
         $item = Item::where(['id' => $itemID])->first();
 
-        if ($item->item_type !== 'face') {
+    
+        if ($item->item_type !== 'face' || $item->item_type !== 'head' ) {
             ItemRenderer::dispatch($item->id)->onQueue('render');
             ItemPreviewRenderer::dispatch($item->id, true, $item->hash)->onQueue('render');
         }
 
-        if ($item->item_type === 'face') {
+        if ($item->item_type === 'face' || $item->item_type === 'head') {
             ItemPreviewRenderer::dispatch($item->id, true, $item->hash)->onQueue('render');
         }
 

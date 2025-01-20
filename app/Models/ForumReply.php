@@ -20,16 +20,16 @@ class ForumReply extends Model
 
     public function creator()
     {
-        return $this->belongsTo('App\Models\User', 'creator_id');
+        return $this->belongsTo(User::class);
     }
 
     public function quote()
     {
-        return $this->belongsTo('App\Models\ForumReply', 'quote_id');
+        return $this->belongsTo(ForumReply::class, 'quote_id');
     }
 
     public function thread()
     {
-        return $this->belongsTo('App\Models\ForumThread', 'thread_id');
+        return $this->belongsTo(ForumThread::class);
     }
 }

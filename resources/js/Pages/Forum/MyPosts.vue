@@ -3,18 +3,19 @@ import Navbar from '@/Components/LayoutParts/Navbar.vue';
 import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
 import Footer from '@/Components/LayoutParts/Footer.vue';
 import { usePage } from '@inertiajs/vue3';
-import { route } from "momentum-trail";
+import { route } from "momentum-trail"
+
 import VLazyImage from "v-lazy-image";
 defineProps({
     posts: { type: Object },
 });
 </script>
 <template>
-  <Navbar/>
-<Sidebar>
-    <div class="cell medium-10">
-      <div class="text-xl text-base bg-primary mb-2">My Posts</div>
-    <div class="card">
+    <Navbar />
+    <Sidebar>
+        <div class="cell medium-10">
+            <div class="text-xl text-base bg-primary mb-2">My Posts</div>
+            <div class="card">
                 <div class="pb-0 card-body">
                     <div class="gap-3 text-center flex-container flex-dir-column"
                         v-if="!usePage<any>().props.posts.data.length">
@@ -25,7 +26,7 @@ defineProps({
                             </div>
                             <div class="text-muted fw-semibold">
                                 <p class="text-xs">You have no posts.</p>
-                                <Link :href="route(`forum.create.page`, {id: 1})" class="text-xs">New Post</Link>
+                                <Link :href="route(`forum.create.page`, { id: 1 })" class="text-xs">New Post</Link>
                             </div>
                         </div>
                     </div>
@@ -59,8 +60,8 @@ defineProps({
                     </div>
                     <div :class="{ divider: usePage<any>().props.posts.data.length > 0 }" class="mx-1 my-3"></div>
                 </div>
-    </div>
-</div>
-  </Sidebar>
-<Footer/>
+            </div>
+        </div>
+    </Sidebar>
+    <Footer />
 </template>

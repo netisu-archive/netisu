@@ -8,7 +8,8 @@ import AppHead from "@/Components/AppHead.vue";
 import Navbar from "@/Components/LayoutParts/Navbar.vue";
 import Sidebar from "@/Components/LayoutParts/Sidebar.vue";
 import Footer from "@/Components/LayoutParts/Footer.vue";
-import { route } from "momentum-trail";
+import { route } from "momentum-trail"
+
 import ItemCardSkeleton from "@/Components/ItemCardSkeleton.vue";
 import VLazyImage from "v-lazy-image";
 
