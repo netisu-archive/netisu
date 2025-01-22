@@ -82,7 +82,7 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
         Route::post('/update', [GrabController::class, 'UpdateAvatar'])->name('update');
     });
 
-    Route::group(['as' => 'forum.', 'prefix' => 'discuss', 'middleware' => 'verified'], function () {
+    Route::group(['as' => 'forum.', 'prefix' => 'discuss'], function () {
         Route::get('/', function () {
             return redirect()->route('forum.page', ['id' => 1], 301);
         });
@@ -92,12 +92,12 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
             Route::get('/posts', [ForumController::class, 'myPosts'])->name('posts');
         });
 
-        Route::get('/post/{id}/{slug}', [ForumController::class, 'ForumPost'])->name('post');
-        Route::group(['as' => 'create.', 'prefix' => 'create'], function () {
+        Route::get('/post/{id}/{slug}', [ForumController::class, 'ForumPost'])->name('post')->middleware('verified');
+        Route::group(['as' => 'create.', 'prefix' => 'create', 'middleware' => 'verified'], function () {
             Route::get('/{id}', [ForumController::class, 'ForumCreate'])->name('page');
             Route::post('/{id}/validate', [ForumController::class, 'ForumVal'])->name('validate');
         });
-        Route::group(['as' => 'reply.', 'prefix' => 'create/reply'], function () {
+        Route::group(['as' => 'reply.', 'prefix' => 'create/reply', 'middleware' => 'verified'], function () {
             Route::post('/{id}/validate', [ForumController::class, 'ForumReply'])->name('validate');
         });
     });
@@ -193,11 +193,13 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
     });
     Route::group(['as' => 'spaces.', 'prefix' => 'spaces'], function () {
         Route::get('/', [SpaceController::class, 'SpacesIndex'])->name('page');
-        Route::group(['as' => 'create.', 'prefix' => 'create'], function () {
+        Route::group(['as' => 'create.', 'prefix' => 'create', 'middleware' => ['auth', 'verified']], function () {
             Route::get('/', [SpaceController::class, 'SpaceCreate'])->name('page');
             Route::post('/create/validate', [SpaceController::class, 'SpaceVal'])->name('validate');
-        });
-        Route::get('/{id}/{slug}', [GrabController::class, 'SpacesView'])->name('view');
+        });       
+        Route::post('/join/{id}', [SpaceController::class, 'JoinSpace'])->name('join');
+
+        Route::get('/{id}/{slug}', [SpaceController::class, 'SpacesView'])->name('view');
     });
 });
 
@@ -224,5 +226,5 @@ Route::post('/email/verification-notification', function (Request $request) {
 
     $request->user()->sendEmailVerificationNotification();
 
-    return inertia('App/Verify/EmailSent');
+    return back();
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');

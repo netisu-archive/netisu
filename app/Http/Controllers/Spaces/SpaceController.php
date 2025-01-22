@@ -3,20 +3,25 @@
 namespace App\Http\Controllers\Spaces;
 
 use App\Models\User;
-use App\Models\Item;
 use App\Models\Space;
 
 use App\Models\Status;
 use App\Models\ForumThread;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\ItemPurchase;
+use App\Models\SpacePurchase;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Level;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cache;
+
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\UploadedFile;
+use App\Models\SpaceJoinRequest;
 
 class SpaceController extends Controller
 {
@@ -55,12 +60,124 @@ class SpaceController extends Controller
         ]);
     }
 
-    public function SpacesView(Request $request, $id)
+    public function SpacesView(Request $request, int $id, string $slug)
     {
-        $space = Space::where('id', $id)->with(['creator'])->first();
+
+        $space = Space::where([['id', '=', $id]])->first();
+
+        if (!$space){
+            abort(404);
+        }
+
+        if ($slug != $space->slug()){
+            echo("Did you mean: ". $space->slug());
+            abort(404);
+        }
 
         return inertia('Spaces/View', [
-            'space' => $space,
+            'isInSpace' =>  Auth::user()->isInSpace($space),
+            'space' => [
+                'id' => $space->id,
+                'name' => $space->name,
+                'slug' => $space->slug(),
+                'name' => $space->name,
+                'creator' => [
+                    'username' => $space->creator->username,
+                    'display_name' => $space->creator->display_name
+                ],
+                'timecreated' => $space->created_at,
+                'description' => $space->description,
+                'DateHum' => $space->DateHum,
+                'member_count' => $space->member_count,
+                'thumbnail' => $space->thumbnail(),
+            ],
         ]);
+    }
+
+    public function JoinSpace(Request $request)
+    {
+        $space = Space::findOrFail($request->id);
+
+        if (Auth::user()->is($space->owner)) {
+            abort(404);
+        }
+
+        $isInSpace = Auth::user()->spaces()->contains($space);
+
+        if (!$isInSpace) {
+
+            $space->members()->create([
+                'user_id' => Auth::id(),
+                'rank' => 1,
+            ]);
+
+            $message = 'You have joined this space.';
+        } else {
+            if (Auth::user()->primary_space_id === $space->id) {
+                Auth::user()->update(['primary_space_id' => null]);
+            }
+
+            $space->members()->where('user_id', Auth::id())->delete();
+            $message = 'You have left this space.';
+        }
+
+        return back()->with('success_message', $message);
+    }
+
+    public function SpaceVal(Request $request)
+    {
+        $this->validateRequest($request);
+        $ThumbnailHashName = bin2hex(random_bytes(22));
+
+        $info = getimagesize($request->file('image'));
+        if ($info[2] == IMAGETYPE_JPEG) {
+            return response()->json([
+                'message' => 'This file needs to be a true PNG, none of that sneaky jpeg-in-disguise business.',
+                'type' => 'danger'
+            ], 502);
+        }
+
+        $this->uploadImage($request->file('image'), $ThumbnailHashName);
+
+        $Space = Space::create([
+            'owner_id' => Auth::id(),
+            'name' => $request->name,
+            'description' => $request->description,
+            'verified' => false,
+            'private' => false,
+            'alert' => false,
+            'alert_message' => null,
+            'vault_viewable' => true,
+            'primary_color' => 'none',
+            'locked' => false,
+            'thumbnail' => $ThumbnailHashName,
+            'thumbnail_pending' => true,
+        ]);
+
+
+        return redirect()->route('spaces.view', $Space->id, $Space->slug())->with([
+            'message' => 'Space created successfully!',
+            'type' => 'success'
+        ], 201);
+    }
+
+    private function uploadImage(UploadedFile $file, string $name): string
+    {
+        $path = Storage::disk('public')->putFileAs('uploads', $file, "{$name}.png");
+
+        return $path;
+    }
+
+    private function validateRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:30',
+            'description' => 'required|string|max:255',
+            'image' => 'required|image|mimes:png',
+        ]);
+
+        if ($validator->fails()) {
+            throw ValidationException::withMessages([$validator->errors()]);
+        }
     }
 }

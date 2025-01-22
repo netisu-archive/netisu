@@ -23,24 +23,26 @@ if (import.meta.hot) {
 import VueTippy from "vue-tippy";
 import "tippy.js/dist/tippy-bundle.umd.min.js";
 import "@popperjs/core/dist/umd/popper.min.js";
-import 'tippy.js/dist/tippy.css'
-import 'tippy.js/themes/light.css'
+import "tippy.js/dist/tippy.css";
+import "tippy.js/themes/light.css";
 
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
 const appName = import.meta.env?.["VITE_APP_NAME"] || "Laravel";
 
 createInertiaApp({
     progress: { includeCSS: true, showSpinner: false },
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) => resolvePageComponent(
-        `./Pages/${name}.vue`,
-        import.meta.glob<DefineComponent>("./Pages/**/*.vue")
-    ),
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.vue`,
+            import.meta.glob<DefineComponent>("./Pages/**/*.vue"),
+        ),
     setup({ el, App, props, plugin }) {
         createSSRApp({ render: () => h(App, props) })
-            .use(trail, { routes })
             .use(plugin)
+            .use(trail, { routes })
             .use(VueTippy)
             .use(PortalVue)
             .component("Skeletor", Skeletor)

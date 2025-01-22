@@ -7,6 +7,7 @@ use App\Models\SpaceMembers;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Space extends Model
 {
@@ -83,13 +84,13 @@ class Space extends Model
         return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
     }
 
-    public function members()
+    public function members(): HasMany
     {
-        return SpaceMembers::where('group_id', '=', $this->id)->get();
+        return $this->hasMany(SpaceMembers::class, 'space_id')->with('user');
     }
 
-    public function ranks()
+    public function ranks(): HasMany
     {
-        return SpaceRanks::where('group_id', '=', $this->id)->orderBy('rank', 'ASC')->get();
+        return $this->hasMany(SpaceRanks::class, 'space_id')->orderBy('rank', 'ASC');
     }
 }

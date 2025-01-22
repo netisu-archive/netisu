@@ -18,6 +18,10 @@ const form = useForm({
     message: '',
 });
 
+defineProps<{
+    recommendations: Array<any>,
+}>();
+
 const statuses = ref([]);
 
 const getStatuses = throttle(async () => {
@@ -116,7 +120,7 @@ onMounted(() => {
                                 </div>
                                 <div class="text-xs fw-bold text-muted text-uppercase">
                                     {{ usePage<any>().props.auth.user.xp + '/' + usePage<any>
-                                            ().props.nextlevelxp }} EXP
+                                        ().props.nextlevelxp }} EXP
                                 </div>
                             </div>
                             <div class="progress-bar">
@@ -243,14 +247,37 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
-                    <div class="card card-body cell large-4 medium-6 small-12" v-if="usePage<any>().props.auth.user.staff">
+                    <div class="card card-body cell large-4 medium-6 small-12"
+                        v-if="usePage<any>().props.auth.user.staff">
                         <div class="flex-container">
                             <div class="text-start">
-
                                 <div class="text-xs fw-semibold text-danger text-uppercase"><i class="fad fa-gavel"></i>
                                     Pending Assets</div>
                                 <div class="mb-1 text-xl text-uppercase">{{ usePage<any>().props.auth.user.pendingAssets
                                         }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-1 text-xl fw-semibold">
+                        Today's Reccomendations
+                    </div>
+                    <div class="divider mx-1 my-2" />
+                    <div class="text-sm text-muted mt-2">
+                        <div class="mb-2 text-sm text-body fw-semibold">
+                            <div v-if="recommendations.length" class="grid-x grid-margin-x">
+                                <div class="cell large-2 medium-3 small-6" v-for="suggestion in recommendations">
+                                    <Link :href="route('store.item', { id: suggestion.id })" class="d-block">
+                                    <div class="p-2 mb-1 card card-inner position-relative">
+                                        <img :src="suggestion.thumbnail">
+                                    </div>
+                                    <div class="text-body text-md fw-semibold text-truncate">
+                                        {{ suggestion.name }}
+                                    </div>
+                                    </Link>
+                                </div>
+                            </div>
+                            <div v-else class="text-sm fw-bold text-muted">
+                                There is no reccomendations.
                             </div>
                         </div>
                     </div>

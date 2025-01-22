@@ -31,35 +31,47 @@ const addText = (text) => {
 };
 </script>
 <template>
-  <Navbar />
-  <Sidebar>
-    <div class="card card-body">
-      <div class="text-xl text-danger bg-primary">Create a Post</div>
-      <div class="text-xs text-muted bg-primary">
-        Make sure you post in the appropriate sub-forum and that your post does not break any site rules.
-      </div>
-      <div class="mx-1 my-3 divider"></div>
-      <form @submit.prevent="submit">
-        <label for="post-title" class="mb-2 text-xs fw-bold text-uppercase">Post Title</label>
-        <input id="post-title" class="mb-2 form" type="text" name="title" v-model="form.title" placeholder="Title"
-          maxlength="64">
+    <Navbar />
+    <Sidebar>
+        <div class="mb-4 cell medium-8">
+            <Link :href="route(`forum.page`, { id: topic.id })">
+                <i class="fad fa-arrow-left"></i>
+                Back to Discuss
+            </Link>
 
-        <label for="post-body" class="mb-2 text-xs fw-bold text-uppercase">Post Content</label>
-        <textarea id="post-body" class="mb-2 form" name="body" v-model="form.body" placeholder="Body"
-          maxlength="4096"></textarea>
+            <div class="text-xl text-body fw-semibold bg-primary">Create a Post in {{ topic.name }}</div>
+            <div class="text-xs text-muted bg-primary">
+                Make sure you post in the appropriate sub-forum and that your post does not break any site rules.
+            </div>
+            <div class="mx-1 my-2 divider"></div>
+            <form @submit.prevent="submit">
+                <label for="post-title" class="mb-2 text-xs fw-bold text-uppercase">Post Title</label>
+                <input id="post-title" class="mb-2 form-has-section-color  form" type="text" name="title"
+                    v-model="form.title" placeholder="Title" maxlength="64">
 
-        <button class="btn btn-success btn-block" type="submit" :disabled="form.processing">Create</button>
-      </form>
-      <div class="min-w-0 gap-2 mt-3 flex-container">
-        <button class="btn btn-info" @click="addText('[color=#hexcodehere]Colored Text[/color]')">Add Color</button>
-        <button class="btn btn-warning" @click="addText('[b]Bold Text[/b]')">Bold Text</button>
-        <button class="btn btn-success" @click="addText('[i]Italic Text[/i]')">Italic Text</button>
-        <button class="btn btn-success" @click="addText('[u]Underlined Text[/u]')">Underline Text</button>
-        <button class="btn btn-info" @click="addText('[img]Image Link[/img]')">Insert an Image</button>
-        <button class="btn btn-danger" @click="addText('[url=https://yourlinkhere]Link Text[/url]')">Link To
-          Website</button>
-      </div>
-    </div>
-  </Sidebar>
-  <Footer />
+
+                <label for="post-body" class="mb-2 text-xs fw-bold text-uppercase">Post Content</label>
+                <div class="position-relative"><textarea id="post-body" name="body" v-model="form.body"
+                        class="mb-2 form form-has-button form-has-section-color pe-5" maxlength="4096" rows="5"
+                        placeholder="Post your thoughts here."></textarea>
+                    <input type="submit" :disabled="form.processing" class="btn btn-success btn-sm has-ripple"
+                        value="Post" style="position: absolute; bottom: 10px; right: 10px;">
+                </div>
+
+            </form>
+        </div>
+        <div class="cell medium-4">
+            <div class="gap-2 mt-3 grid-x">
+                <button class="btn btn-info" @click="addText('[color=#hexcodehere]Colored Text[/color]')">Add
+                    Color</button>
+                <button class="btn btn-warning" @click="addText('[b]Bold Text[/b]')">Bold Text</button>
+                <button class="btn btn-success" @click="addText('[i]Italic Text[/i]')">Italic Text</button>
+                <button class="btn btn-success" @click="addText('[u]Underlined Text[/u]')">Underline Text</button>
+                <button class="btn btn-info" @click="addText('[img]Image Link[/img]')">Insert an Image</button>
+                <button class="btn btn-danger" @click="addText('[url=https://yourlinkhere]Link Text[/url]')">Link To
+                    Website</button>
+            </div>
+        </div>
+    </Sidebar>
+    <Footer />
 </template>

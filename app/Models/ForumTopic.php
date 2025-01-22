@@ -31,7 +31,7 @@ class ForumTopic extends Model
                 ['is_deleted', '=', false]
             ])->orderBy('is_pinned', 'DESC')->orderBy('updated_at', 'DESC');
 
-        return ($hasPagination) ? $threads->paginate(4) : $threads->get();
+        return ($hasPagination) ? $threads->paginate(8) : $threads->get();
     }
 
     public function slug()

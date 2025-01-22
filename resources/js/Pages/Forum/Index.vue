@@ -25,65 +25,13 @@ const form = useForm({
     title: '',
     body: '',
 });
-
-function showModal(modalId: string): void {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.toggle("active");
-    }
-};
-
-const submit = () => {
-    axios.get(`/sanctum/csrf-cookie`).then(() => {
-        form.post(route(`forum.create.validate`, { id: usePage<any>().props.topic.id }), {
-            onFinish: () => form.reset('body'),
-        });
-    });
-};
 </script>
 
 <template>
     <AppHead pageTitle="Discuss"
         :description="'Here, You can discuss with the community surrounding several topics on ' + usePage<any>().props.site.name + '.'"
         :url="route('forum.page', { id: usePage<any>().props.topic.id })" />
-    <div class="modal" id="forum-modal">
-        <div class="modal-card modal-card-body modal-card-sm">
-            <div class="section-borderless">
-                <div class="gap-2 align-middle flex-container align-justify">
-                    <div class="text-lg fw-semibold">New Post</div>
-                    <button @click="showModal('forum-modal')" class="btn-circle" data-toggle-modal="#forum-modal"
-                        style="margin-right: -10px">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="section-borderless">
-                <div class="mb-2">
-                    <div class="text-xs fw-bold text-muted text-uppercase">
-                        Post Title
-                    </div>
-                    <input type="text" class="form" name="title" v-model="form.title" placeholder="Title..." />
-                </div>
-                <div class="mb-2">
-                    <div class="text-xs fw-bold text-muted text-uppercase">
-                        Post Body
-                    </div>
-                    <textarea id="post-body" class="mb-2 form" name="body" v-model="form.body" placeholder="Body"
-                        maxlength="4096"></textarea>
-                </div>
-            </div>
-            <div class="flex-wrap gap-2 flex-container justify-content-end section-borderless">
-                <button type="button" class="btn btn-secondary" @click="showModal('forum-modal')">
-                    Cancel
-                </button>
-                <form @submit.prevent="submit">
 
-                    <input type="submit" class="btn btn-success" :disabled="form.processing"
-                        :value="'Post in ' + usePage<any>().props.topic.name" />
-                </form>
-            </div>
-        </div>
-    </div>
     <Navbar />
     <Sidebar>
         <div class="cell large-2">
@@ -104,10 +52,12 @@ const submit = () => {
                                 class="fad fa-star-circle"></i>&nbsp; Your Posts</Link>
                         </div>
                         <div class="mb-2 flex-container flex-child-grow">
-                            <button @click="showModal('forum-modal')"
+                            <Link as="button"
+                                v-if="usePage<any>().props.auth.user.positionID == usePage<any>().props.topic.role_required_to_post"
+                                :href="route(`forum.create.page`, { id: usePage<any>().props.topic.id })"
                                 :class="(usePage<any>().props.auth.user.staff ? 'btn-danger' : 'btn-success')"
                                 class="text-center btn btn-xs flex-child-grow"><i class="fad fa-hexagon-plus"></i>&nbsp;
-                                Create Post</button>
+                            Create Post</Link>
                         </div>
                     </div>
                 </div>
@@ -144,8 +94,8 @@ const submit = () => {
                     <div class="mb-3 row thread" v-for="(post, index) in usePage<any>().props.posts.data">
                         <div class="mx-1 my-3" :class="{ 'divider': index !== 0 }"></div>
                         <div class="gap-2 align-middle flex-container">
-                            <Link :href="route('user.profile', { username: post.username })">
-                            <v-lazy-image :src="post.headshot" width="65"
+                            <Link :href="route('user.profile', { username: post.creator.username })">
+                            <v-lazy-image :src="post.creator.headshot" width="65"
                                 class="border headshot flex-child-shrink img-fluid rounded-circle border-secondary bg-dark"
                                 alt="Avatar" src-placeholder="assets/img/dummy_headshot.png" />
                             </Link>
@@ -158,19 +108,20 @@ const submit = () => {
                                             class="text-warning fas fa-lock"></i></span>
                                     </Link>
                                     <div></div>
-                                    <Link :href="route('user.profile', { username: post.username })"
+                                    <Link :href="route('user.profile', { username: post.creator.username })"
                                         class="text-sm fw-semibold text-body">
-                                    {{ post.display_name }} &bullet; {{ post.DateHum }}
+                                    {{ post.creator.display_name }} &bullet; {{ post.DateHum }}
                                     </Link>
                                     <div class="text-xs text-muted fw-semibold text-body">
-                                        @{{ post.username }}
+                                        {{ '@' + post.creator.username }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div :class="{ divider: usePage<any>().props.posts.data.length > 0 }" class="mx-1 my-3"></div>
-                    <Pagination v-if="usePage<any>().props.posts.data.length" class="mx-1 my-3" :pagedata="usePage<any>().props.posts"></Pagination>
+                    <Pagination v-if="usePage<any>().props.posts.data.length" class="mx-1 my-3"
+                        :pagedata="usePage<any>().props.posts"></Pagination>
                 </div>
 
             </div>

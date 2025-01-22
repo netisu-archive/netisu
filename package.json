@@ -35,7 +35,7 @@
         "rollup-obfuscator": "^4.1.1",
         "sass": "^1.83.4",
         "typescript": "^5.7.3",
-        "vite": "^6.0.7",
+        "vite": "^6.0.11",
         "vite-plugin-obfuscator": "^1.0.5",
         "vite-plugin-pwa": "^0.21.1",
         "vite-plugin-watch": "^0.3.1",
@@ -46,10 +46,12 @@
         "@inertiajs/vue3": "^2.0.2",
         "@popperjs/core": "^2.11.8",
         "@rollup/plugin-node-resolve": "^16.0.0",
+        "@toast-ui/editor": "^3.2.2",
+        "@toast-ui/vue-editor": "^3.2.3",
         "@tresjs/cientos": "^4.1.0",
         "@tresjs/core": "^4.3.2",
         "@types/node": "^22.10.7",
-        "@typescript-eslint/parser": "^8.20.0",
+        "@typescript-eslint/parser": "^8.21.0",
         "@vitejs/plugin-vue": "^5.2.1",
         "@vitejs/plugin-vue-jsx": "^4.1.1",
         "@vue/server-renderer": "^3.5.13",
@@ -84,7 +86,7 @@
         "ziggy-js": "^2.4.2"
     },
     "optionalDependencies": {
-        "@rollup/rollup-linux-x64-gnu": "4.30.1"
+        "@rollup/rollup-linux-x64-gnu": "4.31.0"
     },
     "trustedDependencies": [
         "@parcel/watcher",

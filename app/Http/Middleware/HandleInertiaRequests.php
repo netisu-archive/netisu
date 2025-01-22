@@ -69,6 +69,7 @@ class HandleInertiaRequests extends Middleware
                         'staff' => $request->user()->isStaff(),
                         'pendingAssets' => $request->user()->isStaff() ? $pendingItemsAndSpaces->count() : null,
                         'position' => $request->user()->CurrentPosition(),
+                        'positionID' => $request->user()->CurrentPositionID(),
                         'about_me' => $request->user()->about_me,
                         'headshot' => $request->user()->headshot(),
                         'thumbnail' => $request->user()->thumbnail(),

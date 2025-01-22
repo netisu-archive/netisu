@@ -199,32 +199,34 @@ const lang = computed(() => usePage<any>().props.locale);
                     <i class="side-icon" :class="sidelink.icon"></i><span>{{ sidelink[lang].title }}</span>
                 </SideLink>
             </template>
-            <li v-if="props.auth.user" class="side-item side-title">
-                My Spaces
-            </li>
-            <li v-if="props.auth.user && usePage<any>().props.navSpaces"
-                v-for="(space, index) in usePage<any>().props.navSpaces" :key="index" class="side-item">
-                <Link href="#" class="side-link side-link-has-img">
-                <span class="side-img">
-                    <v-lazy-image :src="space.thumbnail" />
-                </span>
-                <span>{{ space.name }}</span>
-                </Link>
-            </li>
-            <li v-else class="side-item">
-                <Link :href="route('spaces.page')" class="side-link side-link-has-img">
-                <button class="gap-2 align-middle flex-container squish" style="outline: none;">
-                    <span class="side-img">
-                        <i class="fad fa-square-xmark" />
-                    </span>
+            <div v-if="usePage<any>().props.auth.user">
+                <li class="side-item side-title">
+                    My Spaces
+                </li>
+                <li v-if="usePage<any>().props.auth.user.navSpaces.length"
+                    v-for="(space, index) in usePage<any>().props.auth.user.navSpaces" :key="index" class="side-item">
+                    <Link :href="route(`spaces.view`,  { id: space.id, slug: space.slug })" class="side-link side-link-has-img">
+                        <span class="side-img">
+                            <v-lazy-image :src="space.thumbnail" />
+                        </span>
+                        <span>{{ space.name }}</span>
+                    </Link>
+                </li>
+                <li v-else class="side-item">
+                    <Link :href="route('spaces.page')" class="side-link side-link-has-img">
+                    <button class="gap-2 align-middle flex-container squish" style="outline: none;">
+                        <span class="side-img">
+                            <i class="fad fa-square-xmark" />
+                        </span>
 
-                    <div class="text-start show-for-large">
-                        <div class="text-sm fw-semibold text-body">No spaces found</div>
-                        <div class="mb-1 text-xs text-muted fw-semibold"> Join a space here </div>
-                    </div>
-                </button>
-                </Link>
-            </li>
+                        <div class="text-start show-for-large">
+                            <div class="text-sm fw-semibold text-body">No spaces found</div>
+                            <div class="mb-1 text-xs text-muted fw-semibold"> Join a space here </div>
+                        </div>
+                    </button>
+                    </Link>
+                </li>
+            </div>
         </ul>
     </nav>
     <nav v-if="props.site_config.announcement" class="sitewide-alert">
@@ -236,10 +238,10 @@ const lang = computed(() => usePage<any>().props.locale);
             </div>
         </div>
     </nav>
-    <div v-if="image" class="profile-banner">
-        <img class="masoqi" :class="{ special: OfficialImageBackground }" :style="{
+    <div v-if="image" class="profile-banner" :class="{ special: OfficialImageBackground }">
+        <img class="masoqi" :style="{
             backgroundImage: `url(${image})`,
-            backgroundRepeat: OfficialImageBackground ? 'repeat-x' : 'no-repeat',
+            backgroundRepeat: OfficialImageBackground ? 'repeat' : 'no-repeat',
             backgroundSize: OfficialImageBackground ? '' : 'cover',
             backgroundPosition: 'center'
         }" />

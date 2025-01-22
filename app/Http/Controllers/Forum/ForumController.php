@@ -9,6 +9,7 @@ use App\Models\ForumReply;
 use App\Models\ForumTopic;
 use App\Models\ForumThread;
 use Illuminate\Http\Request;
+use App\Services\MarkdownService;
 use App\Services\BBCodeService;
 use PhpParser\Node\Stmt\Return_;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Controller;
 use JBBCode\DefaultCodeDefinitionSet;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
+use Mews\Purifier\Facades\Purifier;
 
 class ForumController extends Controller
 {
@@ -105,9 +107,11 @@ class ForumController extends Controller
                     'topic_id' => $post->id,
                     'seo' => $post->slug(),
                     'name' => $post->title,
-                    'username' => $post->creator->username,
-                    'headshot' => $post->creator->headshot(),
-                    'display_name' => $post->creator->display_name,
+                    'creator' => [
+                        'username' => $post->creator->username,
+                        'headshot' => $post->creator->headshot(),
+                        'display_name' => $post->creator->display_name,
+                    ],
                     'message' => $post->body,
                     'pinned' => $post->is_pinned,
                     'locked' => $post->is_locked,
@@ -126,7 +130,7 @@ class ForumController extends Controller
         ]);
     }
 
-    public function ForumPost($id, $slug, BBCodeService $bbcodeService)
+    public function ForumPost($id, $slug, BBCodeService $bbcodeService, MarkdownService $MarkdownService)
     {
         // Find the forum post
         $post = ForumThread::find($id);
@@ -145,7 +149,8 @@ class ForumController extends Controller
 
         // Parse the post body
         $post->body = $bbcodeService->parse($post->body);
-
+        $post->body = $MarkdownService->parse($post->body);
+        $post->body = Purifier::clean($post->body);
 
         // Cache the paginated replies
 
@@ -157,22 +162,35 @@ class ForumController extends Controller
                 'is_pinned' => $post->is_pinned,
                 'is_locked' => $post->is_locked,
                 'is_deleted' => $post->is_deleted,
+                'DateHum' => $post->created_at->diffForHumans(),
+
                 'creator' => [
                     'username' => $post->creator->username,
+                    'staff' => $post->creator->isStaff(),
+                    'position' => $post->creator->CurrentPosition(),
                     'display_name' => $post->creator->display_name,
-                    'thumbnail' => $post->creator->thumbnail(),
                     'headshot' => $post->creator->headshot(),
+                    'thumbnail' => $post->creator->thumbnail(),
+
+                    'settings' => [
+                        'beta_tester' => $post->creator->settings->beta_tester,
+                    ],
                 ],
             ],
             'replies' => $post->replies()->paginate(10)->through(function ($reply) use ($bbcodeService) {
                 return [
-                    'body' => $bbcodeService->parse($reply->body),
+                    'body' => $bbcodeService->parse(Purifier::clean($reply->body)),
                     'is_deleted' => $reply->is_deleted,
+                    'DateHum' => $reply->created_at->diffForHumans(),
                     'creator' => [
                         'username' => $reply->creator->username,
+                        'staff' => $reply->creator->isStaff(),
+                        'position' => $reply->creator->CurrentPosition(),
                         'display_name' => $reply->creator->display_name,
                         'thumbnail' => $reply->creator->thumbnail(),
-                        'headshot' => $reply->creator->headshot(),
+                        'settings' => [
+                            'beta_tester' => $reply->creator->settings->beta_tester,
+                        ],
                     ],
                 ];
             }),

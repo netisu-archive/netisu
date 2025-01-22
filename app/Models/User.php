@@ -80,7 +80,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
         'password',
         'remember_token',
         'birthdate',
-        'pm_type',        
+        'pm_type',
         'pm_last_four',
         'trial_ends_at',
         'latest_status',
@@ -214,7 +214,8 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Message::class, 'receiving_id');
     }
-    public function TotalSales() {
+    public function TotalSales()
+    {
         return ItemPurchase::where('seller_id', '=', $this->id)->count();
     }
     public function ownsItem($id)
@@ -260,32 +261,45 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
         return $resellableCopies;
     }
 
-    public function spaces(): Collection
+    public function spaces()
     {
-        return $this->hasMany(SpaceMembers::class, 'user_id')->get()->pluck('space')->unique('id');
+        return $this->hasManyThrough(
+            Space::class,
+            SpaceMembers::class,
+            'user_id', // Foreign key on the SpaceMember table
+            'id', // Foreign key on the Space table
+            'id', // Local key on the User table
+            'space_id' // Local key on the SpaceMember table
+        );
     }
 
-    public function primarySpace(): Bool
+    public function isInSpace(Space $space)
     {
-        return $this->belongsTo(Space::class, $this->settings->primary_space) || null;
+        return $this->spaces->contains($space);
     }
 
-    public function navSpaces(): Collection
+    public function favoriteSpaces()
     {
-        if ($this->primarySpace()) {
-            return $this->spaces()
-                ->where('id', '!=', $this->settings->primary_space)
-                ->sortByDesc('updated_at')
-                ->add($this->primarySpace())
-                ->take(5);
-        }
-
-        return $this->spaces()
-            ->where('id', '!=', $this->primary_space_id)
-            ->sortByDesc('updated_at')
-            ->take(5);
+        return $this->spaces()->where('is_favorite', true);
     }
 
+    public function primarySpace(): HasOne
+    {
+        return $this->hasOne(Space::class, 'space_id', $this->settings->primary_space);
+    }
+
+    public function navSpaces()
+    {
+        $spaces = $this->spaces()->take(5)->get();
+        return $spaces->map(function ($space) {
+            return [
+                'id' => $space->id,
+                'name' => $space->name,
+                'slug' => $space->slug(),
+                'thumbnail' => $space->thumbnail(),
+            ];
+        });
+    }
 
 
     public function canEditItem($id): bool
@@ -365,10 +379,10 @@ class User extends AeoAuthenticatable implements MustVerifyEmail
 
             // Check if profile_picture_url doesn't contain an external domain
             if (!preg_match('/https?:\/\/[^\/]+/', $imageUrl)) {
-              return "{$url}/thumbnails/profile-pictures/{$imageUrl}.png";
+                return "{$url}/thumbnails/profile-pictures/{$imageUrl}.png";
             } else {
-              // Return the external URL from settings if present
-              return $imageUrl;
+                // Return the external URL from settings if present
+                return $imageUrl;
             }
         } else {
             $image = ($this->avatar()?->image === 'default') ? env('DEFAULT_AVATAR_FILE') : $this->avatar()?->image;

@@ -393,26 +393,25 @@
     position: relative;
 }
 
-.profile-banner .masoqi.special {
-    opacity: 0.25;
+.profile-banner.special {
+    background: linear-gradient(to bottom, var(--info-600), var(--body-bg));
+    opacity: 0.2;
     height: 300px;
     z-index: -1;
 
-  }
-  .profile-banner .masoqi.special:before {
+}
+.profile-banner.special .masoqi {
+    opacity: .88;
+    animation: moves 15s infinite linear;
+}
+.profile-banner.special::before {
     content: "";
     position: absolute;
-    width: inherit;
-    height: inherit;
-    top: -50%;
-    left: -50%;
-    z-index: -1;
-
-  }
-  .profile-banner .masoqi.special:before
-  {
-    transform: rotate(-50deg);
-  }
+    left: -10%;
+    right: -10%;
+    top: -150%;
+    height: 400%;
+}
 .selection-circle {
     display: flex;
     justify-content: center;
@@ -423,6 +422,18 @@
     width: 20px;
     border: 1px solid var(--input-border-color);
     border-radius: var(--rounded-circle);
+}
+
+@keyframes moves {
+    0% {
+        background-position: 0 0;
+    }
+    50% {
+        background-position: 140px 140px;
+    }
+    100% {
+        background-position: 0 0;
+    }
 }
 
 a {
@@ -959,7 +970,7 @@ a:hover {
 .text-italic {
     font-style: italic;
 }
-.text-wrap{
+.text-wrap {
     text-wrap: wrap;
 }
 .flex-wrap {

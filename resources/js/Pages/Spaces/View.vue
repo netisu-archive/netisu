@@ -15,35 +15,13 @@ defineProps({
     spaces: { type: Array, required: true },
 });
 
-// Define the SpaceSearchResult interface
-interface SpaceSearchResult {
-    url: string;
-    thumbnail: string;
-    name: string;
-    // Add other properties if needed
-}
-const SpaceSearchLoading = ref(false);
-
-const search = ref("");
-// Update the type of results to be an array of SpaceSearchResult
-const results = ref<SpaceSearchResult[]>([]);
-
-const performSearch = async () => {
-    if (search.value !== "") {
-        SpaceSearchLoading.value = true;
-        await axios
-            .get(route("spaces.page", { search: search.value }))
-            .then((response) => {
-                // Assuming the response.data is an array of SpaceSearchResult
-                results.value = response.data.results;
-                SpaceSearchLoading.value = false;
-            })
-            .catch((err) => console.log(err));
-    } else {
-        SpaceSearchLoading.value = true;
-        results.value = [];
-    }
+const submit = () => {
+    axios.get(`/sanctum/csrf-cookie`).then(() => {
+        axios.post(route(`spaces.join`, { id: usePage<any>().props.space.id }), {
+        });
+    });
 };
+
 </script>
 <template>
     <AppHead pageTitle="Spaces" description="Find a space to join or create one!" :url="route(`spaces.page`)" />
@@ -55,7 +33,7 @@ const performSearch = async () => {
                 class="space-image" alt="Space Thumbnail" src-placeholder="/assets/img/dummy-error.png" />
         </portal>
         <portal to="bannerButtons">
-            <Link v-if="usePage<any>().props.auth.user" class="text-xl text-success squish" href="#"
+            <Link v-if="usePage<any>().props.auth.user && !usePage<any>().props.isInSpace" class="text-xl text-success squish" href="#" @click="submit"
                 :content="'Join ' + usePage<any>().props.space.name" as="button" v-tippy="{ placement: 'bottom' }"
                 style="outline: none;">
             <i class="fad fa-user-plus"></i>
@@ -70,7 +48,7 @@ const performSearch = async () => {
             <p class="text-muted">{{ usePage<any>().props.space.description }}</p>
         </portal>
     </template>
-    <Sidebar :image="usePage<any>().props.space.background ?? null" :alertsEnabled="false" :superBanActive="true">
+    <Sidebar  :superBanActive="true" :alertsEnabled="false">
         <div class="cell medium-3">
             <div class="mb-1 text-xl fw-semibold">Actions</div>
             <div class="gap-3 mt-3 mb-3 align-middle">
@@ -141,13 +119,13 @@ const performSearch = async () => {
                                 <input type="text" class="mb-2 form form-xs form-has-section-color"
                                     placeholder="Search Members...">
                                 <select class="mb-2 form form-xs form-select form-has-section-color">
-                                    <option value="1" selected="">
+                                    <option value="1" selected>
                                         Members
                                     </option>
                                     <option value="2">
                                         Administrators
                                     </option>
-                                    <option value="3" disabled="">
+                                    <option value="3" disabled>
                                         Creators
                                     </option>
 
@@ -157,21 +135,21 @@ const performSearch = async () => {
                     </div>
                     <div class="flex-wrap gap-3 mt-2 mb-2 flex-container">
                         <div class="min-w-0 text-center" style="width: 80px">
-                            <img src="file:///home/chronos/u-b99c190e11ee42e371d918a0399d97cb71a388b8/MyFiles/eclipse-frontend/assets/img/dummy_headshot.png"
+                            <img src="/assets/img/dummy_headshot.png"
                                 class="headshot flex-child-grow" alt="headshot">
                             <div class="text-sm text-info fw-semibold text-truncate">
                                 Aeo
                             </div>
                         </div>
                         <div class="min-w-0 text-center" style="width: 80px">
-                            <img src="file:///home/chronos/u-b99c190e11ee42e371d918a0399d97cb71a388b8/MyFiles/eclipse-frontend/assets/img/dummy_headshot.png"
+                            <img src="/assets/img/dummy_headshot.png"
                                 class="headshot flex-child-grow" alt="headshot">
                             <div class="text-sm text-danger fw-semibold text-truncate">
                                 Aeo
                             </div>
                         </div>
                         <div class="min-w-0 text-center" style="width: 80px">
-                            <img src="file:///home/chronos/u-b99c190e11ee42e371d918a0399d97cb71a388b8/MyFiles/eclipse-frontend/assets/img/dummy_headshot.png"
+                            <img src="/assets/img/dummy_headshot.png"
                                 class="headshot flex-child-grow" alt="headshot">
                             <div class="text-sm fw-semibold text-truncate">
                                 Aeo

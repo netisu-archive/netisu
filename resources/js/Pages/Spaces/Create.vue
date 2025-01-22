@@ -14,25 +14,17 @@ import axios from "axios";
 const Uploading = ref(false);
 
 const form = useForm({
-    type: "",
     name: "",
     description: "",
-    price_coins: "",
-    price_bucks: "",
     image: "",
 });
 
 const submit = () => {
     axios.get(`/sanctum/csrf-cookie`).then(() => {
-        form.post(route(`store.create.validate`), {
+        form.post(route(`spaces.create.validate`), {
             onFinish: () => form.reset("description"),
         });
     });
-};
-
-const handleInputChange = (event: Event) => {
-    (event.target as HTMLInputElement).value
-    return { handleInputChange }
 };
 
 const AttemptUpload = () => {
@@ -40,7 +32,7 @@ const AttemptUpload = () => {
 };
 </script>
 <template>
-    <AppHead pageTitle="Create" description="create your dream item here" :url="route(`store.create.page`)" />
+    <AppHead pageTitle="Create" description="Create A Space Here." :url="route(`spaces.create.page`)" />
     <Navbar />
     <Sidebar>
         <div class="cell medium-5">
@@ -74,7 +66,7 @@ const AttemptUpload = () => {
                     <div class="gap-3 text-sm flex-container align-center">
                         <div class="w-100">
                             <div class="text-xs fw-bold text-muted text-uppercase">Icon</div>
-                            <input class="form text-body" @input="form.image = handleInputChange($event)" type="file" />
+                            <input class="form text-body" @input="form.image = $event.target.files[0]" type="file" />
                             <div v-if="form.errors.image" class="text-xs text-danger fw-semibold">
                                 {{ form.errors.image }}
                             </div>

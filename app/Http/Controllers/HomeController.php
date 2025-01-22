@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use App\Services\BBCodeService;
+use Mews\Purifier\Facades\Purifier;
 
 class HomeController extends Controller
 {
@@ -46,7 +47,7 @@ class HomeController extends Controller
                 return [
                     'id' => $post->id,
                     'title' => $post->title,
-                    'body' => $bbcodeService->parse($post->body),
+                    'body' => Purifier::clean($bbcodeService->parse($post->body)),
                     'creator' => [
                         'username' => $post->creator->username,
                     ],
@@ -64,12 +65,25 @@ class HomeController extends Controller
 
     public function DashboardIndex()
     {
+        // Retrieve recommendations with caching
+        $recommendations = Cache::remember('daily-reccomendtions:' . Auth::id(), now()->addHours(6), function () {
+            return Item::where([
+                ['public_view', false],
+                ['status', 'approved'],
+            ])->with('creator')->inRandomOrder()->take(4)->get();
+        });
+
+        foreach ($recommendations as $recommendation) {
+            $thumbnail = $recommendation->thumbnail();
+            $recommendation->thumbnail = $thumbnail;
+        }
         return inertia('Dashboard', [
             'nextlevelxp' => Auth::user()->getNextLevelExp(),
             'position' => Auth::user()->CurrentPosition(),
             'totalSales' => Auth::user()->TotalSales(),
             'totalFollowers' => Auth::user()->followers()->count(),
             'totalPosts' => Auth::user()->posts()->count(),
+            'recommendations' => $recommendations,
         ]);
     }
 

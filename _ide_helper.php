@@ -5057,30 +5057,6 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Remove all items from the cache.
-         *
-         * @return bool 
-         * @static 
-         */
-        public static function flush()
-        {
-            /** @var \Illuminate\Cache\ArrayStore $instance */
-            return $instance->flush();
-        }
-
-        /**
-         * Get the cache key prefix.
-         *
-         * @return string 
-         * @static 
-         */
-        public static function getPrefix()
-        {
-            /** @var \Illuminate\Cache\ArrayStore $instance */
-            return $instance->getPrefix();
-        }
-
-        /**
          * Get a lock instance.
          *
          * @param string $name
@@ -5091,7 +5067,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function lock($name, $seconds = 0, $owner = null)
         {
-            /** @var \Illuminate\Cache\ArrayStore $instance */
+            /** @var \Illuminate\Cache\FileStore $instance */
             return $instance->lock($name, $seconds, $owner);
         }
 
@@ -5105,8 +5081,95 @@ namespace Illuminate\Support\Facades {
          */
         public static function restoreLock($name, $owner)
         {
-            /** @var \Illuminate\Cache\ArrayStore $instance */
+            /** @var \Illuminate\Cache\FileStore $instance */
             return $instance->restoreLock($name, $owner);
+        }
+
+        /**
+         * Remove all items from the cache.
+         *
+         * @return bool 
+         * @static 
+         */
+        public static function flush()
+        {
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->flush();
+        }
+
+        /**
+         * Get the full path for the given cache key.
+         *
+         * @param string $key
+         * @return string 
+         * @static 
+         */
+        public static function path($key)
+        {
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->path($key);
+        }
+
+        /**
+         * Get the Filesystem instance.
+         *
+         * @return \Illuminate\Filesystem\Filesystem 
+         * @static 
+         */
+        public static function getFilesystem()
+        {
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->getFilesystem();
+        }
+
+        /**
+         * Get the working directory of the cache.
+         *
+         * @return string 
+         * @static 
+         */
+        public static function getDirectory()
+        {
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->getDirectory();
+        }
+
+        /**
+         * Set the working directory of the cache.
+         *
+         * @param string $directory
+         * @return \Illuminate\Cache\FileStore 
+         * @static 
+         */
+        public static function setDirectory($directory)
+        {
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->setDirectory($directory);
+        }
+
+        /**
+         * Set the cache directory where locks should be stored.
+         *
+         * @param string|null $lockDirectory
+         * @return \Illuminate\Cache\FileStore 
+         * @static 
+         */
+        public static function setLockDirectory($lockDirectory)
+        {
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->setLockDirectory($lockDirectory);
+        }
+
+        /**
+         * Get the cache key prefix.
+         *
+         * @return string 
+         * @static 
+         */
+        public static function getPrefix()
+        {
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->getPrefix();
         }
 
             }
@@ -23112,6 +23175,43 @@ namespace Laravel\Socialite\Facades {
             }
     }
 
+namespace Mews\Purifier\Facades {
+    /**
+     * 
+     *
+     * @see \Mews\Purifier
+     */
+    class Purifier {
+        /**
+         * 
+         *
+         * @param $dirty
+         * @param array<string, mixed>|string|null $config
+         * @param \Closure|null $postCreateConfigHook
+         * @return mixed 
+         * @static 
+         */
+        public static function clean($dirty, $config = null, $postCreateConfigHook = null)
+        {
+            /** @var \Mews\Purifier\Purifier $instance */
+            return $instance->clean($dirty, $config, $postCreateConfigHook);
+        }
+
+        /**
+         * Get HTMLPurifier instance.
+         *
+         * @return \HTMLPurifier 
+         * @static 
+         */
+        public static function getInstance()
+        {
+            /** @var \Mews\Purifier\Purifier $instance */
+            return $instance->getInstance();
+        }
+
+            }
+    }
+
 namespace PHPOpenSourceSaver\JWTAuth\Facades {
     /**
      * 
@@ -28250,6 +28350,7 @@ namespace  {
     class L5Swagger extends \L5Swagger\L5SwaggerFacade {}
     class Octane extends \Laravel\Octane\Facades\Octane {}
     class Socialite extends \Laravel\Socialite\Facades\Socialite {}
+    class Purifier extends \Mews\Purifier\Facades\Purifier {}
     class JWTFactory extends \PHPOpenSourceSaver\JWTAuth\Facades\JWTFactory {}
     class ResponseCache extends \Spatie\ResponseCache\Facades\ResponseCache {}
     class Location extends \Stevebauman\Location\Facades\Location {}

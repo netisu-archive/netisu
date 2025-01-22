@@ -30,10 +30,6 @@ const submit = () => {
     });
 };
 
-const handleInputChange = (event: Event) => {
-    (event.target as HTMLInputElement).value
-    return { handleInputChange }
-};
 
 const AttemptUpload = () => {
     Uploading.value = true;
@@ -113,7 +109,7 @@ const AttemptUpload = () => {
                     <div class="gap-3 text-sm flex-container align-center">
                         <div class="w-100">
                             <div class="text-xs fw-bold text-muted text-uppercase">Image</div>
-                            <input class="form text-body" @input="form.image = handleInputChange($event)" type="file" />
+                            <input class="form text-body" @input="form.image = $event.target.files[0]" type="file" />
                             <div v-if="form.errors.image" class="text-xs text-danger fw-semibold">
                                 {{ form.errors.image }}
                             </div>
