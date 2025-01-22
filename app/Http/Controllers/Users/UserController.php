@@ -87,13 +87,12 @@ class UserController extends Controller
             $joindate = Carbon::parse($user->created_at)->format('M d Y');
 
             $statuscacheKey = $username . 'profile_statuses';
-            $friendcacheKey = $username . 'profile_friends';
 
             // Use caching to store the statuses query results
             $statuses = Cache::remember($statuscacheKey, now()->addMinutes(5), function () use ($user) {
                 return Status::where([
                     ['creator_id', '=', $user->id]
-                ])->orderBy('created_at', 'desc')->paginate(3)->through(function ($status) {
+                ])->orderBy('created_at', 'desc')->paginate(6)->through(function ($status) {
                     return [
                         'name' => $status->creator->username,
                         'dname' => $status->creator->display_name,
@@ -104,21 +103,7 @@ class UserController extends Controller
                 });
             });
 
-            $friends = Cache::remember($friendcacheKey, now()->addMinutes(5), function () use ($user) {
-                $mutualFollowers = $user->followers()->whereHas('following', function ($query) use ($user) {
-                    $query->where('following_id', $user->id)
-                        ->whereHas('following', function ($innerQuery) use ($user) {
-                            $innerQuery->where('following_id', $user->id);
-                        });
-                });
-
-                return $mutualFollowers->paginate(5)->through(function ($friend) {
-                    return [
-                        'name' => $friend->username,
-                        'thumbnail' => $friend->thumbnail(),
-                    ];
-                });
-            });
+            
 
 
             $response =  inertia('Users/Profile', [
@@ -132,14 +117,13 @@ class UserController extends Controller
                     'headshot' => $user->headshot(),
                     'level' => $user->getLevel(),
                     'following' => $userFollowing,
-                    'friends' => $friends,
+                    'acheivements' => $user->acheivements,
                     'followers' => $userFollowers,
                     'staff' => $user->isStaff(),
                     'position' => $user->CurrentPosition(),
                     'followsYou' => $thisFollowing,
                     'followers_count' => $FollowerCount,
                     'following_count' => $FollowingCount,
-                    'friend_count' => $friends->count(),
                     'joindate' => $joindate,
                     'DateHum' => $user->DateHum,
                     'status' => $user->status,

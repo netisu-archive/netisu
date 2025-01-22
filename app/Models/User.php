@@ -14,6 +14,7 @@ use Illuminate\{
     Database\Eloquent\Relations\HasMany,
     Database\Eloquent\Relations\HasOne,
     Contracts\Auth\MustVerifyEmail,
+    Contracts\Auth\CanResetPassword
 };
 
 use App\Models\{
@@ -35,7 +36,7 @@ use LevelUp\Experience\Concerns\{
     HasAchievements,
 };
 
-class User extends AeoAuthenticatable implements MustVerifyEmail
+class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPassword
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use

@@ -6,17 +6,9 @@ import { computed, onMounted, ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { route } from 'momentum-trail';
 
-import PageLoader from "@/Components/Loaders/PageLoader.vue";
 
 const site = computed<any>(() => usePage<any>().props.site);
-const loading = ref(true);
 
-const showLoading = () => {
-    loading.value = true;
-    setTimeout(() => {
-        loading.value = false;
-    }, 5500); // Change 5000 to 5 seconds (1000 milliseconds per second)
-};
 defineProps({
     LandingItems: { type: Object },
     LandingPosts: { type: Object },
@@ -65,13 +57,12 @@ function onImgErrorSmall(id) {
 </script>
 <style scoped src="@/Pages/landing.css"></style>
 <template>
-    <PageLoader :isLoading="loading" />
     <AppHead pageTitle="Welcome"
         description="Join in on the action today. Buy &amp; sell items, participate in spaces, make friends, and more."
         :url="route(`Welcome`)" />
     <Navbar :landing="true">
         <header class="masthead-landing p-4 pt-4">
-            <img src="assets/img/site-banners/stars-bg.png" style="z-index: 1" alt="background" />
+            <img src="/assets/img/site-banners/stars-bg.png" style="z-index: 1" alt="background" />
             <div class="cell large-4" style="position: relative; z-index: 3">
                 <div class="min-w-0 gap-4 ml-4 flex-container row-landing">
                     <div class="row-landing">
@@ -170,10 +161,10 @@ function onImgErrorSmall(id) {
                                                     <img class="headshot" src="assets/img/dummy_headshot.png" width="50"
                                                         height="50" alt="Avatar" />
                                                 </button>
-                                                <div class="w-100">
-                                                    <div class="fw-semibold">
+                                                <div>
+                                                    <p class="fw-semibold text-truncate">
                                                         {{ post.title }}
-                                                    </div>
+                                                    </p>
                                                     <div class="text-sm fw-semibold text-muted">
                                                         By:
                                                         <Link

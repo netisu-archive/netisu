@@ -75,7 +75,7 @@ class SpaceController extends Controller
         }
 
         return inertia('Spaces/View', [
-            'isInSpace' =>  Auth::user()->isInSpace($space),
+            'isInSpace' =>  Auth::check() ? Auth::user()->isInSpace($space) : null,
             'space' => [
                 'id' => $space->id,
                 'name' => $space->name,

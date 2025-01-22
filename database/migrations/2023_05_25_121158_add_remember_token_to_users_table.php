@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('discord_users', function (Blueprint $table) {
             $table->rememberToken()->after('refresh_token');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('discord_users', function (Blueprint $table) {
             $table->dropRememberToken();
         });
     }

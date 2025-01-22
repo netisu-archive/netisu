@@ -45,10 +45,10 @@ const nextStep = () => {
         isStepOk.value = false;
     }
 };
-const checkStepOne = throttle(async (name) => {
+const checkStepOne = throttle(async (email) => {
     try {
         await axios.get(`/sanctum/csrf-cookie`);
-        const response = await axios.get(route(`api.user.email-validate`, { email: name }));
+        const response = await axios.get(route(`api.user.email-validate`, { email: email }));
         if (response.data.error === true && response.data.message) {
             // Set ForumError value here (assuming response.data.json.message contains the error message)
             formError.value = response.data.message;
@@ -287,7 +287,7 @@ watch(() => form.birthdate.month, updateDays);
                                             Confirm Password
                                         </div>
                                         <input class="form" placeholder="Confirm Password..."
-                                            v-model="form.password_confirmation" type="password"
+                                            v-model="form.password_confirmation"  @input="checkStepThree(form.password)" type="password"
                                             name="password_confirmation" />
                                     </div>
                                 </div>

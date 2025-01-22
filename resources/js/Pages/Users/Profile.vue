@@ -429,30 +429,30 @@ watch(following, (newValue, oldValue) => {
         <div class="cell medium-9">
             <div style="height: 10px"></div>
             <div class="mb-1 align-middle flex-container align-justify">
-                <div class="mb-1 text-xl fw-semibold">Friends</div>
+                <div class="mb-1 text-xl fw-semibold">Acheivements</div>
                 <a href="#" class="btn btn-secondary btn-sm">View All</a>
             </div>
             <div class="mb-3 card card-body">
-                <div v-if="!usePage<any>().props.user.friends.data || !usePage<any>().props.user.friends.data.length"
+                <div v-if="!usePage<any>().props.user.acheivements || !usePage<any>().props.user.acheivements.length"
                     class="gap-3 text-center flex-container flex-dir-column">
-                    <i class="text-5xl fad fa-face-sad-tear text-muted"></i>
+                    <i class="text-5xl fad fa-badge text-muted"></i>
                     <div style="line-height: 16px">
                         <div class="text-xs fw-bold text-muted text-uppercase">
-                            No Friends
+                            No Acheivements
                         </div>
                         <div class="text-xs text-muted fw-semibold">
-                            {{ usePage<any>().props.user.username }} has no Friends.
+                            {{ usePage<any>().props.user.username }} has no acheivements.
                         </div>
                     </div>
                 </div>
 
                 <div class="flex-wrap gap-3 flex-container align-center">
-                    <div class="min-w-0 text-center" v-for="friend in usePage<any>().props.user.friends.data"
+                    <div class="min-w-0 text-center" v-for="acheivement in usePage<any>().props.user.acheivements"
                         style="width: 80px">
-                        <Link :href="route(`user.profile`, { username: friend.name })">
-                        <img :src="friend.thumbnail" />
+                        <Link :href="route(`achivements`)">
+                        <img :src="acheivement.image" />
                         <div class="text-sm text-muted fw-semibold text-truncate">
-                            {{ "@" + friend.name }}
+                            {{ acheivement.name }}
                         </div>
                         </Link>
                     </div>

@@ -23,6 +23,7 @@ use App\Http\Controllers\{
     Notification,
     MembershipController,
 };
+use Illuminate\Support\Facades\Password;
 
 use App\Models\UserSettings;
 use Illuminate\Support\Facades\Auth;
@@ -149,6 +150,22 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
 
             Route::group(['as' => 'forgot.', 'prefix' => 'forgot'], function () {
                 Route::get('/', [AuthController::class, 'ForgotIndex'])->name('page');
+                
+                Route::get('/reset-password/{token}', function (string $token) {
+                    return view('auth.reset-password', ['token' => $token]);
+                })->middleware('guest')->name('password.reset');
+                
+                Route::post('/', function (Request $request) {
+                    $request->validate(['email' => 'required|email']);
+                 
+                    $status = Password::sendResetLink(
+                        $request->only('email')
+                    );
+                 
+                    return $status === Password::ResetLinkSent
+                                ? back()->with(['status' => __($status)])
+                                : back()->withErrors(['email' => __($status)]);
+                })->middleware('guest')->name('password.email');
             });
         });
     });
