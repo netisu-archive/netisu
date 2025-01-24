@@ -68,7 +68,7 @@ class HomeController extends Controller
         // Retrieve recommendations with caching
         $recommendations = Cache::remember('daily-reccomendtions:' . Auth::id(), now()->addHours(6), function () {
             return Item::where([
-                ['public_view', false],
+                ['public_view', true],
                 ['status', 'approved'],
             ])->with('creator')->inRandomOrder()->take(4)->get();
         });
