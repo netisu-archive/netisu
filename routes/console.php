@@ -2,7 +2,7 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
-
+use App\Http\Controllers\Market\MarketController;
 /*
 |--------------------------------------------------------------------------
 | Console Routes
@@ -17,3 +17,17 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+
+Artisan::command('store:refresh', function () {
+    // 1. Fetch new data from your source (API, database, etc.)
+    $mc = new MarketController;
+    $newData = $mc->getNewData(); 
+
+    // 2. Update your database or perform other refresh actions
+    // ... your logic to process and store $newData ...
+
+    $this->info('Store data refreshed successfully!');
+})->purpose('Refresh store data every 24 hours'); 
+
+// ... your private function getNewData() ...

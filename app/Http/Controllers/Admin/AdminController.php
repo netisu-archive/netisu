@@ -158,7 +158,7 @@ class AdminController extends Controller
     public function ItemIndex()
     {
         // Define a cache key for this query result
-        $cacheKey = 'users_index';
+        $cacheKey = 'item_index';
         $items = Cache::remember($cacheKey, now()->addMinutes(30), function () {
             return Item::where("creator_id", "=", config("Values.system_account_id"))->orderBy('id', 'asc')->paginate(10)->through(function ($item) {
                 return [
@@ -327,6 +327,8 @@ class AdminController extends Controller
             'permissions' => [
                 'canMangeUser' => $this->admin->rolePermissions('can_manage_users') ?? false,
                 'canMangeUserSettings' => $this->admin->rolePermissions('can_manage_user_settings') ?? false,
+                'canGiftUser' => $this->admin->rolePermissions('can_gift_users') ?? false,
+
             ],
         ]);
     }

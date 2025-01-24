@@ -26,14 +26,14 @@ class AvatarController extends Controller
             ->pluck('item_id');
 
         // Now return Items
-        $items = Item::whereIn('id', $itemIds)->orderBy('created_at', 'asc')->jsonPaginate(18)->through(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                    'type' => $item->item_type,
-                    'thumbnail' => $item->thumbnail(),
-                ];
-            });
+        $items = Item::whereIn('id', $itemIds)->orderBy('created_at', 'asc')->jsonPaginate(24)->through(function ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'type' => $item->item_type,
+                'thumbnail' => $item->thumbnail(),
+            ];
+        });
 
         return $items;
     }
@@ -50,20 +50,43 @@ class AvatarController extends Controller
         $user = Auth::user();
         $avatar = $user->avatar();
         $newVrcInstance = new RenderController();
-        $vrs = $newVrcInstance;
         $item = Item::where('id', '=', $itemId)->first();
 
+        if (!$item) {
+            return response()->json(['error' => 'Item reccord not found.']);
+        }
         // Check if avatar record exists
         if (!$avatar) {
             return response()->json([
-                "message" => "Avatar record not found",
+                "message" => "Avatar record not found.",
                 "type" => "error",
             ], 404);
         }
 
-        // Validate slot number (1-6)
         if ($item->item_type == "hat" && $slot != 'none' && $slot != null) {
-            $hatSlot = "hat_" . $slot; // Define $hatSlot here within the if block
+            $hatSlot = "hat_" . $slot;
+
+            // Check if another slot exists with the same item
+            foreach (['hat_1', 'hat_2', 'hat_3', 'hat_4', 'hat_5', 'hat_6'] as $checkSlot) {
+                if ($checkSlot !== $hatSlot && $avatar->$checkSlot == $item->id) {
+                    return response(['error' => 'This item is already assigned to another slot.']);
+                }
+            }
+        }
+
+
+        // finally ownership checking
+        if (!$user->ownsItem($item->id)) {
+            return response()->json(['error' => 'You do not own this item.']);
+        }
+
+        // also finally status checking LOL
+        if ($item->status !== 'approved') {
+            return response()->json(['error' => 'This item is not approved.']);
+        }
+
+        if ($item->public_view === true) {
+            return response()->json(['error' => 'This item is hidden.']);
         }
 
 
@@ -88,7 +111,7 @@ class AvatarController extends Controller
         $this->regenerate();
 
         return response()->json([
-            "thumbnail" => $vrs->getAvatarRenderHash($avatar->id),
+            "thumbnail" => $user->thumbnail(),
             "message" => "You have worn this item",
             "type" => "success",
         ], 200);

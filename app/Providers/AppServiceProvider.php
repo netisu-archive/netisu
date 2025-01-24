@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Laravel\Cashier\Cashier;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Facades\Event;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -49,6 +50,10 @@ class AppServiceProvider extends ServiceProvider
 
         RedirectIfAuthenticated::redirectUsing(function () {
             return route('my.dashboard.page');
+        });
+
+        Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
+            $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
         });
 
 

@@ -20,7 +20,8 @@ const DenyAsset = async () => {
 </script>
 
 <template>
-    <AppHead pageTitle="Admin Dashboard" description="Login to Vestora." :url="route('admin.page')" />
+    <AppHead pageTitle="Admin Dashboard" :description="usePage<any>().props.site.name + ' Administration'"
+        :url="route('admin.page')" />
     <Navbar>
         <div class="card">
             <div class="card-content">
@@ -50,7 +51,7 @@ const DenyAsset = async () => {
                         <p class="subtitle is-6">Created by:
                             <Link :href="route('admin.users.manage-user', { id: item.data.creator.id })"
                                 class="has-text-link">{{
-                                    item.data.creator.username }}</Link>
+                            item.data.creator.username }}</Link>
                         </p>
                         <div class="media-content">
                             <div class="content">

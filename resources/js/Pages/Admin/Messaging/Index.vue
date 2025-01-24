@@ -6,7 +6,8 @@ import AppHead from "@/Components/AppHead.vue";
 </script>
 
 <template>
-    <AppHead pageTitle="Admin Dashboard" description="Login to Vestora." :url="route('admin.page')" />
+    <AppHead pageTitle="Admin Dashboard" :description="usePage<any>().props.site.name + ' Administration'"
+        :url="route('admin.page')" />
     <Navbar>
         <div style="background-color: #1b1b1b;">
             <div class="navbar-item has-text-white" style="background-color: #1b1b1b;">

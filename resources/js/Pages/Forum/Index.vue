@@ -6,8 +6,8 @@ import Footer from '@/Components/LayoutParts/Footer.vue';
 import AppHead from '@/Components/AppHead.vue';
 import VLazyImage from "v-lazy-image";
 import { route } from 'momentum-trail'; // If you're using the 'route' function from 'momentum-trail'
-import { usePage, useForm } from '@inertiajs/vue3';
-import axios from 'axios';
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 defineProps({
     posts: { type: Object },
@@ -21,9 +21,9 @@ defineProps({
 });
 
 
-const form = useForm({
-    title: '',
-    body: '',
+const canPost = (section: string) => computed(() => {
+    const sectionData = usePage<any>().props.topic;
+    return usePage<any>().props.auth.user.positionID >= sectionData.role_required_to_post;
 });
 </script>
 
@@ -53,7 +53,7 @@ const form = useForm({
                         </div>
                         <div class="mb-2 flex-container flex-child-grow">
                             <Link as="button"
-                                v-if="usePage<any>().props.auth.user.positionID == usePage<any>().props.topic.role_required_to_post"
+                                v-if="canPost"
                                 :href="route(`forum.create.page`, { id: usePage<any>().props.topic.id })"
                                 :class="(usePage<any>().props.auth.user.staff ? 'btn-danger' : 'btn-success')"
                                 class="text-center btn btn-xs flex-child-grow"><i class="fad fa-hexagon-plus"></i>&nbsp;

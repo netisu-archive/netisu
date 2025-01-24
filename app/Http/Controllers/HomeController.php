@@ -95,7 +95,7 @@ class HomeController extends Controller
         ]);
 
         $maxAttempts = 5; // Allow 5 requests per two minutes (adjust as needed)
-        $key = 'latest-status:' . Auth::id();
+        $key = 'statuses-for:' . Auth::id();
 
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
@@ -106,7 +106,7 @@ class HomeController extends Controller
             ], 429);
         }
 
-        RateLimiter::increment($key);
+        dd(RateLimiter::increment($key));
 
         if ($request->message != Auth::user()->latestStatus) {
             // Logging

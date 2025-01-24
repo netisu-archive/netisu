@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\Notification;
 use App\Models\Inventory;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
-use Illuminate\Support\Arr; 
+use Illuminate\Support\Arr;
+use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -292,7 +295,7 @@ class UserController extends Controller
 
         return response()->json(['error' => false, 'message' => 'OK'], 200);
     }
-    
+
     public function ValidateEmail(Request $request)
     {
         $email = $request->input('email');
@@ -303,9 +306,59 @@ class UserController extends Controller
         }
 
         $userHasEmail = User::where('email', $email)->exists();
-        
+
         if ($userHasEmail) {
             return response()->json(['error' => true, 'message' => "Your email is already linked to another account."]);
+        }
+
+        return response()->json(['error' => false, 'message' => 'OK'], 200);
+    }
+
+    public function ValidatePassword(Request $request)
+    {
+        $weakPasswords = [
+            config('Values.name'),
+            "password",
+            "test",
+            "test123",
+            "pass",
+            "abc123",
+            "abc",
+            "123",
+            "php",
+            "laravel",
+            "adonis",
+            "mark",
+            "netisux",
+            "netisu",
+            "aeo",
+            "Aeo",
+            "AEO",
+            "Ae0"
+        ];
+
+        $compliments = [
+            config('Values.name') . 'iscool',
+            strtolower(config('Values.name')) . 'iscool',
+        ];
+
+        $request->validate(
+            ['password' => ['required', 'confirmed', Rules\Password::defaults()]],
+            [
+                'password.required' => ['error' => true, 'message' => "The Password Field is Required"],
+                'password.confirmed' => ['error' => true, 'message' => "The Password Confirmation Field is Required"],
+            ],
+        );
+
+        if (!$request->password) {
+            return response()->json(['error' => true, 'message' => "The Password Field is Empty"]);
+        }
+        if (in_array($request->password, $compliments)) {
+            return response()->json(['error' => true, 'message' => "Thanks, but that password is sadly not strong enough."]);
+        }
+
+        if (in_array($request->password, $weakPasswords)) {
+            return response()->json(['error' => true, 'message' => "._. Please make a stronger password"]);
         }
 
         return response()->json(['error' => false, 'message' => 'OK'], 200);

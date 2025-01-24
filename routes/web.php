@@ -191,6 +191,9 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
             Route::post('/validate', [MarketController::class, 'uploadItem'])->name('validate');
         });
         Route::get('/item/{id}', [MarketController::class, 'StoreItem'])->name('item');
+        Route::get('/item/{id}/edit', [MarketController::class, 'edit'])->name('edit');
+        Route::post('/item/{id}/edit', [MarketController::class, 'update'])->name('edit.validate');
+
         Route::post('/item/purchase/{id}/{currencyType}', [MarketController::class, 'purchase'])->name('purchase');
     });
 

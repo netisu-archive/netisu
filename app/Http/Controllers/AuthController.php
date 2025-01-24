@@ -14,7 +14,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Auth\Events\Registered;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Cache;
@@ -42,8 +41,6 @@ class AuthController extends Controller
         $this->ensureIsNotRateLimited($request);
 
         $user = User::where('username', $credentials['username'])->where('password', '!=', '')->first();
-
-        $guard = $user->isStaff() ? 'admin' : 'web';
 
         if (!Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']], $remember = true)) {
             // Authentication failed
@@ -93,9 +90,8 @@ class AuthController extends Controller
                 return $theme['available'];
             }),
             'tester' => [
-                'username' => $tester->username,
-                'avatar' => $tester->thumbnail(),
-
+                'username' => $tester->username ?? "Aeo",
+                'avatar' => $tester ? $tester->thumbnail() : "/assets/img/earl_placeholder.png",
             ]
         ]);
     }
@@ -205,7 +201,6 @@ class AuthController extends Controller
             Admin::create([
                 'user_id' => $user->id,
                 'role_id' => 1,
-
             ]);
         }
 
@@ -213,7 +208,7 @@ class AuthController extends Controller
 
 
 
-        Auth::login($user, $remember = true);
+        Auth::login($user);
     }
     /**
      * Ensure the login request is not rate limited.
@@ -254,7 +249,7 @@ class AuthController extends Controller
         } else {
             Auth::guard('web')->logout();
         }
-        
+
         Inertia::clearHistory();
 
         return redirect()->intended(route("auth.login.page"))->with([

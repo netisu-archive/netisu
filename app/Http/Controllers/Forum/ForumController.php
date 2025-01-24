@@ -92,7 +92,11 @@ class ForumController extends Controller
         });
 
         // Fetch the selected forum topic
-        $topic = ForumTopic::where('id', '=', $id)->firstOrFail();
+        $topic = ForumTopic::where('id', '=', $id)->first();
+
+        if (!$topic){
+            abort(404);
+        }
 
         // Check permissions and abort if necessary
         if (Auth::check() && !Auth::user()->isStaff() && $topic->is_staff_only_viewing) {

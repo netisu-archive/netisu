@@ -139,10 +139,8 @@ class GrabController extends Controller
 
                 $this->regenerate($request);
 
-                return $vrs->getAvatarRenderHash($avatar->id);
-            case 'color':
-                $colors = config('avatar_colors'); // Fetch colors from the configuration file
-
+                return Auth::user()->thumbnail();
+                case 'color':
                 $validBodyParts = ['head', 'torso', 'left_arm', 'right_arm', 'left_leg', 'right_leg'];
 
                 if (!in_array($request->body_part, $validBodyParts)) {
@@ -150,15 +148,11 @@ class GrabController extends Controller
                 }
 
 
-                // Check if the requested color exists in the $colors array
-                if (!in_array($request->color, $colors)) {
-                    return response()->json(['error' => 'Invalid color.']);
-                }
+                
 
                 // Check if the avatar's current color for the specified body part matches the requested color
                 if ($avatar->{"color_{$request->body_part}"} == $request->color) {
-                    $this->regenerate($request);
-                    return $vrs->getAvatarRenderHash($avatar->id);
+                    return Auth::user()->thumbnail();
                 }
 
                 // Update the avatar's color for the specified body part
@@ -167,7 +161,7 @@ class GrabController extends Controller
 
                 $this->regenerate($request);
 
-                return $vrs->getAvatarRenderHash($avatar->id);
+                return Auth::user()->thumbnail();
 
 
             default:

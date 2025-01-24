@@ -45,6 +45,8 @@
     },
     "include": [
         "resources/**/*.ts",
+        "resources/js/**/*.ts",
+        "resources/js/**/*.vue",
         "resources/**/*.vue",
         "resources/**/*.d.ts",
         "vite.config.ts",

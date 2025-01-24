@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Item;
+use App\Models\Space;
+use Illuminate\Support\Carbon;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptionxceptions) {
@@ -32,18 +35,24 @@ return Application::configure(basePath: dirname(__DIR__))
              */
 
             $routes = [
-                500 => 'E_GENERIC_EXCEPTION',
+                500 => 'E_CANNOT_LOOKUP_ROUTE',
                 503 => 'E_SERVICE_UNAVAILABLE',
                 404 => 'E_ROUTE_NOT_FOUND',
-                403 => 'E_FORBIDDEN',
+                403 => 'E_AUTHORIZATION_FAILURE',
             ];
 
             $icons = [
-                500 => 'fa-duotone fa-bomb text-danger',
-                503 => 'fa-duotone fa-cloud-slash text-danger',
-                404 => 'fa-duotone fa-exclamation text-warning',
-                403 => 'fa-duotone fa-star-half-stroke text-danger',
+                500 => 'fa-solid fa-bomb fa-gradient text-danger',
+                503 => 'fa-solid fa-cloud-slash fa-gradient text-danger',
+                404 => 'fa-solid fa-exclamation fa-gradient text-warning',
+                403 => 'fa-solid fa-star-half-stroke fa-gradient text-danger',
             ];
+
+            $pendingItems = Item::where('status', 'pending')->with('creator')->get();
+
+            $pendingSpaces = Space::where('thumbnail_pending', true)->with('creator')->get();
+    
+            $pendingItemsAndSpaces = $pendingItems->merge($pendingSpaces);
 
             if (app()->environment(['local', 'testing'])) {
                 return $response;
@@ -75,25 +84,32 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return inertia('App/Error', [
                 'site' => config('Values'),
-                'auth' => function () use ($request) {
+                'auth' => function () use ($request,  $pendingItemsAndSpaces) {
                     return [
                         'user' => $request->user() ? [
                             'id' => $request->user()->id,
                             'username' => $request->user()->username,
                             'display_name' => $request->user()->display_name,
-                            'email' => $request->user()->email,
+                            'email' => preg_replace('/[^@]+@([^\s]+)/', ''.substr($request->user()->email, 0, 3).'********@$1', $request->user()->email),
                             'birthdate' => $request->user()->birthdate,
-                            'coins' => $request->user()->coins,
-                            'bucks' => $request->user()->bucks,
+                            'email_verified_at' => $request->user()->email_verified_at,
+                            'event_currency' => shortNum($request->user()->event_currency),
+                            'next_currency_payout' => Carbon::parse($request->user()->next_reward_payout)->diffForHumans(),
+                            'coins' => shortNum($request->user()->coins),
+                            'bucks' => shortNum($request->user()->bucks),
                             'status' => $request->user()->status,
                             'staff' => $request->user()->isStaff(),
+                            'pendingAssets' => $request->user()->isStaff() ? $pendingItemsAndSpaces->count() : null,
                             'position' => $request->user()->CurrentPosition(),
+                            'positionID' => $request->user()->CurrentPositionID(),
                             'about_me' => $request->user()->about_me,
                             'headshot' => $request->user()->headshot(),
+                            'thumbnail' => $request->user()->thumbnail(),
                             'following' => $request->user()->following(),
                             'settings' => $request->user()->settings,
                             'level' => $request->user()->getLevel(),
                             'xp' => $request->user()->getPoints(),
+                            'navSpaces' => $request->user()->navSpaces(),
                             'nextlevelxp' =>  $request->user()->nextLevelAt(),
                             'notifications' => $request->user()->unreadNotifications()->limit(5)->get()
                                 ->each(function ($notification) {

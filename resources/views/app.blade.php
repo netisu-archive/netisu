@@ -4,15 +4,15 @@ Unauthorized use of this code (Not Mendcore) is strictly prohibited.
 -->
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" oncontextmenu="return false"
-    dir="{{ App::isLocale('ar') ? 'rtl' : 'ltr' }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" oncontextmenu="return false" dir="{{ App::isLocale('ar') ? 'rtl' : 'ltr' }}" prefix="og: https://ogp.me/ns#">
 
 <head>
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <link id="theme-style" rel="stylesheet" defer>
-    @vite(['resources/js/app.ts'])
     @inertiaHead
+
+    @vite(['resources/js/app.ts', "resources/js/Pages/{$page['component']}.vue"])
 </head>
 <style>
     #snowflakeContainer {

@@ -26,7 +26,7 @@ defineProps({
                             </div>
                             <div class="text-muted fw-semibold">
                                 <p class="text-xs">You have no posts.</p>
-                                <Link :href="route(`forum.create.page`, { id: 1 })" class="text-xs">New Post</Link>
+                                <Link :href="route(`forum.create.page`, { id: 4 })" class="text-xs">New Post</Link>
                             </div>
                         </div>
                     </div>

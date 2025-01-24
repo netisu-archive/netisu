@@ -22,10 +22,10 @@ class UserCreated
     /**
      * Handle the event.
      *
-     * @param  \App\Events\UserWasCreated  $event
+     * @param  \App\Events\UserWasCreated  $user
      * @return void
      */
-    public function handle(Registered $user)
+    public function handle($user)
     {
         Log::info('User was created: ' . $user);
     }

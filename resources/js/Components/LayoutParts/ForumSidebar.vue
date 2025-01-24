@@ -33,7 +33,7 @@ function setActiveTopCat(categoryName): void {
             <Link as="button" v-for="Official in section_one" :key="Official.id"
                 :href="route('forum.page', { id: Official.id })" class="text-xs market-section-item"
                 :class="[current('forum.page', Official.id) ? 'active' : '']">
-            <i v-if="Official.is_staff_only_posting == '1'" class="fas fa-lock"></i>&nbsp;{{ Official.name }}
+            <i v-if="Official.role_required_to_post != null" class="fas fa-lock"></i>&nbsp;{{ Official.name }}
             </Link>
         </div>
     </div>
@@ -48,7 +48,7 @@ function setActiveTopCat(categoryName): void {
             <Link as="button" v-for="Community in section_two" :key="Community.id"
                 :href="route('forum.page', { id: Community.id })" class="text-xs market-section-item"
                 :class="[current('forum.page', Community.id) ? 'active' : '']">
-            <i v-if="Community.is_staff_only_posting == '1'" class="fas fa-lock"></i>&nbsp;{{ Community.name }}
+            <i v-if="Community.role_required_to_post != null" class="fas fa-lock"></i>&nbsp;{{ Community.name }}
             </Link>
         </div>
     </div>
@@ -63,7 +63,7 @@ function setActiveTopCat(categoryName): void {
             <Link as="button"  v-for="Serious in section_three" :key="Serious.id"
                 :href="route('forum.page', { id: Serious.id })" class="text-xs market-section-item"
                 :class="[current('forum.page', Serious.id) ? 'active' : '']">
-            <i v-if="Serious.is_staff_only_posting == '1'" class="fas fa-lock"></i>&nbsp;{{ Serious.name }}
+            <i v-if="Serious.role_required_to_post != null" class="fas fa-lock"></i>&nbsp;{{ Serious.name }}
             </Link>
         </div>
     </div>

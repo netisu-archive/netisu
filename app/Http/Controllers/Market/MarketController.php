@@ -50,15 +50,15 @@ class MarketController extends Controller
         $item = Cache::remember($cacheKey, now()->addMinutes(15), function () use ($id) {
             return Item::where('id', $id)->first();
         });
-        
+
         if (!$item || (!Auth::check() && !$item->public_view)) {
             abort(403);
         }
-        
+
         if (!$item->public_view && Auth::check() && $item->creator_id != Auth::id() && !$authenticatedUserModel->isStaff()) {
             abort(403);
         }
-        
+
 
         // Retrieve recommendations with caching
         $recommendations = Cache::remember($recommendationCacheKey, now()->addHours(6), function () use ($item) {
@@ -135,8 +135,8 @@ class MarketController extends Controller
             'item_type' => $request->type,
             'status' => 'pending',
             'public_view' => false,
-            'cost_coins' => $request->price_coins,
-            'cost_bucks' => $request->price_bucks,
+            'cost_coins' => $request->cost_coins,
+            'cost_bucks' => $request->cost_bucks,
             'avatar_preview' => $previewName,
             'onsale' => true,
         ]);
@@ -170,12 +170,59 @@ class MarketController extends Controller
             'description' => 'required|string|max:255',
             'type' => 'required|string|in:shirt,tshirt,pants', // Allowed item types
             'image' => 'required|image|mimes:png', // Validate PNG image
-            'price_coins' => 'required|integer|max:50000',
-            'price_bucks' => 'required|integer|max:10000',
+            'cost_coins' => 'required|integer|max:50000',
+            'cost_bucks' => 'required|integer|max:10000',
         ]);
 
         if ($validator->fails()) { // Use Validator object's fails method on $validator
             throw ValidationException::withMessages([$validator->errors()]);
         }
+    }
+
+    public function edit(int $id)
+    {
+        $item = Item::findOrFail($id);
+        if (!$item) {
+            abort(404);
+        }
+
+        if ($item->creator_id != Auth::id()) {
+            abort(403);
+        }
+
+        return inertia('Store/Edit', [
+            'item' => [
+                'id' => $item->id,
+                'name' => $item->name,
+                'thumbnail' => $item->thumbnail(),
+                'description' => $item->name,
+
+                ]
+        ]);
+    }
+
+    public function update(Request $request, int $id)
+    {
+        $item = Item::findOrFail($id);
+        if (!$item) {
+            abort(404);
+        }
+
+        if ($item->creator_id != Auth::id()) {
+            abort(403);
+        }
+
+        $item->update([
+           'name' => $request->name ??  $item->name,
+           'description' => $request->description ??  $item->description,
+           'cost_coins' => $request->cost_coins ??  $item->cost_coins,
+           'cost_bucks' => $request->cost_bucks ??  $item->cost_bucks,
+           'onsale' => $request->isOnsale ??  $item->onsale, 
+        ]);
+
+        return redirect()->route('store.item', $item->id)->with([
+            'message' => 'Item edited successfully!',
+            'type' => 'success' // Optional: specify message type for styling
+        ], 201);
     }
 }

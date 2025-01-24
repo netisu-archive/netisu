@@ -9,7 +9,8 @@ import AdminPagination from "@/Components/AdminPagination.vue";
 </script>
 
 <template>
-    <AppHead pageTitle="Item Index" description="Login to Vestora." :url="route('admin.items.page')" />
+    <AppHead pageTitle="Item Index" :description="usePage<any>().props.site.name + ' Administration'"
+        :url="route('admin.items.page')" />
     <Navbar>
         <div class="card">
             <div class="card-content">

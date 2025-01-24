@@ -38,7 +38,8 @@ watch(MaintenanceActive, (newValue, oldValue) => {
 </script>
 
 <template>
-    <AppHead pageTitle="Admin Dashboard" description="Login to Vestora." :url="route('admin.page')" />
+    <AppHead pageTitle="Admin Dashboard" :description="usePage<any>().props.site.name + ' Administration'"
+        :url="route('admin.page')" />
     <Navbar>
         <div class="card">
             <div class="card-content">
@@ -52,7 +53,7 @@ watch(MaintenanceActive, (newValue, oldValue) => {
                         <br />
 
                         <p class="title is-2" style="margin-bottom:0.5rem;">Welcome back, {{ usePage<any>
-                            ().props.auth?.user?.username }}</p>
+                                ().props.auth?.user?.username }}</p>
                         <span class="tag is-danger is-medium">{{ usePage<any>().props.auth?.user?.position }}</span>
                     </div>
                 </div>
@@ -88,7 +89,7 @@ watch(MaintenanceActive, (newValue, oldValue) => {
                 <a v-if="usePage<any>().props.stats.canControlMaintenance" class="button"
                     :class="{ 'is-active': MaintenanceActive ? true : false }"
                     @click="!MaintenanceActive ? EnableMaintenance() : DisableMaintenance()">Turn Maintenance {{
-                        !MaintenanceActive ? "ON" : "OFF" }}</a>
+                    !MaintenanceActive ? "ON" : "OFF" }}</a>
             </div>
         </div>
         <br />
@@ -99,19 +100,19 @@ watch(MaintenanceActive, (newValue, oldValue) => {
                         <div class="buttons">
                             <button v-if="usePage<any>().props.stats.canControlMarketPurchases"
                                 :class="{ 'is-active': MarketActive ? true : false }" class="button">{{ MarketActive ?
-                                    'Enable' : 'Disable' }}
+                                'Enable' : 'Disable' }}
                                 Market</button>
                             <button v-if="usePage<any>().props.stats.canControlDiscussion"
                                 :class="{ 'is-active': ForumActive ? true : false }" class="button">{{ ForumActive ?
-                                    'Enable' : 'Disable' }}
+                                'Enable' : 'Disable' }}
                                 Discussion</button>
                             <button v-if="usePage<any>().props.stats.canControlCustomization"
                                 :class="{ 'is-active': CustomizationActive ? true : false }" class="button">{{
-                                    CustomizationActive ?
-                                        'Enable' : 'Disable' }} Customization</button>
+                                CustomizationActive ?
+                                'Enable' : 'Disable' }} Customization</button>
                             <button v-if="usePage<any>().props.stats.canControlSpaces"
                                 :class="{ 'is-active': SpacesActive ? true : false }" class="button">{{ SpacesActive ?
-                                    'Enable' : 'Disable' }}
+                                'Enable' : 'Disable' }}
                                 Spaces</button>
                         </div>
                     </div>

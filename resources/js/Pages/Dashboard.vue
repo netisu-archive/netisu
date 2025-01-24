@@ -24,14 +24,14 @@ defineProps<{
 
 const statuses = ref([]);
 
-const getStatuses = throttle(async () => {
+const getStatuses = async () => {
     try {
         const response = await axios.get(route(`api.dashboard.statuses`));
         statuses.value = response.data;
     } catch (error) {
         console.error('Error fetching statuses:', error);
     }
-}, 15000);
+};
 
 const initialData = statuses;
 
@@ -50,7 +50,7 @@ function createStatusUpdate(status: string) {
         thumbnail: usePage<any>().props.auth.user.headshot,
     };
 }
-const addStatus = (status: string): void => {
+const addStatus = throttle((status: string): void => {
     const newStatus = createStatusUpdate(status);
     initialData.value.unshift(newStatus); // Push the single StatusObject
     axios.post(route(`my.dashboard.validate`), {
@@ -60,7 +60,8 @@ const addStatus = (status: string): void => {
     }).catch((error) => {
         console.error("Error:", error);
     });
-};
+}, 15000);
+
 
 const getXPProgressWidth = (currentxp, nextxp) => {
     const progress = (currentxp / nextxp) * 100;
@@ -258,6 +259,7 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
+                </div>
                     <div class="mb-1 text-xl fw-semibold">
                         Today's Reccomendations
                     </div>
@@ -281,7 +283,6 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     </Sidebar>

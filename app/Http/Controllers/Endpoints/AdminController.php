@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 use App\Models\{
     Item,
     Admin,
+    Space,
     User,
     Inventory,
     SiteSettings
@@ -94,9 +95,11 @@ class AdminController extends Controller
         $user = User::where(['id' => $userId])->first();
         $item = Item::where(['id' => $itemId])->first();
 
-
-        if (!$this->admin->rolePermissions("can_gift_users")) {
-            abort(403); // Immediately return a 403 for unauthorized users
+        if ((!$this->admin->rolePermissions("can_gift_users"))) {
+            return response()->json([
+                'message' => 'Unauthorized',
+                'type' => 'danger',
+            ]);
         }
 
         $inventory = new Inventory;
@@ -106,12 +109,47 @@ class AdminController extends Controller
             'item_id' => $itemId,
         ]);
 
-        $user->notify(new GiftNotification($user, $item));
+        $user->notify(new GiftNotification(Auth::user(), $item));
 
         return response()->json([
             'message' =>  $item->name .' has been gifted to ' . $user->username . '.',
             'type' => 'success'
         ]);
+    }
+
+    public function purge(string $type, int $assetId){
+        $canManage = [
+            'item' => 'can_manage_items',
+            'user' => 'can_manage_users',
+            'space' => 'can_manage_spaces',
+        ];
+
+        if ((!$this->admin->rolePermissions($canManage[$type]))) {
+            return response()->json([
+                'message' => 'Unauthorized',
+                'type' => 'danger',
+            ]);
+        }
+    
+        if ($type == "item") {
+            $item = Item::where('id', $assetId)->first();
+    
+            $item->update([
+                'name' => "[netisu-item:{$item->id}]"
+            ]);
+        } else if ($type == "user") {
+            $user = User::where('id', $assetId)->first();
+            $user->update([
+                'display_name' => "[netisu-user:{$user->id}]",
+                'username' => "[netisu-user:{$user->id}]"
+            ]);
+    
+        } else if ($type == "space") {
+            $space = Space::where('id', $assetId)->first();
+            $space->update([
+                'name' => "[netisu-space:{$space->id}]",
+            ]);
+        }
     }
 
     public function disableMaintenance(Request $request)

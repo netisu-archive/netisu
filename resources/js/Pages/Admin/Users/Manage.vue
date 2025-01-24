@@ -4,10 +4,18 @@ import { route } from "momentum-trail"
 import { usePage } from "@inertiajs/vue3";
 import Navbar from "@/Components/LayoutParts/Admin/AdminNavbar.vue";
 import AppHead from "@/Components/AppHead.vue";
+import axios from 'axios';
+
+const purge = (type: string, id: number) => {
+    axios.get(`/sanctum/csrf-cookie`).then(() => {
+        axios.post(route(`api.admin.purge`, { type: type, assetId: id }));
+    });
+};
 </script>
 
 <template>
-    <AppHead pageTitle="User Index" description="Login to Vestora." :url="route('auth.login.page')" />
+    <AppHead pageTitle="User Index" :description="usePage<any>().props.site.name + ' Administration'"
+        :url="route('auth.login.page')" />
     <Navbar>
         <div class="card"
             :style="'background:url(' + usePage<any>().props.user.settings.profile_banner_enabled ? usePage<any>().props.user.settings.profile_banner_url : null + ');'">
@@ -30,7 +38,7 @@ import AppHead from "@/Components/AppHead.vue";
                         </p>
                         <div class="content">
                             <blockquote>{{ usePage<any>().props.user.about_me ?? usePage<any>().props.user.username +
-                                        "does not hava a description yet." }}</blockquote>
+                                "does not hava an about me yet." }}</blockquote>
                         </div>
                         <template v-if="usePage<any>().props.permissions.canMangeUser">
                             <label><strong>UID:</strong></label> <label>{{ usePage<any>().props.user.id }}</label>
@@ -51,9 +59,13 @@ import AppHead from "@/Components/AppHead.vue";
 
                                 <a :href="route(`user.profile`, { username: usePage<any>().props.user.username })"
                                     class="button is-outlined">View Profile</a>
-                                <a href="grant.html" class="button is-outlined">Grant Achievement (not working atm)</a>
-                                <Link :href="route(`admin.users.gift-user`, { id: usePage<any>().props.user.id })"
-                                    class="button is-outlined">Gift Item</Link>
+                                <a v-if="usePage<any>().props.permissions.canGiftUser" href="grant.html"
+                                    class="button is-outlined">Grant
+                                    Achievement (not working atm)</a>
+                                <Link v-if="usePage<any>().props.permissions.canGiftUser"
+                                    :href="route(`admin.users.gift-user`, { id: usePage<any>().props.user.id })"
+                                    class="button is-outlined">
+                                Gift Item</Link>
                             </div>
                         </div>
                         <div v-if="usePage<any>().props.permissions.canMangeUserSettings">
@@ -61,7 +73,9 @@ import AppHead from "@/Components/AppHead.vue";
                             <label><strong>Moderation Actions:</strong></label>
                             <br>
                             <div class="buttons">
-                                <a href="purge.html" class="button is-danger is-outlined">Purge Username</a>
+                                <a @click="purge('user', usePage<any>().props.user.id)"
+                                    class="button is-danger is-outlined">Purge
+                                    Username</a>
                                 <a href="purge.html" class="button is-danger is-outlined">Purge Bio</a>
                                 <a href="banuser.html" class="button is-danger is-outlined">Ban User</a>
                             </div>

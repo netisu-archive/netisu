@@ -8,7 +8,7 @@ import { route } from "momentum-trail"
 import AppHead from "@/Components/AppHead.vue";
 import Footer from "@/Components/LayoutParts/Footer.vue";
 import axios from "axios";
-import throttle from "lodash/throttle";
+import debounce from "lodash/debounce";
 import VLazyImage from "v-lazy-image";
 const form = useForm({
     username: "",
@@ -38,14 +38,16 @@ const isStepOk = ref(false);
 const totalSteps = 6;
 
 const site = computed(() => usePage<any>().props.site);
-
+const SetValue = () => {
+        isStepOk.value = true;
+};
 const nextStep = () => {
     if (currentStep.value < totalSteps) {
         currentStep.value++;
         isStepOk.value = false;
     }
 };
-const checkStepOne = throttle(async (email) => {
+const checkStepOne = debounce(async (email) => {
     try {
         await axios.get(`/sanctum/csrf-cookie`);
         const response = await axios.get(route(`api.user.email-validate`, { email: email }));
@@ -66,7 +68,7 @@ const checkStepOne = throttle(async (email) => {
     }
 }, 1000);
 
-const checkStepTwo = throttle(async (name) => {
+const checkStepTwo = debounce(async (name) => {
     try {
         await axios.get(`/sanctum/csrf-cookie`);
         const response = await axios.get(route(`api.user.name-availability`, { name: name }));
@@ -83,6 +85,27 @@ const checkStepTwo = throttle(async (name) => {
     } catch (error) {
         // Handle errors during API call or CSRF token retrieval
         console.error("Error checking name availability:", error);
+        // You can display an error message to the user here
+    }
+}, 1000);
+
+const checkStepThree = debounce(async (password, confirm) => {
+    try {
+        await axios.get(`/sanctum/csrf-cookie`);
+        const response = await axios.get(route(`api.user.password-validate`, { password: password, password_confirmation: confirm }));
+        if (response.data.error === true && response.data.message) {
+            // Set ForumError value here (assuming response.data.json.message contains the error message)
+            formError.value = response.data.message ?? response.data.errors.password;
+            isStepOk.value = false;
+
+        } else {
+            // Handle successful response (e.g., set isStepOk.value to true)
+            formError.value = "";
+            isStepOk.value = true;
+        }
+    } catch (error) {
+        // Handle errors during API call or CSRF token retrieval
+        console.error("Error checking password:", error);
         // You can display an error message to the user here
     }
 }, 1000);
@@ -287,8 +310,9 @@ watch(() => form.birthdate.month, updateDays);
                                             Confirm Password
                                         </div>
                                         <input class="form" placeholder="Confirm Password..."
-                                            v-model="form.password_confirmation"  @input="checkStepThree(form.password)" type="password"
-                                            name="password_confirmation" />
+                                            v-model="form.password_confirmation"
+                                            @input="checkStepThree(form.password, form.password_confirmation)"
+                                            type="password" name="password_confirmation" />
                                     </div>
                                 </div>
                                 <div v-else-if="currentStep === 4">
@@ -336,6 +360,8 @@ watch(() => form.birthdate.month, updateDays);
                                                 </option>
                                             </select>
                                         </div>
+                                        <button type="button" @click="SetValue" class="btn btn-xs w-100 btn-success">
+                                            Set </button>
                                     </div>
                                 </div>
                                 <div v-else-if="currentStep === 5">
@@ -348,8 +374,7 @@ watch(() => form.birthdate.month, updateDays);
                                                 active:
                                                     currentTheme ===
                                                     theme.lowercase,
-                                            }"
-                                                class="mb-2 theme-selection squish card card-body card-inner mb-lg-0"
+                                            }" class="mb-2 theme-selection squish card card-body card-inner mb-lg-0"
                                                 :id="theme.lowercase +
                                                     '-theme-btn'
                                                     " @click="
@@ -364,7 +389,7 @@ watch(() => form.birthdate.month, updateDays);
                                                             "></div>
                                                         <div class="text-lg fw-semibold text-truncate">
                                                             {{
-                                                                theme.name
+                                                            theme.name
                                                             }}
                                                         </div>
                                                         <div
@@ -374,6 +399,9 @@ watch(() => form.birthdate.month, updateDays);
                                                 </div>
                                             </div>
                                         </div>
+                                        <button type="button" @click="SetValue" class="btn btn-xs w-100 btn-success">
+                                            Set </button>
+
                                     </div>
                                 </div>
 

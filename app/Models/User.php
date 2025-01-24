@@ -219,6 +219,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
     {
         return ItemPurchase::where('seller_id', '=', $this->id)->count();
     }
+    
     public function ownsItem($id)
     {
         return Inventory::where([

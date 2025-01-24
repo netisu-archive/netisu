@@ -1,15 +1,15 @@
 {
-  ".vue-skeletor": ".smwtf",
-  ".vue-skeletor:not:after": ".nm4at",
-  ".vue-skeletor--rect": ".f9wbm",
-  ".vue-skeletor--circle": ".xxj39",
-  ".vue-skeletor--pill": ".xatyb",
-  ".vue-skeletor--text": ".mh8pe",
-  "#nprogress": "#fp0cl",
-  ".bar": ".znvn6",
-  ".peg": ".zpc42",
-  ".spinner": ".h1s6z",
-  ".spinner-icon": ".f8fgj",
-  ".nprogress-custom-parent": ".rzdes",
-  ".headerDivider": ".npv8w"
+  ".vue-skeletor": ".keezj",
+  ".vue-skeletor:not:after": ".bjbdk",
+  ".vue-skeletor--rect": ".xvee4",
+  ".vue-skeletor--circle": ".hw6ds",
+  ".vue-skeletor--pill": ".gqytf",
+  ".vue-skeletor--text": ".xdxxy",
+  "#nprogress": "#cvrsy",
+  ".bar": ".cxp2g",
+  ".peg": ".cmr8p",
+  ".spinner": ".u96k7",
+  ".spinner-icon": ".u65gn",
+  ".nprogress-custom-parent": ".dcdwv",
+  ".headerDivider": ".wvwy3"
 }

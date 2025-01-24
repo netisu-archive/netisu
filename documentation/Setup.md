@@ -29,8 +29,32 @@ Make the following modifications in the configuration:
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
-    server_name yourdomain.com;
+    server_name netisu.com;
     root /var/www/html/public;
+
+    # SSL configuration
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    ssl_certificate         /etc/ssl/cert.pem;
+    ssl_certificate_key     /etc/ssl/key.pem;
+    
+    ssl_session_cache shared:SSL:20m;
+    ssl_session_timeout 10m;
+    ssl_prefer_server_ciphers       on;
+    ssl_protocols                   TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers                     ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+
+    add_header Strict-Transport-Security "max-age=31536000";
+
+    gzip              on;
+    gzip_buffers      16 8k;
+    gzip_comp_level   4;
+    gzip_http_version 1.0;
+    gzip_min_length   1280;
+    gzip_types        text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript image/x-icon image/bmp;
+    gzip_vary         on;
+
 
     # Add security headers
     add_header X-Frame-Options "SAMEORIGIN";
@@ -43,11 +67,10 @@ server {
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
-
     # Other location blocks for specific routes
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
     }

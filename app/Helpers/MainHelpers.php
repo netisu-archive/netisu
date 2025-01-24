@@ -15,6 +15,19 @@ function translations($json)
     return json_decode(file_get_contents($json), true);
 }
 
+function truncate($text, $length)
+{
+    if ($length >= \strlen($text)) {
+      return $text;
+    }
+
+  return preg_replace(
+        "/^(.{1,$length})(\s.*|$)/s",
+        '\\1...',
+        $text
+    );
+}
+
 function crateRarity($data, $rarity)
 {
     switch ($data) {

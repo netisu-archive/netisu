@@ -1,0 +1,22 @@
+{
+  ".vue-skeletor": ".i4c6l",
+  ".vue-skeletor:not:after": ".erbpq",
+  ".vue-skeletor--rect": ".j5zd3",
+  ".vue-skeletor--circle": ".ogy9o",
+  ".vue-skeletor--pill": ".an8wl",
+  ".vue-skeletor--text": ".td2li",
+  "#nprogress": "#vytc5",
+  ".bar": ".j9vhx",
+  ".peg": ".fyudi",
+  ".spinner": ".a1iq5",
+  ".spinner-icon": ".gu12b",
+  ".nprogress-custom-parent": ".jpp14",
+  ".tippy-box": ".n0oqc",
+  ".tippy-box>": ".vu2lr",
+  ".tippy-arrow": ".ikq1l",
+  ".tippy-arrow:before": ".dmtnr",
+  ".tippy-box[data-inertia]": ".iya00",
+  ".tippy-content": ".kmfpy",
+  ".tippy-backdrop": ".siox2",
+  ".tippy-svg-arrow": ".w7jtf"
+}

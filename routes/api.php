@@ -54,6 +54,7 @@ Route::group(['as' => 'api.'], function () {
         });
         Route::get('/name-availability', [UserController::class, 'UsernameAvailability'])->name('name-availability');
         Route::get('/validate-email', [UserController::class, 'ValidateEmail'])->name('email-validate');
+        Route::get('/validate-password', [UserController::class, 'ValidatePassword'])->name('password-validate');
 
         Route::get('/user-profile/{id}', [UserController::class, 'getUser'])->name('profile');
         Route::get('/online/{id}', [UserController::class, 'getStatus'])->name('online');
@@ -125,5 +126,6 @@ Route::group(['as' => 'api.'], function () {
         Route::post('/enable-maintenance', [AdminController::class, 'enableMaintenance'])->name('enableMaintenance');
         Route::post('/disable-maintenance', [AdminController::class, 'disableMaintenance'])->name('disableMaintenance');
         Route::post('/gift-item/{itemID}/{userID}', [AdminController::class, 'giftItem'])->name('gift-item');
+        Route::post('/purge/{type}/{assetId}', [AdminController::class, 'purge'])->name('purge');
     });
 });

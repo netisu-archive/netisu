@@ -11,7 +11,25 @@ defineProps<{
     icon: string
 }>();
 </script>
+<style scoped>
+.fa-gradient.text-info {
+    background: -webkit-gradient(linear, left top, left bottom, from(var(--info-600)), to(#fff));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
+.fa-gradient.text-danger {
+    background: -webkit-gradient(linear, left top, left bottom, from(var(--danger-600)), to(#fff));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.fa-gradient.text-warning {
+    background: -webkit-gradient(linear, left top, left bottom, from(var(--warning-600)), to(#fff));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+</style>
 <template>
 <AppHead :pageTitle="status" :description="message" :url="route('Welcome')" />
     <Navbar :landing="false" />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, reactive } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import { route, current } from 'momentum-trail';
 
@@ -9,34 +9,25 @@ import FlashMessages from "@/Components/Messages/FlashMessages.vue";
 import VLazyImage from "v-lazy-image";
 import SuperBanner from "./SuperBanner.vue";
 
+
+
 interface Props {
     image?: string;
-    showJsonAlert: boolean;
-    JSONALERT: JsonResponse;
-    alertsEnabled: boolean;
-    superBanType?: string;
-    superBanAsset?: string;
-    superBanName?: string;
-    superBanDesc?: string;
-    superBanActive: boolean;
-    OfficialImageBackground: boolean;
-    navSpaces: Array<any>;
+    showJsonAlert?: boolean;
+    JSONALERT?: Array<any>;
+    superBanActive?: boolean;
+    OfficialImageBackground?: boolean;
+    navSpaces?: Array<any>;
 }
 
-interface JsonResponse {
-    message: string;
-    type: string;
-}
+withDefaults(defineProps<Props>(), {
+    alertsEnabled: true,
+    superBanActive: false,
+    showJsonAlert: false,
+    JSONALERT: [],
+    OfficialImageBackground: false,
+});
 
-const defaultResponse: JsonResponse = { message: 'Server Error', type: 'error' };
-
-const MainProps: Props = defineProps<Props>();
-
-MainProps.showJsonAlert = false;
-MainProps.alertsEnabled = true;
-MainProps.superBanActive = false;
-MainProps.JSONALERT = defaultResponse;
-MainProps.OfficialImageBackground = false;
 
 const chatToggle = ref(false);
 const { props } = usePage<any>();
@@ -205,11 +196,12 @@ const lang = computed(() => usePage<any>().props.locale);
                 </li>
                 <li v-if="usePage<any>().props.auth.user.navSpaces.length"
                     v-for="(space, index) in usePage<any>().props.auth.user.navSpaces" :key="index" class="side-item">
-                    <Link :href="route(`spaces.view`,  { id: space.id, slug: space.slug })" class="side-link side-link-has-img">
-                        <span class="side-img">
-                            <v-lazy-image :src="space.thumbnail" />
-                        </span>
-                        <span>{{ space.name }}</span>
+                    <Link :href="route(`spaces.view`, { id: space.id, slug: space.slug })"
+                        class="side-link side-link-has-img">
+                    <span class="side-img">
+                        <v-lazy-image :src="space.thumbnail" />
+                    </span>
+                    <span>{{ space.name }}</span>
                     </Link>
                 </li>
                 <li v-else class="side-item">

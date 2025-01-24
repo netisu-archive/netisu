@@ -50,18 +50,18 @@ const getFormattedDate = (timeStamp: number) => {
         <link v-if="maintenance" rel="stylesheet" href="/assets/css/themes/variables-dark.css" />
 
         <meta :content="pageTitle" name="title" />
-        <meta :content="description" name="description" />
+        <meta :content="description || 'A page on ' + usePage<any>().props.site.name + '.'" name="description" />
 
         <meta content="website" property="og:type" />
         <meta :content="url" property="og:url" />
         <meta :content="pageTitle" property="og:title" />
-        <meta :content="description" property="og:description" />
+        <meta :content="description || 'A page on ' + usePage<any>().props.site.name + '.'" property="og:description" />
         <meta :content="cover || usePage<any>().props.site.icon" property="og:image" />
 
         <meta content="summary_large_image" property="twitter:card" />
         <meta :content="url" property="twitter:url" />
         <meta :content="pageTitle" property="twitter:title" />
-        <meta :content="description" property="twitter:description" />
+        <meta :content="description || 'A page on ' +usePage<any>().props.site.name + '.'" property="twitter:description" />
         <meta :content="cover || usePage<any>().props.site.icon" property="twitter:image" />
         <meta v-if="item == true" name="item-info" :data-id="iid" :data-onsale-until="getFormattedDate(itime)" />
     </Head>
