@@ -94,6 +94,7 @@ class MarketController extends Controller
                 'created_at' => $item->created_at,
 
                 'creator' => [
+                    'id' => $item->creator->id,
                     'username' => $item->creator->username,
                     'displayname' => $item->creator->display_name,
                     'thumbnail' => $item->creator->headshot(),
