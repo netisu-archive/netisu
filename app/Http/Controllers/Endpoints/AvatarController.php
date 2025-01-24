@@ -77,21 +77,31 @@ class AvatarController extends Controller
 
         // finally ownership checking
         if (!$user->ownsItem($item->id)) {
-            return response()->json(['error' => 'You do not own this item.']);
+            return response()->json([
+                "thumbnail" => $user->thumbnail(),
+                'error' => 'You do not own this item.'
+            ]);
         }
 
         // also finally status checking LOL
         if ($item->status !== 'approved') {
-            return response()->json(['error' => 'This item is not approved.']);
+            return response()->json([
+                "thumbnail" => $user->thumbnail(),
+                'error' => 'This item is not approved.'
+            ]);
         }
 
         if ($item->public_view === true) {
-            return response()->json(['error' => 'This item is hidden.']);
+            return response()->json([
+                "thumbnail" => $user->thumbnail(),
+                'error' => 'This item is hidden.'
+            ]);
         }
 
 
         if ($item->item_type == "hat" && !in_array($slot, range(1, 6)) && $slot != 'none') {
             return response()->json([
+                "thumbnail" => $user->thumbnail(),
                 "message" => "Invalid hat slot. Please choose between 1 and 6.",
                 "type" => "error",
             ], 400); // Bad request status code
@@ -142,6 +152,7 @@ class AvatarController extends Controller
 
         if ($item->item_type == "hat" && !in_array($slot, range(1, 6)) && $slot != 'none') {
             return response()->json([
+                "thumbnail" => $user->thumbnail(),
                 "message" => "Invalid hat slot. Please choose between 1 and 6.",
                 "type" => "error",
             ], 400); // Bad request status code
