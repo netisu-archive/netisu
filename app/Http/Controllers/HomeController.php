@@ -70,7 +70,7 @@ class HomeController extends Controller
             return Item::where([
                 ['public_view', true],
                 ['status', 'approved'],
-            ])->with('creator')->inRandomOrder()->take(4)->get();
+            ])->with('creator')->inRandomOrder()->take(12)->get();
         });
 
         foreach ($recommendations as $recommendation) {
