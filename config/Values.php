@@ -7,7 +7,7 @@ return [
     'system_account_id' => 2,
     'in_testing_phase' => true,
 
-    'version' => "enigma-content",
+    'version' => "supernova",
     'frontend' => [
         'page_loader' => false,
         'sidebar_menu' => true,
