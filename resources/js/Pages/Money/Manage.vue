@@ -13,7 +13,7 @@ const ActiveCategory: Ref<string> = ref("Information");
 function setActiveCategory(category): void {
     ActiveCategory.value = category;
 };
-usePoll(2000, { only: ['purchases'] })
+usePoll(10000, { only: ['purchases'] })
 </script>
 
 <template>
@@ -84,9 +84,9 @@ usePoll(2000, { only: ['purchases'] })
                         <div class="flex-wrap col-md-4 d-flex justify-content-center align-content-start"
                             style="flex-direction: column;">
                             <div class="text-start">
-                                <a class="text-md" href="https://100.115.92.195/discuss/post/1/ffeeffe">
-                                    ffeeffe
-                                </a>
+                                <Link class="text-md" :href="route(`store.item`, {id: purchase.id})">
+                                {{ purchase.name }}
+                                </Link>
                                 <div></div>
                                 <p class="text-sm fw-semibold" :class="{
                                     'text-warning': purchase.currency_used === 'coins',

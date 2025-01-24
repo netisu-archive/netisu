@@ -161,7 +161,7 @@ class AvatarController extends Controller
         $this->regenerate();
 
         return response()->json([
-            "thumbnail" => $vrs->getAvatarRenderHash($avatar->id),
+            "thumbnail" => $user->thumbnail(),
             "message" => "You have taken off this item",
             "type" => "success",
         ], 200);
