@@ -5,7 +5,7 @@ import Footer from '@/Components/LayoutParts/Footer.vue';
 import { route } from 'momentum-trail';
 
 defineProps<{
-    status: number
+    status: string
     adonis_error: string
     message: string
     icon: string
