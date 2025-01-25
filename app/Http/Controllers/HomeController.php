@@ -106,7 +106,7 @@ class HomeController extends Controller
             ], 429);
         }
 
-        dd(RateLimiter::increment($key));
+        RateLimiter::increment($key);
 
         if ($request->message != Auth::user()->latestStatus) {
             // Logging
