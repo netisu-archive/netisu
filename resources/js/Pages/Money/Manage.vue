@@ -84,7 +84,7 @@ usePoll(10000, { only: ['purchases'] })
                         <div class="flex-wrap col-md-4 d-flex justify-content-center align-content-start"
                             style="flex-direction: column;">
                             <div class="text-start">
-                                <Link class="text-md" :href="route(`store.item`, {id: purchase.id})">
+                                <Link class="text-md" :href="route(`store.item`, { id: purchase.id })">
                                 {{ purchase.name }}
                                 </Link>
                                 <div></div>

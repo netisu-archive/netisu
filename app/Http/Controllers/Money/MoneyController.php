@@ -25,6 +25,7 @@ class MoneyController extends Controller
         return inertia('Money/Manage', [
             'purchases' =>  $purchases->paginate(10)->through(function ($purchase) {
                 return [
+                    'id' => $purchase->item->id,
                     'thumbnail' => $purchase->item->thumbnail(),
                     'name' => $purchase->item->name,
                     'currency_used' => $purchase->currency_used,
