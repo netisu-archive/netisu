@@ -360,7 +360,7 @@ function onImgErrorSmall(id) {
                                 {{ usePage<any>().props.item.name }}
                             </div>
                             <div class="position-relative" style="margin-right: -10px">
-                                <Link v-if="usePage<any>().props.auth.user.id == usePage<any>().props.item.creator.id" as="button" :href="route(`store.edit`, {id: usePage<any>().props.item.id })" class="btn-circle" data-tooltip-title="More" data-tooltip-placement="bottom">
+                                <Link v-if="usePage<any>().props.auth.user && usePage<any>().props.auth.user.id == usePage<any>().props.item.creator.id" as="button" :href="route(`store.edit`, {id: usePage<any>().props.item.id })" class="btn-circle" data-tooltip-title="More" data-tooltip-placement="bottom">
                                     <i class="fad fa-pen"></i>
                                 </Link>
                                 
