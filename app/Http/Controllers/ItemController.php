@@ -14,9 +14,9 @@ class ItemController extends Controller
      */
     public function getItemsByCategory($category)
     {
-        $items = Item::where('item_type', $category)->orderBy('updated_at')->get();
+        $item = Item::where('item_type', $category)->orderBy('updated_at')->get();
 
-        return response()->json($items);
+        return response()->json($item);
     }
 
     public function purchaseItem($id)
