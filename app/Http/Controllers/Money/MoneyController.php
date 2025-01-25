@@ -29,7 +29,7 @@ class MoneyController extends Controller
                     'thumbnail' => $purchase->item->thumbnail(),
                     'name' => $purchase->item->name,
                     'currency_used' => $purchase->currency_used,
-                    'DateHum' => $purchase->item->DateHum,
+                    'DateHum' => $purchase->DateHum,
                     'price' => $purchase->price,
                 ];
             }),
