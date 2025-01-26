@@ -170,7 +170,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Fahlisaputra\Minify\Middleware\MinifyCss::class,
             \App\Http\Middleware\CompressResponse::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \Fahlisaputra\Minify\Middleware\MinifyJavascript::class,
+            // \Fahlisaputra\Minify\Middleware\MinifyJavascript::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
             \App\Http\Middleware\Localization::class,
             \App\Http\Middleware\HandleInertiaCrossDomainVisits::class,
