@@ -61,7 +61,7 @@ function enableBannerVisibility(visible): void {
     console.log(country);
 };
 
-const currentTheme = localStorage.getItem('theme') ? JSON.parse(localStorage.getItem("theme")) : null;
+const currentTheme = localStorage.getItem('theme') || null;
 
 
 const isVerifiedEmail = computed(() => {
@@ -99,8 +99,9 @@ const isVerifiedEmail = computed(() => {
                 <div class="text-xl" style="line-height: 16px">
                     <div class="mb-1 flex-container align-middle gap-1 fw-semibold">
                         {{ usePage<any>().props.auth.user.display_name }}
-                            <i v-if="usePage<any>().props.auth.user.staff" 
-                                :content="usePage<any>().props.auth.user.staff.Position" v-tippy="{ placement: 'bottom' }" class="fad fa-gavel text-danger"></i>
+                            <i v-if="usePage<any>().props.auth.user.staff"
+                                :content="usePage<any>().props.auth.user.staff.Position"
+                                v-tippy="{ placement: 'bottom' }" class="fad fa-gavel text-danger"></i>
                             <i v-else-if="usePage<any>().props.auth.user.settings.beta_tester"
                                 class="fad fa-hard-hat text-success"></i>
                             <v-lazy-image
@@ -767,7 +768,7 @@ export default {
         };
     },
     mounted() {
-        const theme = localStorage.getItem('theme') ? JSON.parse(localStorage.getItem("theme")) : 'light';
+        const theme = localStorage.getItem('theme') || 'light';
         this.activeTheme = theme;
         this.applyTheme(theme);
         const storedTheme = localStorage.getItem('theme');
@@ -806,7 +807,7 @@ export default {
 
             // Save the selected theme in localStorage
             localStorage.setItem('theme', theme);
-            const storedTheme = localStorage.getItem('theme') ? JSON.parse(localStorage.getItem("theme")) : null;
+            const storedTheme = localStorage.getItem('theme') || null;
 
             if (themeBtn) {
                 if (themeBtn.classList.contains('active')) {
@@ -818,7 +819,7 @@ export default {
         },
         setTheme(theme) {
 
-            const storedTheme = localStorage.getItem('theme') ? JSON.parse(localStorage.getItem("theme")) : 'light';
+            const storedTheme = localStorage.getItem('theme') || 'light';
             const newtheme = theme || 'light';
 
             if (storedTheme != newtheme) {

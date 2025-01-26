@@ -277,7 +277,7 @@ const { props } = usePage<any>();
                                 <div>
                                     Show all results for "<span class="search-keyword">{{
                                         search
-                                    }}</span>"
+                                        }}</span>"
                                 </div>
                             </div>
                             <i class="px-1 fad fa-chevron-right text-muted"></i>
@@ -344,7 +344,7 @@ const { props } = usePage<any>();
                                                 notification.data.object }} &nbsp;</span>
                                             <span class="text-sm text-muted">{{
                                                 notification.data.message
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <div class="text-xs text-muted">
                                             {{ notification.DateHum }}
@@ -471,7 +471,7 @@ export default {
     beforeMount() {
         this.$nextTick(function () {
 
-            const theme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : "light";
+            const theme = localStorage.getItem("theme") || "light";
             this.applyTheme(theme);
         })
 

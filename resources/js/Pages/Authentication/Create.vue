@@ -30,7 +30,7 @@ defineProps<{
     errors?: Object;
 }>();
 
-const currentTheme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : null;
+const currentTheme = localStorage.getItem("theme") || null;
 
 
 let currentStep = ref(1);
@@ -40,7 +40,7 @@ const totalSteps = 6;
 
 const site = computed(() => usePage<any>().props.site);
 const SetValue = () => {
-        isStepOk.value = true;
+    isStepOk.value = true;
 };
 const nextStep = () => {
     if (currentStep.value < totalSteps) {
@@ -379,8 +379,8 @@ watch(() => form.birthdate.month, updateDays);
                                                 :id="theme.lowercase +
                                                     '-theme-btn'
                                                     " @click="
-                                                    setTheme(theme.lowercase)
-                                                    ">
+                                                        setTheme(theme.lowercase)
+                                                        ">
                                                 <div class="gap-4 align-middle flex-container">
                                                     <div class="selection-circle flex-child-grow show-for-large"></div>
                                                     <div class="gap-1 align-middle flex-container flex-dir-column"
@@ -390,7 +390,7 @@ watch(() => form.birthdate.month, updateDays);
                                                             "></div>
                                                         <div class="text-lg fw-semibold text-truncate">
                                                             {{
-                                                            theme.name
+                                                                theme.name
                                                             }}
                                                         </div>
                                                         <div
@@ -481,10 +481,10 @@ export default {
         };
     },
     mounted() {
-        const theme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : "light";
+        const theme = localStorage.getItem("theme") || "light";
         this.activeTheme = theme;
         this.applyTheme(theme);
-        const storedTheme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : null;
+        const storedTheme = localStorage.getItem("theme") || null;
 
         const themeBtn = document.getElementById(theme + "-theme-btn");
 
@@ -522,7 +522,7 @@ export default {
 
             // Save the selected theme in localStorage
             localStorage.setItem("theme", theme);
-            const storedTheme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : null;
+            const storedTheme = localStorage.getItem("theme") || null;
 
             if (themeBtn) {
                 if (themeBtn.classList.contains("active")) {
@@ -536,7 +536,7 @@ export default {
             }
         },
         setTheme(theme) {
-            const storedTheme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : null;
+            const storedTheme = localStorage.getItem("theme") || null;
             const newtheme = theme;
             if (storedTheme != newtheme) {
                 document
