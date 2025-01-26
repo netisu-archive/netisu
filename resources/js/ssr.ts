@@ -60,5 +60,9 @@ createServer(page =>
                 .component("Skeletor", Skeletor)
                 .component("Pagination", Pagination);
         },
+    }).then((app) => {
+        const appRender = app;
+        appRender.body = appRender.body.replace(/data-page=".*?"/, "");
+        return appRender;
     }),
 );
