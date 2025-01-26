@@ -3,8 +3,8 @@ import { usePage } from "@inertiajs/vue3";
 import VLazyImage from "v-lazy-image";
 
 interface Props {
-    bannerType?: string,
-    bannerAsset?: string,
+    bannerType?: any,
+    bannerAsset?: any,
 
 }
 
@@ -30,7 +30,7 @@ const props = defineProps<Props>();
                 width="100"
                 class="space-image"
                 alt="Space Thumbnail"
-                src-placeholder="assets/img/space-error.png"
+                src-placeholder="/assets/img/space-error.png"
             />
             <i
                 v-else-if="props.bannerType == 'icon'"
