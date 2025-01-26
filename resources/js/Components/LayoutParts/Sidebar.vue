@@ -10,21 +10,27 @@ import VLazyImage from "v-lazy-image";
 import SuperBanner from "./SuperBanner.vue";
 
 
+interface Alert {
+    message: string;
+    type: string;
+}
 
 interface Props {
     image?: string;
     showJsonAlert?: boolean;
-    JSONALERT?: Array<any>;
+    JSONALERT: Array<Alert>;
     superBanActive?: boolean;
     OfficialImageBackground?: boolean;
     navSpaces?: Array<any>;
 }
 
+
+
 withDefaults(defineProps<Props>(), {
     alertsEnabled: true,
     superBanActive: false,
     showJsonAlert: false,
-    JSONALERT: [],
+    JSONALERT: { message: 'test', type: 'danger' },
     OfficialImageBackground: false,
 });
 
