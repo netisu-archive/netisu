@@ -8,7 +8,7 @@ import AppHead from "@/Components/AppHead.vue";
 import { ref, watch } from "vue";
 
 
-let MaintenanceActive = ref(usePage<any>().props.siteSettings.inMaintenance);
+const MaintenanceActive = ref(usePage<any>().props.siteSettings.inMaintenance);
 const ForumActive = ref(usePage<any>().props.siteSettings.discussion_enabled);
 const MarketActive = ref(usePage<any>().props.siteSettings.market_enabled);
 const CustomizationActive = ref(usePage<any>().props.siteSettings.customization_enabled);
