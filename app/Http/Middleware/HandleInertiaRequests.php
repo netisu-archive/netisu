@@ -10,24 +10,29 @@ use Illuminate\Support\Carbon;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that is loaded on the first page visit.
+     /**
+     * The root template that's loaded on the first page visit.
+     *
+     * @see https://inertiajs.com/server-side-setup#root-template
      *
      * @var string
      */
     protected $rootView = 'app';
 
     /**
-     * Determine the current asset version.
+     * Determines the current asset version.
+     *
+     * @see https://inertiajs.com/asset-versioning
      */
-    public function version(Request $request)
+    public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
-
-    /**
+      /**
      * Define the props that are shared by default.
+     *
+     * @see https://inertiajs.com/shared-data
      *
      * @return array<string, mixed>
      */
@@ -87,29 +92,6 @@ class HandleInertiaRequests extends Middleware
                 ];
             },
             'site' => config('Values'),
-            'errors' => $this->shareValidationErrors($request)
         ]);
-    }
-    public function shareValidationErrors(Request $request)
-    {
-        if (!$request->session()->has('errors')) {
-            return (object) [];
-        }
-
-        return (object) collect($request->session()->get('errors')->getBags())->map(function ($bag) {
-            return (object) $bag->toArray();
-        })->pipe(function ($bags) use ($request) {
-            if ($bags->has('default') && $request->header('x-inertia-error-bag')) {
-                return [$request->header('x-inertia-error-bag') => $bags->get('default')];
-            } elseif ($bags->has('default')) {
-                return $bags->get('default');
-            } else {
-                return $bags->toArray();
-            }
-        });
-    }
-    public function handle(Request $request, \Closure $next)
-    {
-        return parent::handle($request, $next);
     }
 }
