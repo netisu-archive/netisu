@@ -56,9 +56,6 @@ createInertiaApp({
             .component("AppHead", AppHead)
             .component("Skeletor", Skeletor)
             .component("Pagination", Pagination)
-
             .mount(el);
     },
-}).then(() => {
-    document.getElementById("app").removeAttribute("data-page");
 });

@@ -18,7 +18,7 @@ import PortalVue from "portal-vue";
 import "../css/style.css";
 import axios from "axios";
 
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 axios.defaults.withCredentials = true;
 axios.defaults.crossDomain = true;
 axios.defaults.withXSRFToken = true;
@@ -31,7 +31,7 @@ if (import.meta.hot) {
 import VueTippy from "vue-tippy";
 import "tippy.js/dist/tippy-bundle.umd.min.js";
 import "@popperjs/core/dist/umd/popper.min.js";
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
 const appName = import.meta.env?.["VITE_APP_NAME"] || "Laravel";
 createServer((page) =>
@@ -40,10 +40,11 @@ createServer((page) =>
         render: renderToString,
         progress: { includeCSS: true, showSpinner: false },
         title: (title) => `${title} - ${appName}`,
-        resolve: (name) => resolvePageComponent(
-            `./Pages/${name}.vue`,
-            import.meta.glob<DefineComponent>("./Pages/**/*.vue")
-        ),
+        resolve: (name) =>
+            resolvePageComponent(
+                `./Pages/${name}.vue`,
+                import.meta.glob<DefineComponent>("./Pages/**/*.vue"),
+            ),
         setup({ App, props, plugin }) {
             return createSSRApp({ render: () => h(App, props) })
                 .use(trail, {
@@ -59,9 +60,5 @@ createServer((page) =>
                 .component("Skeletor", Skeletor)
                 .component("Pagination", Pagination);
         },
-    }).then((app) => {
-        const appRender = app;
-        appRender.body = appRender.body.replace(/data-page=".*?"/, "");
-        return appRender;
     }),
 );
