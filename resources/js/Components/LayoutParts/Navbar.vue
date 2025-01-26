@@ -471,7 +471,7 @@ export default {
     beforeMount() {
         this.$nextTick(function () {
 
-            const theme = localStorage.getItem("theme") || "light";
+            const theme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : "light";
             this.applyTheme(theme);
         })
 

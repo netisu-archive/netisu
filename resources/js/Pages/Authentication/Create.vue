@@ -30,7 +30,8 @@ defineProps<{
     errors?: Object;
 }>();
 
-const currentTheme = localStorage.getItem("theme");
+const currentTheme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : null;
+
 
 let currentStep = ref(1);
 const isStepOk = ref(false);
@@ -480,10 +481,10 @@ export default {
         };
     },
     mounted() {
-        const theme = localStorage.getItem("theme") || "light";
+        const theme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : "light";
         this.activeTheme = theme;
         this.applyTheme(theme);
-        const storedTheme = localStorage.getItem("theme");
+        const storedTheme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : null;
 
         const themeBtn = document.getElementById(theme + "-theme-btn");
 
@@ -521,7 +522,7 @@ export default {
 
             // Save the selected theme in localStorage
             localStorage.setItem("theme", theme);
-            const storedTheme = localStorage.getItem("theme");
+            const storedTheme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : null;
 
             if (themeBtn) {
                 if (themeBtn.classList.contains("active")) {
@@ -535,7 +536,7 @@ export default {
             }
         },
         setTheme(theme) {
-            const storedTheme = localStorage.getItem("theme");
+            const storedTheme = localStorage.getItem("theme") ? JSON.parse(localStorage.getItem("theme")) : null;
             const newtheme = theme;
             if (storedTheme != newtheme) {
                 document

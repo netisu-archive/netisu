@@ -61,7 +61,7 @@ function enableBannerVisibility(visible): void {
     console.log(country);
 };
 
-const currentTheme = localStorage.getItem('theme');
+const currentTheme = localStorage.getItem('theme') ? JSON.parse(localStorage.getItem("theme")) : null;
 
 
 const isVerifiedEmail = computed(() => {
@@ -767,7 +767,7 @@ export default {
         };
     },
     mounted() {
-        const theme = localStorage.getItem('theme') || 'light';
+        const theme = localStorage.getItem('theme') ? JSON.parse(localStorage.getItem("theme")) : 'light';
         this.activeTheme = theme;
         this.applyTheme(theme);
         const storedTheme = localStorage.getItem('theme');
@@ -806,7 +806,7 @@ export default {
 
             // Save the selected theme in localStorage
             localStorage.setItem('theme', theme);
-            const storedTheme = localStorage.getItem('theme');
+            const storedTheme = localStorage.getItem('theme') ? JSON.parse(localStorage.getItem("theme")) : null;
 
             if (themeBtn) {
                 if (themeBtn.classList.contains('active')) {
@@ -818,7 +818,7 @@ export default {
         },
         setTheme(theme) {
 
-            const storedTheme = localStorage.getItem('theme') || 'light';
+            const storedTheme = localStorage.getItem('theme') ? JSON.parse(localStorage.getItem("theme")) : 'light';
             const newtheme = theme || 'light';
 
             if (storedTheme != newtheme) {
