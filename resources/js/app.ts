@@ -50,12 +50,13 @@ createInertiaApp({
             .use(plugin)
             .use(trail, { routes })
             .use(VueTippy)
-            .use(PortalVue)
-            .component("Skeletor", Skeletor)
-            .component("Pagination", Pagination)
-            .component("AppHead", AppHead)
+            .use(PortalVue)  
             .component("Head", Head)
             .component("Link", Link)
+            .component("AppHead", AppHead)
+            .component("Skeletor", Skeletor)
+            .component("Pagination", Pagination)
+
             .mount(el);
     },
 }).then(() => {

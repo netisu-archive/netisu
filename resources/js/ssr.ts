@@ -53,11 +53,11 @@ createServer((page) =>
                 .use(plugin)
                 .use(VueTippy)
                 .use(PortalVue)
-                .component("Skeletor", Skeletor)
-                .component("Pagination", Pagination)
-                .component("AppHead", AppHead)
                 .component("Head", Head)
-                .component("Link", Link);
+                .component("Link", Link)
+                .component("AppHead", AppHead)
+                .component("Skeletor", Skeletor)
+                .component("Pagination", Pagination);
         },
     }).then((app) => {
         const appRender = app;
