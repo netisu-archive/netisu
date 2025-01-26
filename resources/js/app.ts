@@ -41,7 +41,7 @@ createInertiaApp({
     progress: { includeCSS: true, showSpinner: false },
     title: (title) => `${title} - ${appName}`,
     resolve: name => {
-        const pages = import.meta.glob('./Pages/**/*.vue', { eager: false })
+        const pages = import.meta.glob<DefineComponent>('./Pages/**/*.vue', { eager: false })
         return pages[`./Pages/${name}.vue`]()
       },
     setup({ el, App, props, plugin }) {
@@ -57,6 +57,4 @@ createInertiaApp({
             .component("Pagination", Pagination)
             .mount(el);
     },
-}).then(() => {
-    document.getElementById("app").removeAttribute("data-page");
-});
+})
