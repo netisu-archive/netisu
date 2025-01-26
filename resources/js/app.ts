@@ -1,5 +1,5 @@
 // フレームワーク
-import "./bootstrap";
+// import "./bootstrap";
 import "vue-skeletor/dist/vue-skeletor.css";
 import "../css/NProgress.css";
 
@@ -25,6 +25,12 @@ import "tippy.js/dist/tippy-bundle.umd.min.js";
 import "@popperjs/core/dist/umd/popper.min.js";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
+import axios from "axios";
+
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.withCredentials = true;
+axios.defaults.crossDomain = true;
+axios.defaults.withXSRFToken = true;
 
 
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";

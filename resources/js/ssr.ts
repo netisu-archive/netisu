@@ -16,6 +16,12 @@ import Pagination from "./Components/Pagination.vue";
 import { createInertiaApp, Head, Link } from "@inertiajs/vue3";
 import PortalVue from "portal-vue";
 import "../css/style.css";
+import axios from "axios";
+
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.withCredentials = true;
+axios.defaults.crossDomain = true;
+axios.defaults.withXSRFToken = true;
 
 if (import.meta.hot) {
     import.meta.hot.accept();
