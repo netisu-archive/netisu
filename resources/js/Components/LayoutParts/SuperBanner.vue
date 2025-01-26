@@ -3,9 +3,8 @@ import { usePage } from "@inertiajs/vue3";
 import VLazyImage from "v-lazy-image";
 
 interface Props {
-    bannerType?: any,
-    bannerAsset?: any,
-
+    bannerType?: string,
+    [bannerAsset: string]: any,
 }
 
 const props = defineProps<Props>();
@@ -26,7 +25,7 @@ const props = defineProps<Props>();
 
             <v-lazy-image
                 v-if="props.bannerType == 'image'"
-                :src="props.bannerAsset"
+                :src="props?.['bannerAsset']"
                 width="100"
                 class="space-image"
                 alt="Space Thumbnail"
@@ -35,7 +34,7 @@ const props = defineProps<Props>();
             <i
                 v-else-if="props.bannerType == 'icon'"
                 class="text-5xl text-muted"
-                :class="props.bannerAsset"
+                :class="props?.['bannerAsset']"
             ></i>
             <template v-else />
             <div class="text-start">
