@@ -20,6 +20,7 @@ interface Props {
     showJsonAlert?: boolean;
     JSONALERT: Array<Alert>;
     superBanActive?: boolean;
+    alertsEnabled: boolean;
     OfficialImageBackground?: boolean;
     navSpaces?: Array<any>;
 }
