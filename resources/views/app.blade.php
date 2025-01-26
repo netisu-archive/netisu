@@ -4,7 +4,7 @@ Unauthorized use of this code (Not Mendcore) is strictly prohibited.
 -->
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" oncontextmenu="return false" dir="{{ App::isLocale('ar') ? 'rtl' : 'ltr' }}" prefix="og: https://ogp.me/ns#">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ App::isLocale('ar') ? 'rtl' : 'ltr' }}" prefix="og: https://ogp.me/ns#">
 
 <head>
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
