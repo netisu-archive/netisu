@@ -21,7 +21,6 @@ import axios from "axios";
 
 axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 axios.defaults.withCredentials = true;
-axios.defaults.crossDomain = true;
 axios.defaults.withXSRFToken = true;
 
 if (import.meta.hot) {
