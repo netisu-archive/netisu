@@ -35,10 +35,10 @@ createServer((page: Page) =>
         render: renderToString,
         progress: { includeCSS: true, showSpinner: false },
         title: (title) => `${title} - ${appName}`,
-        resolve: (name) => resolvePageComponent(
-            `./Pages/${name}.vue`,
-            import.meta.glob<DefineComponent>("./Pages/**/*.vue")
-        ),
+        resolve: name => {
+            const pages = import.meta.glob<DefineComponent>('./Pages/**/*.vue', { eager: false })
+            return pages[`./Pages/${name}.vue`]()
+          },
         setup({ App, props, plugin }) {
             return createSSRApp({ render: () => h(App, props) })
                 .use(trail, {
