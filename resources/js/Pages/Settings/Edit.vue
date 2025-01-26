@@ -769,7 +769,7 @@ export default {
         };
     },
     mounted() {
-        const theme = ref(JSON.parse(localStorage.getItem('theme') || 'light'));
+        const theme = ref(JSON.parse(localStorage.getItem('theme')) || 'light');
         this.activeTheme = theme;
         this.applyTheme(theme);
         const storedTheme = ref(JSON.parse(localStorage.getItem('theme')));
@@ -820,7 +820,7 @@ export default {
         },
         setTheme(theme) {
 
-            const storedTheme = ref(JSON.parse(localStorage.getItem('theme') || 'light'));
+            const storedTheme = ref(JSON.parse(localStorage.getItem('theme')) || 'light');
             const newtheme = theme || 'light';
 
             if (storedTheme != newtheme) {
