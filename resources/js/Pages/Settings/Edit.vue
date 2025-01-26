@@ -13,6 +13,7 @@ import type { Ref } from 'vue';
 import axios from "axios";
 import AppHead from '@/Components/AppHead.vue';
 import VLazyImage from 'v-lazy-image';
+
 defineProps<{
     mustVerifyEmail?: Boolean,
     status?: String,
@@ -764,14 +765,14 @@ const isVerifiedEmail = computed(() => {
 export default {
     data() {
         return {
-            activeTheme: '',
+            activeTheme: null,
         };
     },
     mounted() {
-        const theme = localStorage.getItem('theme') || 'light';
+        const theme = ref(JSON.parse(localStorage.getItem('theme') || 'light'));
         this.activeTheme = theme;
         this.applyTheme(theme);
-        const storedTheme = localStorage.getItem('theme');
+        const storedTheme = ref(JSON.parse(localStorage.getItem('theme')));
 
         const themeBtn = document.getElementById(theme + "-theme-btn");
 
@@ -806,8 +807,8 @@ export default {
             style.href = `/assets/css/themes/variables-${lowercaseTheme}.css`;
 
             // Save the selected theme in localStorage
-            localStorage.setItem('theme', theme);
-            const storedTheme = localStorage.getItem('theme') || null;
+            localStorage.setItem('theme', JSON.stringify(theme));
+            const storedTheme = ref(JSON.parse(localStorage.getItem('theme') || null));
 
             if (themeBtn) {
                 if (themeBtn.classList.contains('active')) {
@@ -819,7 +820,7 @@ export default {
         },
         setTheme(theme) {
 
-            const storedTheme = localStorage.getItem('theme') || 'light';
+            const storedTheme = ref(JSON.parse(localStorage.getItem('theme') || 'light'));
             const newtheme = theme || 'light';
 
             if (storedTheme != newtheme) {

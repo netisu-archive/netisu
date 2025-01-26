@@ -471,7 +471,7 @@ export default {
     beforeMount() {
         this.$nextTick(function () {
 
-            const theme = localStorage.getItem("theme") || "light";
+            const theme = ref(JSON.parse(localStorage.getItem("theme") || "light"));
             this.applyTheme(theme);
         })
 
@@ -499,7 +499,7 @@ export default {
             }
 
             // Save the selected theme in localStorage
-            localStorage.setItem("theme", theme);
+            localStorage.setItem("theme", JSON.stringify(theme));
         },
         showModal(modalId: string): void {
             const modal = document.getElementById(modalId);
