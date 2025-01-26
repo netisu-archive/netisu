@@ -178,8 +178,6 @@ watch(following, (newValue, oldValue) => {
                     <div class="section">
                         <template v-for="(followingUser, index) in usePage<any>().props.user.following" :key="index">
                             <div class="gap-2 mt-2 mb-2 align-middle flex-container align-justify">
-                                <VLazyImage :src="followingUser.thumbnail" src-default="/assets/img/dummy_headshot.png"
-                                    class="headshot" width="50" />
                                 <div class="w-100">
                                     <div class="fw-semibold">{{ followingUser.display_name }}</div>
                                     <div class="text-sm fw-semibold text-muted">
@@ -219,8 +217,6 @@ watch(following, (newValue, oldValue) => {
                     <div class="section">
                         <template v-for="(followerUser, index) in usePage<any>().props.user.followers" :key="index">
                             <div class="gap-2 mt-2 mb-2 align-middle flex-container align-justify">
-                                <VLazyImage :src="followerUser.thumbnail" src-default="/assets/img/dummy_headshot.png"
-                                    class="headshot" width="50" />
                                 <div class="w-100">
                                     <div class="fw-semibold">{{ followerUser.display_name }}</div>
                                     <div class="text-sm fw-semibold text-muted">
@@ -257,7 +253,7 @@ watch(following, (newValue, oldValue) => {
                     }
                     : null
                     " :src="usePage<any>().props.user.headshot" width="100" class="space-image" alt="Headshot"
-                    src-placeholder="assets/img/space-error.png" />
+                    src-placeholder="/assets/img/dummmy_headshot.png" />
             </portal>
 
             <portal to="bannerName">
