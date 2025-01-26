@@ -27,11 +27,10 @@ import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
 import axios from "axios";
 
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 axios.defaults.withCredentials = true;
 axios.defaults.crossDomain = true;
 axios.defaults.withXSRFToken = true;
-
 
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
@@ -40,16 +39,17 @@ const appName = import.meta.env?.["VITE_APP_NAME"] || "Laravel";
 createInertiaApp({
     progress: { includeCSS: true, showSpinner: false },
     title: (title) => `${title} - ${appName}`,
-    resolve: name => {
-        const pages = import.meta.glob<DefineComponent>('./Pages/**/*.vue', { eager: false })
-        return pages[`./Pages/${name}.vue`]()
-      },
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.vue`,
+            import.meta.glob<DefineComponent>("./Pages/**/*.vue"),
+        ),
     setup({ el, App, props, plugin }) {
         createSSRApp({ render: () => h(App, props) })
             .use(plugin)
             .use(trail, { routes })
             .use(VueTippy)
-            .use(PortalVue)  
+            .use(PortalVue)
             .component("Head", Head)
             .component("Link", Link)
             .component("AppHead", AppHead)
@@ -57,4 +57,4 @@ createInertiaApp({
             .component("Pagination", Pagination)
             .mount(el);
     },
-})
+});
