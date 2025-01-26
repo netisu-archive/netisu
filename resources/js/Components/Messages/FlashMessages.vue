@@ -35,29 +35,22 @@ watch(
 </script>
 
 <template>
-    <nav v-if="message && show" class="toast-menu" id="ToastNotif" @click="handleClick">
-        <div
-            v-if="type === 'success' && message && show"
-            class="py-2 mb-1 text-center alert alert-toast alert-success fw-semibold"
-        >
+    <nav v-if="message && show" class="toast-menu" :class="{ 'toast-menu-slide': showToast }"  id="ToastNotif"
+        @click="handleClick">
+        <div v-if="type === 'success' && message && show"
+            class="py-2 mb-1 text-center alert alert-toast alert-success fw-semibold">
             <div class="gap-2 align-middle flex-container">
                 <i class="text-lg fad fa-check-circle"></i>
                 {{ message }}
             </div>
         </div>
-        <div
-            v-if="type === 'error' && message && show"
-            class="py-2 mb-1 text-center alert alert-danger fw-semibold"
-        >
+        <div v-if="type === 'error' && message && show" class="py-2 mb-1 text-center alert alert-danger fw-semibold">
             <div class="gap-2 align-middle flex-container">
                 <i class="text-lg fad fa-circle-xmark"></i>
                 <div>{{ message }}</div>
             </div>
         </div>
-        <div
-            v-if="type === 'warning' && message && show"
-            class="py-2 mb-1 text-center alert alert-warning fw-semibold"
-        >
+        <div v-if="type === 'warning' && message && show" class="py-2 mb-1 text-center alert alert-warning fw-semibold">
             <div class="gap-2 align-middle flex-container">
                 <i class="text-lg fad fa-exclamation-circle"></i>
                 <div>{{ message }}</div>
@@ -66,17 +59,20 @@ watch(
     </nav>
 </template>
 <script lang="ts">
-// Function to toggle the class
-function toggleToastMenu() {
-    const toastMenu = document.getElementById("ToastNotif") as HTMLElement;
-    if (toastMenu) {
-        toastMenu.classList.toggle('toast-menu-slide');
+export default {
+    data() {
+        return {
+            showToast: false
+        };
+    },
+    mounted() {
+        setTimeout(() => {
+            this.showToast = true;
+        }, 1000);
+
+        setTimeout(() => {
+            this.showToast = false;
+        }, 6000);
     }
-}
-
-// Call the function after 1 second
-setTimeout(toggleToastMenu, 1000);
-
-// Call the function again after 6 seconds
-setTimeout(toggleToastMenu, 6000);
+};
 </script>
