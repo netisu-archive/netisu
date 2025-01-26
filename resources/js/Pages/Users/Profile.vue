@@ -154,7 +154,9 @@ watch(following, (newValue, oldValue) => {
 <template>
     <AppHead :pageTitle="usePage<any>().props.user.username + '\'s Profile'"
         :description="usePage<any>().props.user.about_me"
-        :url="route(`user.profile`, { username: usePage<any>().props.user.username })" />
+        :url="route(`user.profile`, { username: usePage<any>().props.user.username })"
+        :cover="usePage<any>().props.user.thumbnail"
+         />
     <Navbar />
     <Sidebar :alertsEnabled="false"
         :image="usePage<any>().props.user.settings.profile_banner_enabled ? usePage<any>().props.user.settings.profile_banner_url : null"
