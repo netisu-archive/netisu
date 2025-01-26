@@ -3,8 +3,7 @@ Copyright © 2025 Netisu All Rights Reserved.
 Unauthorized use of this code (Not Mendcore) is strictly prohibited.
 -->
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
-   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" oncontextmenu="return false" dir="{{ App::isLocale('ar') ? 'rtl' : 'ltr' }}" prefix="og: https://ogp.me/ns#">
 
 <head>
