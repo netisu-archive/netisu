@@ -15,7 +15,7 @@ import type { Ref } from 'vue';
 defineProps({
     user: { type: Object },
     is_following: { type: Boolean },
-    statuses: { type: Array },
+    statuses: { type: Object },
 });
 
 let following = ref(usePage<any>().props.is_following); // Initial follow status
@@ -471,7 +471,7 @@ watch(following, (newValue, oldValue) => {
                     </ul>
                 </div>
                 <div v-if="ActiveCategory === 'Posts'">
-                    <div v-if="!statuses.data?.['length']" class="section">
+                    <div v-if="!statuses?.['data']?.['length']" class="section">
                         <div class="gap-3 text-center flex-container flex-dir-column">
                             <i class="text-5xl fad fa-face-sleeping text-muted"></i>
                             <div style="line-height: 16px">
@@ -485,7 +485,7 @@ watch(following, (newValue, oldValue) => {
                             </div>
                         </div>
                     </div>
-                    <div v-else v-for="status in statuses.data" class="gap-3 section flex-container flex-dir-column-sm">
+                    <div v-else v-for="status in statuses?.['data']" class="gap-3 section flex-container flex-dir-column-sm">
                         <div class="mx-auto flex-child-grow" style="width: 100px">
                             <a href="#" class="text-sm text-center d-block squish">
                                 <img src="/assets/img/dummy_headshot.png" class="mb-1 headshot" width="60" />
@@ -551,7 +551,7 @@ watch(following, (newValue, oldValue) => {
                             </div>
                         </div>
                     </div>
-                    <Pagination v-if="statuses.data.length" v-bind:pagedata="statuses" />
+                    <Pagination v-if="statuses?.['data']?.['length']" v-bind:pagedata="statuses" />
                 </div>
                 <div v-else-if="ActiveCategory === 'Inventory'" class="my-2">
                     <span class="text-xl fw-semibold">Current Outfit</span>
