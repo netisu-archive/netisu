@@ -3,16 +3,17 @@ Copyright © 2025 Netisu All Rights Reserved.
 Unauthorized use of this code (Not Mendcore) is strictly prohibited.
 -->
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" oncontextmenu="return false" dir="{{ App::isLocale('ar') ? 'rtl' : 'ltr' }}" prefix="og: https://ogp.me/ns#">
 
 <head>
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <link id="theme-style" rel="stylesheet" defer>
-    @inertiaHead
 
     @vite(['resources/js/app.ts', "resources/js/Pages/{$page['component']}.vue"])
+    @inertiaHead
 </head>
 <style>
     #snowflakeContainer {
