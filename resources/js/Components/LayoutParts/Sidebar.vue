@@ -31,8 +31,7 @@ withDefaults(defineProps<Props>(), {
 
 const chatToggle = ref(false);
 const { props } = usePage<any>();
-const googleAdUrl =
-    "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+const googleAdUrl = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
 const adblock = ref(false);
 const messages = ref([
     {

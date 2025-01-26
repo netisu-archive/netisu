@@ -66,19 +66,17 @@ watch(
     </nav>
 </template>
 <script lang="ts">
-window.onload = () => {
-    setTimeout(() => {
-        const toastMenu = document.getElementById("ToastNotif") as HTMLElement;
-        if (toastMenu) { // Check if the element exists
-            toastMenu.classList.toggle('toast-menu-slide');
-        }
-    }, 1000);
+// Function to toggle the class
+function toggleToastMenu() {
+    const toastMenu = document.getElementById("ToastNotif") as HTMLElement;
+    if (toastMenu) {
+        toastMenu.classList.toggle('toast-menu-slide');
+    }
+}
 
-    setTimeout(() => {
-        const toastMenu = document.getElementById("ToastNotif") as HTMLElement;
-        if (toastMenu) {
-            toastMenu.classList.toggle('toast-menu-slide');
-        }
-    }, 6000);
-};
+// Call the function after 1 second
+setTimeout(toggleToastMenu, 1000);
+
+// Call the function again after 6 seconds
+setTimeout(toggleToastMenu, 6000);
 </script>
