@@ -346,7 +346,7 @@ watch(following, (newValue, oldValue) => {
                 </div>
             </div>
             <a class="gap-2 p-2 mt-1 mb-2 align-middle card card-inner flex-container">
-                <img src="assets/img/space_placeholder.png" class="headshot" width="40" />
+                <img src="/assets/img/space_placeholder.png" class="headshot" width="40" />
                 <div class="min-w-0" style="line-height: 14px">
                     <div class="text-xs text-truncate fw-bold text-muted text-uppercase">
                         Primary Space

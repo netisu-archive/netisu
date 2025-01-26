@@ -36,7 +36,7 @@ defineProps({
                             <Link :href="route('user.profile', { username: post.username })">
                             <v-lazy-image :src="post.headshot" width="65"
                                 class="border headshot flex-child-shrink img-fluid rounded-circle border-secondary bg-dark"
-                                alt="Avatar" src-placeholder="assets/img/dummy_headshot.png" />
+                                alt="Avatar" src-placeholder="/assets/img/dummy_headshot.png" />
                             </Link>
                             <div class="flex-wrap col-md-4 d-flex justify-content-center align-content-start"
                                 style="flex-direction: column">

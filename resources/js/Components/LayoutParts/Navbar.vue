@@ -402,7 +402,7 @@ const { props } = usePage<any>();
                 class="dropdown position-relative nav-item cell shrink ms-1" id="user_dropdown">
                 <button @click="showModal('profile-modal')" class="gap-2 align-middle flex-container squish">
                     <v-lazy-image :src="usePage<any>().props.auth?.user?.headshot" width="40" class="headshot"
-                        alt="Avatar" src-placeholder="assets/img/dummy_headshot.png" />
+                        alt="Avatar" src-placeholder="/assets/img/dummy_headshot.png" />
                     <div class="text-start show-for-large">
                         <div class="text-sm fw-semibold text-body">
                             {{ props.auth?.user?.display_name }}
@@ -455,7 +455,7 @@ const { props } = usePage<any>();
             <li v-if="props.auth?.user" class="dropdown position-relative nav-item cell shrink ms-1" id="user_dropdown">
                 <button @click="showModal('profile-modal')" class="gap-2 align-middle flex-container squish">
                     <v-lazy-image :src="usePage<any>().props.auth?.user?.headshot" width="30" class="headshot"
-                        alt="Avatar" src-placeholder="assets/img/dummy_headshot.png" />
+                        alt="Avatar" src-placeholder="/assets/img/dummy_headshot.png" />
                 </button>
             </li>
         </ul>

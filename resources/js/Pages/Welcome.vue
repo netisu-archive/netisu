@@ -158,7 +158,7 @@ function onImgErrorSmall(id) {
                                         <div class="gap-2 flex-container">
                                             <div class="gap-2 flex-container">
                                                 <button class="gap-2 align-middle flex-container squish">
-                                                    <img class="headshot" src="assets/img/dummy_headshot.png" width="50"
+                                                    <img class="headshot" src="/assets/img/dummy_headshot.png" width="50"
                                                         height="50" alt="Avatar" />
                                                 </button>
                                                 <div>
