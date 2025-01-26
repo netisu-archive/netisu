@@ -44,8 +44,7 @@ const getFormattedDate = (timeStamp: number) => {
 
         <!-- Fonts -->
         <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/v6.1.2/css/pro.min.css" />
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" />
 
         <link v-if="maintenance" rel="stylesheet" href="/assets/css/themes/variables-dark.css" />
 

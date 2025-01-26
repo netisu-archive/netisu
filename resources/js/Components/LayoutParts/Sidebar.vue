@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, reactive } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
-import { route, current } from 'momentum-trail';
+import { route } from 'momentum-trail';
 
 import SideLink from "../SideLink.vue";
 import FlashMessages from "@/Components/Messages/FlashMessages.vue";
