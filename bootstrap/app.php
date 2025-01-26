@@ -166,8 +166,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->replace(\Illuminate\Http\Middleware\TrustProxies::class, \App\Http\Middleware\TrustProxies::class);
         $middleware->web(append: [
             \App\Http\Middleware\Cors::class,
-            \Fahlisaputra\Minify\Middleware\MinifyHtml::class,
-            \Fahlisaputra\Minify\Middleware\MinifyCss::class,
+            // \Fahlisaputra\Minify\Middleware\MinifyHtml::class,
+            // \Fahlisaputra\Minify\Middleware\MinifyCss::class,
             \App\Http\Middleware\CompressResponse::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             // \Fahlisaputra\Minify\Middleware\MinifyJavascript::class,
