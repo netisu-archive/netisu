@@ -467,10 +467,24 @@ const props = usePage<any>().props;
 <script lang="ts">
 import { directive } from 'vue-tippy'
 
+let theme;
+
 export default {
     beforeMount() {
         this.$nextTick(function () {
-            const theme = localStorage.getItem("theme");
+
+            if (typeof localStorage !== 'undefined') {
+                 theme = localStorage.getItem('theme');
+            } else if (typeof sessionStorage !== 'undefined') {
+                // Fallback to sessionStorage
+                  theme = sessionStorage.getItem('theme');
+            } else {
+                // If neither localStorage nor sessionStorage is supported
+                console.log('Web Storage is not supported in this environment.');
+                 theme = 'light';
+            }
+
+             theme = localStorage.getItem("theme");
             this.applyTheme(theme);
         })
 
@@ -480,7 +494,7 @@ export default {
     },
     methods: {
         applyTheme(theme) {
-            let lowercaseTheme = theme ? theme.toLowerCase() : "light";
+            let lowercaseTheme = theme.toLowerCase();
 
             const style = (document.getElementById("theme-style") as HTMLLinkElement);
 
