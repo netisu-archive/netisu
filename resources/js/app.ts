@@ -51,6 +51,4 @@ createInertiaApp({
             .component("Link", Link)
             .mount(el);
     },
-}).then(() => {
-    document.getElementById("app").removeAttribute("data-page");
-});
+})
