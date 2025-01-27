@@ -470,8 +470,7 @@ import { directive } from 'vue-tippy'
 export default {
     beforeMount() {
         this.$nextTick(function () {
-
-            const theme = localStorage.getItem("theme") || "light";
+            const theme = localStorage.getItem("theme");
             this.applyTheme(theme);
         })
 
@@ -481,7 +480,7 @@ export default {
     },
     methods: {
         applyTheme(theme) {
-            var lowercaseTheme = theme.toLowerCase();
+            let lowercaseTheme = theme ? theme.toLowerCase() : "light";
 
             const style = (document.getElementById("theme-style") as HTMLLinkElement);
 
