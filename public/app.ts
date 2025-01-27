@@ -12,7 +12,7 @@ import Pagination from "./Components/Pagination.vue";
 import AppHead from "./Components/AppHead.vue";
 import { trail } from "momentum-trail";
 import routes from "../routes/js/routing.json";
-import PortalVue from "portal-vue";
+import portalVue from "portal-vue";
 
 if (import.meta.hot) {
     import.meta.hot.accept();
@@ -23,23 +23,24 @@ if (import.meta.hot) {
 import VueTippy from "vue-tippy";
 import "tippy.js/dist/tippy-bundle.umd.min.js";
 import "@popperjs/core/dist/umd/popper.min.js";
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
 const appName = import.meta.env?.["VITE_APP_NAME"] || "Laravel";
 
 createInertiaApp({
     progress: { includeCSS: true, showSpinner: false },
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) => resolvePageComponent(
-        `./Pages/${name}.vue`,
-        import.meta.glob<DefineComponent>("./Pages/**/*.vue")
-    ),
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.vue`,
+            import.meta.glob<DefineComponent>("./Pages/**/*.vue"),
+        ),
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(trail, { routes })
             .use(plugin)
             .use(VueTippy)
-            .use(PortalVue)
+            .use(portalVue)
             .component("Skeletor", Skeletor)
             .component("Pagination", Pagination)
             .component("AppHead", AppHead)

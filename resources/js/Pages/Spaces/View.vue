@@ -33,7 +33,8 @@ const submit = () => {
                 class="space-image" alt="Space Thumbnail" src-placeholder="/assets/img/dummy-error.png" />
         </portal>
         <portal to="bannerButtons">
-            <Link v-if="usePage<any>().props.auth.user && !usePage<any>().props.isInSpace" class="text-xl text-success squish" href="#" @click="submit"
+            <Link v-if="usePage<any>().props.auth.user && !usePage<any>().props.isInSpace"
+                class="text-xl text-success squish" href="#" @click="submit"
                 :content="'Join ' + usePage<any>().props.space.name" as="button" v-tippy="{ placement: 'bottom' }"
                 style="outline: none;">
             <i class="fad fa-user-plus"></i>
@@ -48,7 +49,7 @@ const submit = () => {
             <p class="text-muted">{{ usePage<any>().props.space.description }}</p>
         </portal>
     </template>
-    <Sidebar  :superBanActive="true" :alertsEnabled="false">
+    <Sidebar :superBanActive="true" :alertsEnabled="false">
         <div class="cell medium-3">
             <div class="mb-1 text-xl fw-semibold">Actions</div>
             <div class="gap-3 mt-3 mb-3 align-middle">
@@ -135,22 +136,19 @@ const submit = () => {
                     </div>
                     <div class="flex-wrap gap-3 mt-2 mb-2 flex-container">
                         <div class="min-w-0 text-center" style="width: 80px">
-                            <img src="/assets/img/dummy_headshot.png"
-                                class="headshot flex-child-grow" alt="headshot">
+                            <img src="/assets/img/dummy_headshot.png" class="headshot flex-child-grow" alt="headshot">
                             <div class="text-sm text-info fw-semibold text-truncate">
                                 Aeo
                             </div>
                         </div>
                         <div class="min-w-0 text-center" style="width: 80px">
-                            <img src="/assets/img/dummy_headshot.png"
-                                class="headshot flex-child-grow" alt="headshot">
+                            <img src="/assets/img/dummy_headshot.png" class="headshot flex-child-grow" alt="headshot">
                             <div class="text-sm text-danger fw-semibold text-truncate">
                                 Aeo
                             </div>
                         </div>
                         <div class="min-w-0 text-center" style="width: 80px">
-                            <img src="/assets/img/dummy_headshot.png"
-                                class="headshot flex-child-grow" alt="headshot">
+                            <img src="/assets/img/dummy_headshot.png" class="headshot flex-child-grow" alt="headshot">
                             <div class="text-sm fw-semibold text-truncate">
                                 Aeo
                             </div>

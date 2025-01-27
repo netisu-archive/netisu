@@ -29,8 +29,8 @@ const locales = usePage().props?.['locales'];
                                 class="squish card card-body card-inner mb-lg-0" style="cursor: pointer;">
                                 <div class="align-middle">
                                     <div class="gap-2 align-start flex-container" style="min-width: 0">
-                                        <div class="selection-circle language"><i class=""
-                                                :class="{ 'fa-solid fa-check': locale_active === locale }"></i></div>
+                                        <div class="selection-circle language"><i
+                                                :class="{ 'fa-duotone fa-check': locale_active === locale }"></i></div>
                                         <div class="fw-semibold text-language text-truncate">
                                             {{ name }}
                                         </div>

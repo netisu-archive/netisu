@@ -9,29 +9,16 @@ import VLazyImage from "v-lazy-image";
 <template>
     <AppHead title="Aeo's Game" />
     <Navbar />
-    <Sidebar
-        image="/assets/img/site-banners/landing-melody.png"
-        :alertsEnabled="false"
-        :superBanActive="true"
-        :OfficialImageBackground="false"
-    >
+    <Sidebar image="/assets/img/site-banners/landing-melody.png" :alertsEnabled="false" :superBanActive="true"
+        :OfficialImageBackground="false">
         <template>
             <portal to="bannerAsset">
-                <v-lazy-image
-                    src="/assets/img/dummy-error.png"
-                    width="100"
-                    class="space-image"
-                    alt="Game Thumbnail"
-                    src-placeholder="/assets/img/dummy-error.png"
-                />
+                <v-lazy-image src="/assets/img/dummy-error.png" width="100" class="space-image" alt="Game Thumbnail"
+                    src-placeholder="/assets/img/dummy-error.png" />
             </portal>
             <portal to="bannerButtons">
-                <Link
-                    class="btn btn-info btn-xs text-white squish"
-                    as="button"
-                    style="outline: none"
-                >
-                    <i class="fad fa-gamepad-modern"></i> Play Game
+                <Link class="btn btn-info btn-xs text-white squish" as="button" style="outline: none">
+                <i class="fad fa-gamepad-modern"></i> Play Game
                 </Link>
             </portal>
             <portal to="bannerName">
@@ -44,42 +31,42 @@ import VLazyImage from "v-lazy-image";
         <div class="cell medium-12">
             <div class="mb-1 align-middle navbar-grid">
                 <div class="cell large-12">
-                  <div class="grid-x grid-margin-x grid-padding-y">
-                    <div class="mb-1 cell large-3 medium-6 small-6">
-                      <div class="text-center">
-                        <div class="card-body">
-                          <h3 class="text-muted"><i class="fad fa-swords"></i> Combat</h3>
-                          <p>Genere</p>
+                    <div class="grid-x grid-margin-x grid-padding-y">
+                        <div class="mb-1 cell large-3 medium-6 small-6">
+                            <div class="text-center">
+                                <div class="card-body">
+                                    <h3 class="text-muted"><i class="fad fa-swords"></i> Combat</h3>
+                                    <p>Genere</p>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                    </div>
-                    <div class="mb-1 cell large-3 medium-6 small-6">
-                      <div class="text-center">
-                        <div class="card-body">
-                          <h3 class="text-muted"><i class="fad fa-user"></i> 5</h3>
-                          <p>Active</p>
+                        <div class="mb-1 cell large-3 medium-6 small-6">
+                            <div class="text-center">
+                                <div class="card-body">
+                                    <h3 class="text-muted"><i class="fad fa-user"></i> 5</h3>
+                                    <p>Active</p>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                    </div>
-                    <div class="mb-1 cell large-3 medium-6 small-6">
-                      <div class="text-center">
-                        <div class="card-body">
-                          <h3 class="text-muted"><i class="fad fa-heart"></i> 1</h3>
-                          <p>Favorite</p>
+                        <div class="mb-1 cell large-3 medium-6 small-6">
+                            <div class="text-center">
+                                <div class="card-body">
+                                    <h3 class="text-muted"><i class="fad fa-heart"></i> 1</h3>
+                                    <p>Favorite</p>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                    </div>
-                    <div class="mb-1 cell large-3 medium-6 small-6">
-                      <div class="text-center">
-                        <div class="card-body">
-                          <h3>21</h3>
-                          <p>Communities</p>
+                        <div class="mb-1 cell large-3 medium-6 small-6">
+                            <div class="text-center">
+                                <div class="card-body">
+                                    <h3>21</h3>
+                                    <p>Communities</p>
+                                </div>
+                            </div>
                         </div>
-                      </div>
                     </div>
-                  </div>
                 </div>
-              </div>
+            </div>
             <div class="mb-2 text-xl fw-semibold">Description</div>
             <div class="card card-body">
                 <span href="#" class="text-md">Thumbnail </span>
@@ -90,34 +77,23 @@ import VLazyImage from "v-lazy-image";
             <div class="card card-body">
                 <div class="section-borderless">
                     <div class="section">
-                        <a
-                            class="gap-2 mt-2 mb-2 align-middle flex-container align-justify squish"
-                        >
+                        <a class="gap-2 mt-2 mb-2 align-middle flex-container align-justify squish">
                             <div class="headshot-group">
                                 <div class="headshot">
-                                    <img
-                                        src="/assets/img/dummy_headshot.png"
-                                        width="50"
-                                    />
+                                    <img src="/assets/img/dummy_headshot.png" width="50" />
                                 </div>
                                 <div class="headshot">
-                                    <img
-                                        src="/assets/img/dummy_headshot.png"
-                                        width="50"
-                                    />
+                                    <img src="/assets/img/dummy_headshot.png" width="50" />
                                 </div>
                                 <div class="headshot">
                                     <span
-                                        class="text-lg text-muted flex-container text-center align-center flex-child-grow"
-                                    >
+                                        class="text-lg text-muted flex-container text-center align-center flex-child-grow">
                                         50+
                                     </span>
                                 </div>
                             </div>
 
-                            <a
-                                class="min-w-0 btn btn-info btn-sm text-truncate hide-for-medium-only"
-                            >
+                            <a class="min-w-0 btn btn-info btn-sm text-truncate hide-for-medium-only">
                                 <i class="fad fa-user"></i> Join
                             </a>
                         </a>
@@ -134,21 +110,22 @@ import VLazyImage from "v-lazy-image";
                 <div class="gap-3 section flex-container flex-dir-column-sm">
                     <div class="mx-auto flex-child-grow" style="width: 100px">
                         <Link href="#" class="text-sm text-center d-block squish">
-                            <v-lazy-image src="/assets/img/dummy_headshot.png" width="60" class="headshot" alt="Avatar"
-                                src-placeholder="/assets/img/dummy_headshot.png" />
-                            <div style="line-height: 16px">
-                                <div class="text-truncate">aeno</div>
-                                <div class="text-xs text-muted text-truncate">
-                                    @aeo
-                                </div>
+                        <v-lazy-image src="/assets/img/dummy_headshot.png" width="60" class="headshot" alt="Avatar"
+                            src-placeholder="/assets/img/dummy_headshot.png" />
+                        <div style="line-height: 16px">
+                            <div class="text-truncate">aeno</div>
+                            <div class="text-xs text-muted text-truncate">
+                                @aeo
                             </div>
+                        </div>
                         </Link>
                     </div>
                     <div class="card card-body card-inner w-100">
                         <div class="align-middle flex-container align-justify">
                             <div class="w-100">
                                 <div class="text-xs text-muted">
-                                    <i class="far fa-clock me-1" style="vertical-align: middle;margin-top: -2.5px;font-size: 10px;"></i>
+                                    <i class="far fa-clock me-1"
+                                        style="vertical-align: middle;margin-top: -2.5px;font-size: 10px;"></i>
                                     Posted 2m ago
                                 </div>
                                 <div>

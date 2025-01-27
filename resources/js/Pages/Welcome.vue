@@ -17,27 +17,23 @@ const Welcome = [
     {
         en: {
             message: `Welcome to ${usePage<any>().props.site.name}!`,
-            desc: `${
-                usePage<any>().props.site.name
-            } is a collaborative 3D sandbox community. Work together to build amazing things and have fun along the way!`,
+            desc: `${usePage<any>().props.site.name
+                } is a collaborative 3D sandbox community. Work together to build amazing things and have fun along the way!`,
         },
         es: {
             message: `Bienvenido a ${usePage<any>().props.site.name}!`,
-            desc: `${
-                usePage<any>().props.site.name
-            } es una comunidad colaborativa de sandbox 3D. ¡Trabajad juntos para construir cosas increíbles y divertíos en el camino!`,
+            desc: `${usePage<any>().props.site.name
+                } es una comunidad colaborativa de sandbox 3D. ¡Trabajad juntos para construir cosas increíbles y divertíos en el camino!`,
         },
         ru: {
             message: `Добро пожаловать в ${usePage<any>().props.site.name}!`,
-            desc: `${
-                usePage<any>().props.site.name
-            }— это совместное сообщество 3D-песочниц. Работайте вместе, чтобы создавать удивительные вещи, и получайте от этого удовольствие!`,
+            desc: `${usePage<any>().props.site.name
+                }— это совместное сообщество 3D-песочниц. Работайте вместе, чтобы создавать удивительные вещи, и получайте от этого удовольствие!`,
         },
         ja: {
             message: `${usePage<any>().props.site.name}へようこそ！`,
-            desc: `${
-                usePage<any>().props.site.name
-            } は、協力的な 3D サンドボックス コミュニティです。協力して素晴らしいものを作り、その過程を楽しみましょう!`,
+            desc: `${usePage<any>().props.site.name
+                } は、協力的な 3D サンドボックス コミュニティです。協力して素晴らしいものを作り、その過程を楽しみましょう!`,
         },
     },
 ];
@@ -81,11 +77,11 @@ function onImgErrorSmall(id) {
                             </h3>
                             <div class="min-w-0 gap-2 mt-3 flex-container">
                                 <Link :href="route('auth.register.page')" class="btn btn-landing btn-success">
-                                <i class="mr-1 fa-solid fa-person-to-portal show-for-medium"></i>
+                                <i class="mr-1 fa-solid fa-person-to-Teleport show-for-medium"></i>
                                 Get Started
                                 </Link>
                                 <Link :href="route('auth.login.page')" class="btn btn-landing btn-info">
-                                <i class="mr-1 fa-solid fa-person-to-portal show-for-medium"></i>
+                                <i class="mr-1 fa-solid fa-person-to-Teleport show-for-medium"></i>
                                 Login
                                 </Link>
                             </div>
@@ -120,13 +116,12 @@ function onImgErrorSmall(id) {
                         <div class="cell large-8">
                             <div class="grid-x grid-margin-x grid-padding-y">
                                 <div class="cell large-2 medium-4 small-6" v-for="item in LandingItems?.['data']">
-                                    <Link :href="
-                                            route(`store.item`, { id: item.id })
+                                    <Link :href="route(`store.item`, { id: item.id })
                                         " class="d-block">
                                     <div class="p-2 mb-1 card card-item position-relative">
                                         <img :src="item.thumbnail" :id="item.name" :alt="item.name" class="img-fluid"
                                             @error="
-                                                    onImgErrorSmall(item.name)
+                                                onImgErrorSmall(item.name)
                                                 " />
                                     </div>
                                     <div class="text-body fw-semibold text-truncate">
@@ -135,11 +130,10 @@ function onImgErrorSmall(id) {
                                     </Link>
                                     <div class="text-xs fw-semibold">
                                         <span class="text-muted">By </span>
-                                        <Link :href="
-                                                route(`user.profile`, {
-                                                    username:
-                                                        item.creator.username,
-                                                })
+                                        <Link :href="route(`user.profile`, {
+                                            username:
+                                                item.creator.username,
+                                        })
                                             " class="text-info">{{ "@" + item.creator.username }}
                                         </Link>
                                     </div>
@@ -158,8 +152,8 @@ function onImgErrorSmall(id) {
                                         <div class="gap-2 flex-container">
                                             <div class="gap-2 flex-container">
                                                 <button class="gap-2 align-middle flex-container squish">
-                                                    <img class="headshot" src="/assets/img/dummy_headshot.png" width="50"
-                                                        height="50" alt="Avatar" />
+                                                    <img class="headshot" src="/assets/img/dummy_headshot.png"
+                                                        width="50" height="50" alt="Avatar" />
                                                 </button>
                                                 <div>
                                                     <p class="fw-semibold text-truncate">
@@ -180,7 +174,7 @@ function onImgErrorSmall(id) {
                                             </div>
                                         </div>
                                         <div class="divider-m0 w-100"></div>
-                                        <Link :href="route(`forum.post`, {id: post.id, slug: post.slug})"
+                                        <Link :href="route(`forum.post`, { id: post.id, slug: post.slug })"
                                             class="min-w-0 w-100 text-center btn btn-info btn-sm text-truncate">View
                                         Post</Link>
                                     </div>

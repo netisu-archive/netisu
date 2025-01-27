@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, reactive } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
-import { route } from 'momentum-trail';
+import { route, current } from 'momentum-trail';
 
 import SideLink from "../SideLink.vue";
 import FlashMessages from "@/Components/Messages/FlashMessages.vue";
@@ -10,28 +10,22 @@ import VLazyImage from "v-lazy-image";
 import SuperBanner from "./SuperBanner.vue";
 
 
-interface Alert {
-    message: string;
-    type: string;
-}
 
 interface Props {
     image?: string;
     showJsonAlert?: boolean;
-    JSONALERT: Array<Alert>;
+    JSONALERT?: Array<any>;
     superBanActive?: boolean;
-    alertsEnabled: boolean;
+    alertsEnabled?: boolean;
     OfficialImageBackground?: boolean;
     navSpaces?: Array<any>;
 }
-
-
 
 withDefaults(defineProps<Props>(), {
     alertsEnabled: true,
     superBanActive: false,
     showJsonAlert: false,
-    JSONALERT: { message: 'test', type: 'danger' },
+    JSONALERT: [],
     OfficialImageBackground: false,
 });
 
@@ -52,7 +46,7 @@ const messages = ref([
 async function detectAdBlock() {
     try {
         await fetch(new Request(googleAdUrl)).catch(
-            () => (adblock.value = true)
+            adblock.value = true
         );
     } catch (e) {
         adblock.value = true;

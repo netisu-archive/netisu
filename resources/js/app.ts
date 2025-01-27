@@ -12,7 +12,6 @@ import Pagination from "./Components/Pagination.vue";
 import AppHead from "./Components/AppHead.vue";
 import { trail } from "momentum-trail";
 import routes from "../routes/js/routing.json";
-import PortalVue from "portal-vue";
 
 if (import.meta.hot) {
     import.meta.hot.accept();
@@ -26,6 +25,7 @@ import "@popperjs/core/dist/umd/popper.min.js";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
 
+import PortalVue from "portal-vue";
 
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
@@ -34,10 +34,12 @@ const appName = import.meta.env?.["VITE_APP_NAME"] || "Laravel";
 createInertiaApp({
     progress: { includeCSS: true, showSpinner: false },
     title: (title) => `${title} - ${appName}`,
-    resolve: name => {
-        const pages = import.meta.glob<DefineComponent>('./Pages/**/*.vue', { eager: false })
-        return pages[`./Pages/${name}.vue`]()
-      },
+    resolve: (name) => {
+        const pages = import.meta.glob<DefineComponent>("./Pages/**/*.vue", {
+            eager: false,
+        });
+        return pages[`./Pages/${name}.vue`]();
+    },
     setup({ el, App, props, plugin }) {
         createSSRApp({ render: () => h(App, props) })
             .use(plugin)
@@ -51,4 +53,4 @@ createInertiaApp({
             .component("Link", Link)
             .mount(el);
     },
-})
+});

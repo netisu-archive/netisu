@@ -91,7 +91,7 @@ provide("selectedSubCategory", selectedSubCategory);
             </portal>
         </template>
         <div class="cell large-2">
-            <MarketSidebar :categories="categories" @category-selected="fetchItems" :selectCategory="selectCategory" />
+            <MarketSidebar :categories="categories" :selectCategory="selectCategory" @categorySelected="fetchItems" />
         </div>
         <div class="cell large-10">
             <MarketSorting :selectedCategory="selectedCategory" :selectedSubCategory="selectedSubCategory" />

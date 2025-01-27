@@ -58,7 +58,7 @@
         "brotli-wasm": "^3.0.1",
         "circle-flags": "https://github.com/HatScripts/circle-flags",
         "dayjs": "^1.11.13",
-        "eslint": "^9.18.0",
+        "eslint": "^9.19.0",
         "fsevents": "^2.3.3",
         "laravel-echo": "^1.19.0",
         "momentum-paginator": "^1.0.7",
@@ -87,7 +87,7 @@
         "ziggy-js": "^2.5.0"
     },
     "optionalDependencies": {
-        "@rollup/rollup-linux-x64-gnu": "4.31.0"
+        "@rollup/rollup-linux-x64-gnu": "4.32.0"
     },
     "trustedDependencies": [
         "@parcel/watcher",

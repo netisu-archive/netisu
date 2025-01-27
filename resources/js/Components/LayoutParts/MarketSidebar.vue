@@ -10,20 +10,19 @@ interface Category {
 interface Props {
     categories: Record<string, any>; // Adjusted type to handle mixed structure
     selectCategory: Function; // or specify the expected type if it's not a function
-    categorySelected: Function; // or specify the expected type if it's not a function
 }
 
 const { categories } = defineProps<Props>();
 const selectedCategory = ref<Category | null>(null);
 const selectedSubCategory: Ref<string> = ref("general");
 
-const emit = defineEmits(); // Define the emit function to emit custom events
+const emit = defineEmits(["categorySelected"]); // Define the emit function to emit custom events
 
 // Function to handle category selection
 function selectCategory(category: Category) {
     selectedCategory.value = category;
     // Emit the 'category-selected' event with the selected category
-    emit("category-selected", category);
+    emit("categorySelected", category);
 }
 
 function setActiveTopCat(categoryName): void {

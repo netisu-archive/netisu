@@ -155,8 +155,7 @@ watch(following, (newValue, oldValue) => {
     <AppHead :pageTitle="usePage<any>().props.user.username + '\'s Profile'"
         :description="usePage<any>().props.user.about_me"
         :url="route(`user.profile`, { username: usePage<any>().props.user.username })"
-        :cover="usePage<any>().props.user.thumbnail"
-         />
+        :cover="usePage<any>().props.user.thumbnail" />
     <Navbar />
     <Sidebar :alertsEnabled="false"
         :image="usePage<any>().props.user.settings.profile_banner_enabled ? usePage<any>().props.user.settings.profile_banner_url : null"
@@ -485,7 +484,8 @@ watch(following, (newValue, oldValue) => {
                             </div>
                         </div>
                     </div>
-                    <div v-else v-for="status in statuses?.['data']" class="gap-3 section flex-container flex-dir-column-sm">
+                    <div v-else v-for="status in statuses?.['data']"
+                        class="gap-3 section flex-container flex-dir-column-sm">
                         <div class="mx-auto flex-child-grow" style="width: 100px">
                             <a href="#" class="text-sm text-center d-block squish">
                                 <img src="/assets/img/dummy_headshot.png" class="mb-1 headshot" width="60" />

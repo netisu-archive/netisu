@@ -140,7 +140,7 @@ const right = [
 ];
 const lang = computed<any>(() => props.locale);
 
-const { props } = usePage<any>();
+const props = usePage<any>().props;
 </script>
 <template>
     <PageLoader v-if="props.site.page_loader" />
@@ -229,10 +229,10 @@ const { props } = usePage<any>();
                     <i class="text-xl fad fa-bars"></i>
                 </button>
             </li>
-            <NavLink :link="route(`Welcome`)">
-                <v-lazy-image :src="props.site.logo" class="show-for-medium" width="180" />
-                <v-lazy-image :src="props.site.icon" class="show-for-small-only" width="43" />
-            </NavLink>
+            <Link as="li" class="nav-item cell shrink" :href="route(`Welcome`)">
+            <v-lazy-image :src="props.site.logo" class="show-for-medium" width="180" />
+            <v-lazy-image :src="props.site.icon" class="show-for-small-only" width="43" />
+            </Link>
             <NavLink v-for="topbarlinks in topbar" :link="topbarlinks.url" :active_link="topbarlinks.active_link">
                 <i :class="topbarlinks.icon"></i> &nbsp;
                 <span>{{ topbarlinks[lang].title }}</span>
@@ -291,7 +291,7 @@ const { props } = usePage<any>();
             </li>
             <Button v-if="!props.auth?.user" :link="route('auth.register.page')" ColorClass="btn-success"
                 class="nav-item cell show-for-large shrink me-1">
-                <i class="fad fa-person-to-portal"></i> &nbsp; Get Started
+                <i class="fad fa-person-to-Teleport"></i> &nbsp; Get Started
             </Button>
             <Button v-if="!props.auth?.user" :link="route('auth.login.page')" ColorClass="btn-info"
                 class="nav-item cell show-for-large shrink me-1">
@@ -402,7 +402,7 @@ const { props } = usePage<any>();
                 class="dropdown position-relative nav-item cell shrink ms-1" id="user_dropdown">
                 <button @click="showModal('profile-modal')" class="gap-2 align-middle flex-container squish">
                     <v-lazy-image :src="usePage<any>().props.auth?.user?.headshot" width="40" class="headshot"
-                        alt="Avatar" src-placeholder="/assets/img/dummy_headshot.png" />
+                        alt="Avatar" src-placeholder="assets/img/dummy_headshot.png" />
                     <div class="text-start show-for-large">
                         <div class="text-sm fw-semibold text-body">
                             {{ props.auth?.user?.display_name }}
@@ -455,7 +455,7 @@ const { props } = usePage<any>();
             <li v-if="props.auth?.user" class="dropdown position-relative nav-item cell shrink ms-1" id="user_dropdown">
                 <button @click="showModal('profile-modal')" class="gap-2 align-middle flex-container squish">
                     <v-lazy-image :src="usePage<any>().props.auth?.user?.headshot" width="30" class="headshot"
-                        alt="Avatar" src-placeholder="/assets/img/dummy_headshot.png" />
+                        alt="Avatar" src-placeholder="assets/img/dummy_headshot.png" />
                 </button>
             </li>
         </ul>
@@ -471,7 +471,7 @@ export default {
     beforeMount() {
         this.$nextTick(function () {
 
-            const theme = ref(localStorage.getItem("theme") || "light");
+            const theme = localStorage.getItem("theme") || "light";
             this.applyTheme(theme);
         })
 
@@ -498,8 +498,16 @@ export default {
                 return console.log("Theme Error");
             }
 
-            // Save the selected theme in localStorage
-            localStorage.setItem("theme", theme);
+            // Save the selected theme in Storage
+            if (typeof localStorage !== 'undefined') {
+                localStorage.setItem('theme', theme);
+            } else if (typeof sessionStorage !== 'undefined') {
+                // Fallback to sessionStorage if localStorage is not supported
+                sessionStorage.setItem('theme', theme);
+            } else {
+                // If neither localStorage nor sessionStorage is supported
+                console.log('Web Storage is not supported in this environment.');
+            }
         },
         showModal(modalId: string): void {
             const modal = document.getElementById(modalId);

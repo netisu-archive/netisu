@@ -15,8 +15,8 @@ import createServer from "@inertiajs/vue3/server";
 import { renderToString } from "@vue/server-renderer";
 import Pagination from "./Components/Pagination.vue";
 import { createInertiaApp, Head, Link } from "@inertiajs/vue3";
-import PortalVue from "portal-vue";
 import "../css/style.css";
+import PortalVue from "portal-vue";
 
 if (import.meta.hot) {
     import.meta.hot.accept();
@@ -26,7 +26,7 @@ if (import.meta.hot) {
 import VueTippy from "vue-tippy";
 import "tippy.js/dist/tippy-bundle.umd.min.js";
 import "@popperjs/core/dist/umd/popper.min.js";
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
 const appName = import.meta.env?.["VITE_APP_NAME"] || "Laravel";
 createServer((page: Page) =>
@@ -35,10 +35,13 @@ createServer((page: Page) =>
         render: renderToString,
         progress: { includeCSS: true, showSpinner: false },
         title: (title) => `${title} - ${appName}`,
-        resolve: name => {
-            const pages = import.meta.glob<DefineComponent>('./Pages/**/*.vue', { eager: false })
-            return pages[`./Pages/${name}.vue`]()
-          },
+        resolve: (name) => {
+            const pages = import.meta.glob<DefineComponent>(
+                "./Pages/**/*.vue",
+                { eager: false },
+            );
+            return pages[`./Pages/${name}.vue`]();
+        },
         setup({ App, props, plugin }) {
             return createSSRApp({ render: () => h(App, props) })
                 .use(trail, {
@@ -54,5 +57,5 @@ createServer((page: Page) =>
                 .component("Head", Head)
                 .component("Link", Link);
         },
-    })
+    }),
 );

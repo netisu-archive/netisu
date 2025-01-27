@@ -82,7 +82,7 @@ usePoll(10000, { only: ['replies'] })
                             v-if="usePage<any>().props.post.locked"><i class="text-warning fas fa-lock"></i></span>
                     </div>
                     <div class=" text-xs text-base fw-semibold">Posted by: {{ usePage<any>
-                            ().props.post.creator.username }} <span>&bullet;</span> {{ usePage<any>
+                        ().props.post.creator.username }} <span>&bullet;</span> {{ usePage<any>
                                 ().props.post.DateHum
                                 }} </div>
                 </div>

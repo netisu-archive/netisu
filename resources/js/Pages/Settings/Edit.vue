@@ -13,7 +13,6 @@ import type { Ref } from 'vue';
 import axios from "axios";
 import AppHead from '@/Components/AppHead.vue';
 import VLazyImage from 'v-lazy-image';
-
 defineProps<{
     mustVerifyEmail?: Boolean,
     status?: String,
@@ -62,7 +61,7 @@ function enableBannerVisibility(visible): void {
     console.log(country);
 };
 
-const currentTheme = localStorage.getItem('theme') || null;
+const currentTheme = localStorage.getItem('theme');
 
 
 const isVerifiedEmail = computed(() => {
@@ -765,14 +764,14 @@ const isVerifiedEmail = computed(() => {
 export default {
     data() {
         return {
-            activeTheme: null,
+            activeTheme: '',
         };
     },
     mounted() {
-        const theme = ref(JSON.parse(localStorage.getItem('theme')) || 'light');
+        const theme = localStorage.getItem('theme') || 'light';
         this.activeTheme = theme;
         this.applyTheme(theme);
-        const storedTheme = ref(JSON.parse(localStorage.getItem('theme')));
+        const storedTheme = localStorage.getItem('theme');
 
         const themeBtn = document.getElementById(theme + "-theme-btn");
 
@@ -806,9 +805,26 @@ export default {
 
             style.href = `/assets/css/themes/variables-${lowercaseTheme}.css`;
 
-            // Save the selected theme in localStorage
-            localStorage.setItem('theme', JSON.stringify(theme));
-            const storedTheme = ref(JSON.parse(localStorage.getItem('theme') || null));
+            // Save the selected theme in Storage
+            if (typeof localStorage !== 'undefined') {
+                localStorage.setItem('theme', theme);
+            } else if (typeof sessionStorage !== 'undefined') {
+                // Fallback to sessionStorage if localStorage is not supported
+                sessionStorage.setItem('theme', theme);
+            } else {
+                // If neither localStorage nor sessionStorage is supported
+                console.log('Web Storage is not supported in this environment.');
+            }
+
+            const storedTheme = typeof localStorage !== 'undefined'
+                ? localStorage.getItem('theme')
+                : typeof sessionStorage !== 'undefined'
+                    ? sessionStorage.getItem('theme')
+                    : null;
+
+            if (storedTheme === null) {
+                console.log('Web Storage is not supported in this environment.');
+            }
 
             if (themeBtn) {
                 if (themeBtn.classList.contains('active')) {
@@ -820,7 +836,7 @@ export default {
         },
         setTheme(theme) {
 
-            const storedTheme = ref(JSON.parse(localStorage.getItem('theme')) || 'light');
+            const storedTheme = localStorage.getItem('theme') || 'light';
             const newtheme = theme || 'light';
 
             if (storedTheme != newtheme) {
