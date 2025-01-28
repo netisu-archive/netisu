@@ -93,7 +93,7 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
             Route::get('/posts', [ForumController::class, 'myPosts'])->name('posts');
         });
 
-        Route::get('/post/{id}/{slug}', [ForumController::class, 'ForumPost'])->name('post')->middleware('verified');
+        Route::get('/post/{id}/{slug}', [ForumController::class, 'ForumPost'])->name('post'));
         Route::group(['as' => 'create.', 'prefix' => 'create', 'middleware' => 'verified'], function () {
             Route::get('/{id}', [ForumController::class, 'ForumCreate'])->name('page');
             Route::post('/{id}/validate', [ForumController::class, 'ForumVal'])->name('validate');
