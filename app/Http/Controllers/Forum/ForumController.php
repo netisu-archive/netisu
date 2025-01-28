@@ -104,7 +104,7 @@ class ForumController extends Controller
                     abort(403); 
                 }
             } else {
-                return abort(404); 
+                abort(404); 
             }
         }
 
