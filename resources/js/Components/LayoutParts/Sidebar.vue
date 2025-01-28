@@ -7,7 +7,6 @@ import SideLink from "../SideLink.vue";
 import FlashMessages from "@/Components/Messages/FlashMessages.vue";
 
 import VLazyImage from "v-lazy-image";
-import SuperBanner from "./SuperBanner.vue";
 
 
 
@@ -25,7 +24,6 @@ withDefaults(defineProps<Props>(), {
     alertsEnabled: true,
     superBanActive: false,
     showJsonAlert: false,
-    JSONALERT: [],
     OfficialImageBackground: false,
 });
 
@@ -80,7 +78,7 @@ const sidebarsections = [
 const sidebar = [
     {
         url: route(`games.page`),
-        active_link: "games.*",
+        ActiveLink: "games.*",
         section: "NAVIGATION",
         icon: "fad fa-gamepad-modern",
         en: { title: "Games" },
@@ -91,7 +89,7 @@ const sidebar = [
     {
         url: route(`store.page`),
         section: "NAVIGATION",
-        active_link: "store.*",
+        ActiveLink: "store.*",
         icon: "fad fa-store",
         en: { title: "Market" },
         es: { title: "Mercado" },
@@ -100,7 +98,7 @@ const sidebar = [
     },
     {
         url: route(`forum.page`, { id: 1 }),
-        active_link: "forum.*",
+        ActiveLink: "forum.*",
         icon: "fad fa-messages",
         section: "NAVIGATION",
         en: { title: "Discuss" },
@@ -111,7 +109,7 @@ const sidebar = [
     {
         url: "#",
         section: "NAVIGATION",
-        active_link: "develop.*",
+        ActiveLink: "develop.*",
         icon: "fad fa-code",
         en: { title: "Develop" },
         es: { title: "Desarrollar" },
@@ -120,7 +118,7 @@ const sidebar = [
     },
     {
         url: route(`user.page`),
-        active_link: "user.*",
+        ActiveLink: "user.*",
         section: "SOCIAL",
         icon: "fad fa-users",
         en: { title: "Players" },
@@ -131,7 +129,7 @@ const sidebar = [
     {
         url: route(`spaces.page`),
         section: "SOCIAL",
-        active_link: "spaces.*",
+        ActiveLink: "spaces.*",
         icon: "fad fa-planet-ringed",
         en: { title: "Spaces" },
         es: { title: "Espacios" },
@@ -141,7 +139,7 @@ const sidebar = [
     {
         url: route(`leaderboard.page`),
         section: "SOCIAL",
-        active_link: route(`leaderboard.page`),
+        ActiveLink: route(`leaderboard.page`),
         icon: "fad fa-list-ol",
         en: { title: "Leaderboard" },
         es: { title: "Tabla de clasificación" },
@@ -151,7 +149,7 @@ const sidebar = [
     {
         url: "#",
         icon: "fad fa-rocket-launch",
-        active_link: "upgade.*",
+        ActiveLink: "upgade.*",
         section: "BOOST YOUR ACCOUNT",
         en: { title: "Upgrade" },
         es: { title: "Mejora" },
@@ -186,7 +184,7 @@ const lang = computed(() => usePage<any>().props.locale);
                 <!-- Iterate over links within the current section -->
                 <SideLink class="side-item" v-for="sidelink in sidebar.filter(
                     (link) => link.section === sidesections.en.name
-                )" :link="sidelink.url" :ActiveLink="sidelink.active_link">
+                )" :link="sidelink.url" :ActiveLink="sidelink.ActiveLink">
                     <i class="side-icon" :class="sidelink.icon"></i><span>{{ sidelink[lang].title }}</span>
                 </SideLink>
             </template>
@@ -211,7 +209,7 @@ const lang = computed(() => usePage<any>().props.locale);
                             <i class="fad fa-square-xmark" />
                         </span>
 
-                        <div class="text-start show-for-large">
+                        <div class="text-start">
                             <div class="text-sm fw-semibold text-body">No spaces found</div>
                             <div class="mb-1 text-xs text-muted fw-semibold"> Join a space here </div>
                         </div>
@@ -239,10 +237,10 @@ const lang = computed(() => usePage<any>().props.locale);
         }" />
     </div>
     <FlashMessages :ShowJsonAlert="showJsonAlert" :flash="JSONALERT" />
-    <SuperBanner v-if="superBanActive" />
+    <slot name="SuperBanner" v-if="superBanActive" />
     <main :class="{
         'container-navbar': !props.site.frontend.sidebar_menu,
-        container: props.site.frontend.sidebar_menu,
+        'container': props.site.frontend.sidebar_menu,
     }">
         <div v-if="alertsEnabled">
             <div v-if="adblock" class="py-2 mb-4 text-center alert alert-danger fw-semibold">

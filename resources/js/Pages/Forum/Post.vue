@@ -9,6 +9,7 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useForm, usePage, usePoll } from '@inertiajs/vue3';
 import VLazyImage from 'v-lazy-image';
+import SuperBanner from '@/Components/LayoutParts/SuperBanner.vue';
 
 defineProps<{
     topic?: Object,
@@ -46,47 +47,50 @@ usePoll(10000, { only: ['replies'] })
     <Navbar />
     <Sidebar image="/assets/img/site-banners/market-background.svg" :superBanActive="true"
         :OfficialImageBackground="true">
-        <template>
-            <portal to="bannerAsset">
-                <v-lazy-image :style="usePage<any>().props.post.creator?.settings.calling_card_enabled
-                    ? {
-                        margin: '0',
-                        'background-image':
-                            'url(' +
-                            usePage<any>().props.post.creator?.settings.calling_card_url +
-                            ')',
-                        'background-repeat': 'no-repeat',
-                        'background-size': 'cover',
-                        'box-shadow':
-                            'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
-                    }
-                    : null
-                    " :src="usePage<any>().props.post.creator.headshot" width="100" class="space-image" alt="Headshot"
-                    src-placeholder="assets/img/space-error.png" />
-            </portal>
-            <portal to="bannerButtons">
-                <Link class="text-xl text-success squish" href="route(`store.create.page`)" content="Edit Post"
-                    as="button" v-tippy="{ placement: 'bottom' }" style="outline: none">
-                <i class="fad fa-square-pen"></i>
-                </Link>
-            </portal>
-            <portal to="bannerName">
-                <div class="text-xl" style="line-height: 16px">
-                    {{ usePage<any>().props.post.title }}
-                </div>
-            </portal>
-            <portal to="bannerDescription">
-                <div class="text-start">
-                    <div class=" text-xl fw-semibold"><span v-if="usePage<any>().props.post.pinned"><i
-                                class="text-danger fas fa-thumbtack"></i></span> <span
-                            v-if="usePage<any>().props.post.locked"><i class="text-warning fas fa-lock"></i></span>
+        <template #SuperBanner>
+            <SuperBanner>
+                <template #bannerAsset>
+                    <v-lazy-image :style="usePage<any>().props.post.creator?.settings.calling_card_enabled
+                        ? {
+                            margin: '0',
+                            'background-image':
+                                'url(' +
+                                usePage<any>().props.post.creator?.settings.calling_card_url +
+                                ')',
+                            'background-repeat': 'no-repeat',
+                            'background-size': 'cover',
+                            'box-shadow':
+                                'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
+                        }
+                        : null
+                        " :src="usePage<any>().props.post.creator.headshot" width="100" class="space-image"
+                        alt="Headshot" src-placeholder="assets/img/space-error.png" />
+                </template>
+
+                <template #bannerName>
+                    <div class="text-xl" style="line-height: 16px">
+                        {{ usePage<any>().props.post.title }}
                     </div>
-                    <div class=" text-xs text-base fw-semibold">Posted by: {{ usePage<any>
-                        ().props.post.creator.username }} <span>&bullet;</span> {{ usePage<any>
-                                ().props.post.DateHum
-                                }} </div>
-                </div>
-            </portal>
+                </template>
+                <template #bannerDescription>
+                    <div class="text-start">
+                        <div class=" text-xl fw-semibold"><span v-if="usePage<any>().props.post.pinned"><i
+                                    class="text-danger fas fa-thumbtack"></i></span> <span
+                                v-if="usePage<any>().props.post.locked"><i class="text-warning fas fa-lock"></i></span>
+                        </div>
+                        <div class=" text-xs text-base fw-semibold">Posted by: {{ usePage<any>
+                                ().props.post.creator.username }} <span>&bullet;</span> {{ usePage<any>
+                                    ().props.post.DateHum
+                                    }} </div>
+                    </div>
+                </template>
+                <template #bannerButtons>
+                    <Link class="text-xl text-success squish" href="#" content="Edit Post" as="button"
+                        v-tippy="{ placement: 'bottom' }" style="outline: none">
+                    <i class="fad fa-square-pen"></i>
+                    </Link>
+                </template>
+            </SuperBanner>
         </template>
         <div class="cell medium-12">
             <div class="card-body">

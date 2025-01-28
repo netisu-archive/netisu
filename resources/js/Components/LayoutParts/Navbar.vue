@@ -21,9 +21,9 @@ interface SearchResult {
     name: string;
     // Add other properties if needed
 }
+
 interface Props {
     landing?: boolean;
-
 }
 
 withDefaults(defineProps<Props>(), {
@@ -62,7 +62,7 @@ const readAll = async () => {
 const topbar = [
     {
         url: route(`games.page`),
-        active_link: "games.*",
+        ActiveLink: "games.*",
         icon: "fad fa-gamepad-modern",
         en: { title: "Games" },
         es: { title: "Juegos" },
@@ -71,7 +71,7 @@ const topbar = [
     },
     {
         url: route(`store.page`),
-        active_link: "store.*",
+        ActiveLink: "store.*",
         icon: "fad fa-store",
         en: { title: "Market" },
         es: { title: "Mercado" },
@@ -80,7 +80,7 @@ const topbar = [
     },
     {
         url: route(`forum.page`, { id: 1 }),
-        active_link: "forum.*",
+        ActiveLink: "forum.*",
         icon: "fad fa-message-code",
         en: { title: "Discuss" },
         es: { title: "Conversar" },
@@ -89,7 +89,7 @@ const topbar = [
     },
     {
         url: route(`spaces.page`),
-        active_link: "spaces.*",
+        ActiveLink: "spaces.*",
         icon: "fad fa-planet-ringed",
         en: { title: "Spaces" },
         es: { title: "Espacios" },
@@ -100,7 +100,7 @@ const topbar = [
 const left = [
     {
         url: "#",
-        active_link: "develop.*",
+        ActiveLink: "develop.*",
         icon: "fad fa-code",
         en: { title: "Develop" },
         es: { title: "Desarrollar" },
@@ -109,7 +109,7 @@ const left = [
     },
     {
         url: route(`user.page`),
-        active_link: "user.*",
+        ActiveLink: "user.*",
         section: "SOCIAL",
         icon: "fad fa-users",
         en: { title: "Players" },
@@ -121,7 +121,7 @@ const left = [
 const right = [
     {
         url: route(`leaderboard.page`),
-        active_link: route(`leaderboard.page`),
+        ActiveLink: route(`leaderboard.page`),
         icon: "fad fa-list-ol",
         en: { title: "Leaderboard" },
         es: { title: "Tabla de clasificación" },
@@ -131,7 +131,7 @@ const right = [
     {
         url: "#",
         icon: "fad fa-rocket-launch",
-        active_link: "upgade.*",
+        ActiveLink: "upgade.*",
         en: { title: "Upgrade" },
         es: { title: "Mejora" },
         ru: { title: "Подписки" },
@@ -233,10 +233,12 @@ const props = usePage<any>().props;
             <v-lazy-image :src="props.site.logo" class="show-for-medium" width="180" />
             <v-lazy-image :src="props.site.icon" class="show-for-small-only" width="43" />
             </Link>
-            <NavLink v-for="topbarlinks in topbar" :link="topbarlinks.url" :active_link="topbarlinks.active_link">
-                <i :class="topbarlinks.icon"></i> &nbsp;
-                <span>{{ topbarlinks[lang].title }}</span>
-            </NavLink>
+            <template v-for="topbarlinks in topbar">
+                <NavLink :link="topbarlinks.url" :ActiveLink="topbarlinks.ActiveLink">
+                    <i :class="topbarlinks.icon"></i> &nbsp;
+                    <span>{{ topbarlinks[lang].title }}</span>
+                </NavLink>
+            </template>
             <li class="nav-item text-danger cell shrink show-for-large">
                 <div class="side-item">
                     <a v-if="props.auth?.user && props.auth?.user?.staff" :href="route('admin.page')" class="nav-link">
@@ -433,7 +435,7 @@ const props = usePage<any>().props;
                     <i class="text-xl fad fa-bars"></i>
                 </button>
             </li>
-            <NavLink v-for="leftside in left" :link="leftside.url" :active_link="leftside.active_link">
+            <NavLink v-for="leftside in left" :link="leftside.url" :ActiveLink="leftside.ActiveLink">
                 <i :class="leftside.icon"></i> &nbsp;
                 <span>{{ leftside[lang].title }}</span>
             </NavLink>
@@ -448,7 +450,7 @@ const props = usePage<any>().props;
             <li class="mx-1 align-middle nav-item cell auto nav-search mx-md-3">
 
             </li>
-            <NavLink v-for="rightside in right" :link="rightside.url" :active_link="rightside.active_link">
+            <NavLink v-for="rightside in right" :link="rightside.url" :ActiveLink="rightside.ActiveLink">
                 <i :class="rightside.icon"></i> &nbsp;
                 <span>{{ rightside[lang].title }}</span>
             </NavLink>
@@ -474,20 +476,19 @@ export default {
         this.$nextTick(function () {
 
             if (typeof localStorage !== 'undefined') {
-                 theme = localStorage.getItem('theme');
+                theme = localStorage.getItem('theme');
             } else if (typeof sessionStorage !== 'undefined') {
                 // Fallback to sessionStorage
-                  theme = sessionStorage.getItem('theme');
+                theme = sessionStorage.getItem('theme');
             } else {
                 // If neither localStorage nor sessionStorage is supported
                 console.log('Web Storage is not supported in this environment.');
-                 theme = 'light';
+                theme = 'light';
             }
 
-             theme = localStorage.getItem("theme");
+            theme = localStorage.getItem("theme");
             this.applyTheme(theme);
         })
-
     },
     directives: {
         tippy: directive,

@@ -9,9 +9,10 @@ import Navbar from "@/Components/LayoutParts/Navbar.vue";
 import Sidebar from "@/Components/LayoutParts/Sidebar.vue";
 import Footer from "@/Components/LayoutParts/Footer.vue";
 import { route } from "momentum-trail"
+import SuperBanner from '@/Components/LayoutParts/SuperBanner.vue';
 
 import ItemCardSkeleton from "@/Components/ItemCardSkeleton.vue";
-import VLazyImage from "v-lazy-image";
+import VLazyImage from 'v-lazy-image';
 
 const props = defineProps({
     categories: Object,
@@ -69,27 +70,33 @@ provide("selectedSubCategory", selectedSubCategory);
     <Navbar :landing="false" />
     <Sidebar image="/assets/img/site-banners/market-background.svg" :superBanActive="true"
         :OfficialImageBackground="true">
-        <template>
-            <portal to="bannerAsset">
-                <i class="text-5xl fad fa-store text-info"></i>
-            </portal>
-            <portal to="bannerButtons">
-                <Link v-if="usePage<any>().props.auth.user" class="text-xl text-success squish"
-                    :href="route(`store.create.page`)" content="Create Item" as="button"
-                    v-tippy="{ placement: 'bottom' }" style="outline: none">
-                <i class="fad fa-square-pen"></i>
-                </Link>
-            </portal>
-            <portal to="bannerName">
-                <div class="text-xl" style="line-height: 16px">
-                    <v-lazy-image src="/assets/img/site-banners/market-title.png" alt="Market"
-                        style="width: auto; height: 50px" />
-                </div>
-            </portal>
-            <portal to="bannerDescription">
-                <span class="text-muted text-wrap fw-semibold">Craving something new? Create it or find it here.</span>
-            </portal>
+        <template #SuperBanner>
+            <SuperBanner>
+                <template #bannerAsset>
+                    <i class="text-5xl fad fa-store text-info"></i>
+
+                </template>
+
+                <template #bannerName>
+                    <div class="text-xl" style="line-height: 16px">
+                        <v-lazy-image src="/assets/img/site-banners/market-title.png" alt="Market"
+                            style="width: auto; height: 50px" />
+                    </div>
+                </template>
+                <template #bannerDescription>
+                    <span class="text-muted text-wrap fw-semibold">Craving something new? Create it or find it
+                        here.</span>
+                </template>
+                <template #bannerButtons>
+                    <Link v-if="usePage<any>().props.auth.user" as="button" class="text-xl text-success squish"
+                        :href="route(`store.create.page`)" content="Create Item" v-tippy="{ placement: 'bottom' }"
+                        style="outline: none">
+                    <i class="fad fa-square-pen"></i>
+                    </Link>
+                </template>
+            </SuperBanner>
         </template>
+
         <div class="cell large-2">
             <MarketSidebar :categories="categories" :selectCategory="selectCategory" @categorySelected="fetchItems" />
         </div>

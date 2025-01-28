@@ -3,14 +3,14 @@ import { current } from "momentum-trail";
 
 // Props
 defineProps<{
-    link: string,
+    link?: string,
     ActiveLink?: any,
 }>();
 </script>
 <template>
     <li class="side-item">
         <Link class="side-link" :href="link" :class="[current(ActiveLink) ? 'active' : '']" prefetch>
-        <slot />
+            <slot />
         </Link>
     </li>
 </template>

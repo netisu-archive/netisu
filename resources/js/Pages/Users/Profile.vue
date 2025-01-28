@@ -11,6 +11,7 @@ import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
 import AppHead from '@/Components/AppHead.vue';
 import ItemCardSkeleton from '@/Components/ItemCardSkeleton.vue';
 import type { Ref } from 'vue';
+import SuperBanner from '@/Components/LayoutParts/SuperBanner.vue';
 
 defineProps({
     user: { type: Object },
@@ -236,66 +237,71 @@ watch(following, (newValue, oldValue) => {
                 </div>
             </div>
         </div>
-        <template>
-            <portal to="bannerAsset">
-                <v-lazy-image :style="usePage<any>().props.user?.settings.calling_card_enabled
-                    ? {
-                        margin: '0',
-                        'background-image':
-                            'url(' +
-                            usePage<any>().props.user?.settings.calling_card_url +
-                            ')',
-                        'background-repeat': 'no-repeat',
-                        'background-size': 'cover',
-                        'box-shadow':
-                            'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
-                    }
-                    : null
-                    " :src="usePage<any>().props.user.headshot" width="100" class="space-image" alt="Headshot"
-                    src-placeholder="/assets/img/dummmy_headshot.png" />
-            </portal>
+        <template #SuperBanner>
+            <SuperBanner>
+                <template #bannerAsset>
+                    <v-lazy-image :style="usePage<any>().props.user?.settings.calling_card_enabled
+                        ? {
+                            margin: '0',
+                            'background-image':
+                                'url(' +
+                                usePage<any>().props.user?.settings.calling_card_url +
+                                ')',
+                            'background-repeat': 'no-repeat',
+                            'background-size': 'cover',
+                            'box-shadow':
+                                'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
+                        }
+                        : null
+                        " :src="usePage<any>().props.user.headshot" width="100" class="space-image" alt="Headshot"
+                        src-placeholder="/assets/img/dummmy_headshot.png" />
+                </template>
 
-            <portal to="bannerName">
-                <div class="text-xl" style="line-height: 16px">
-                    <div class="mb-1 flex-container align-middle gap-1 fw-semibold">
-                        {{ usePage<any>().props.user.display_name }}
-                            <i v-if="usePage<any>().props.user.staff" class="fad fa-gavel text-danger"></i>
-                            <i v-else-if="usePage<any>().props.user.settings.beta_tester"
-                                class="fad fa-hard-hat text-success"></i>
-                            <v-lazy-image
-                                :src="'/assets/img/flags/' + usePage<any>().props.user.settings.country_code + '.svg'"
-                                alt="Country Flag" style="width: auto;height: 20px;"
-                                src-placeholder="/assets/img/flags/other/pirate.svg" />
+                <template #bannerName>
+                    <div class="text-xl" style="line-height: 16px">
+                        <div class="mb-1 flex-container align-middle gap-1 fw-semibold">
+                            {{ usePage<any>().props.user.display_name }}
+                                <i v-if="usePage<any>().props.user.staff" class="fad fa-gavel text-danger"></i>
+                                <i v-else-if="usePage<any>().props.user.settings.beta_tester"
+                                    class="fad fa-hard-hat text-success"></i>
+                                <v-lazy-image
+                                    :src="'/assets/img/flags/' + usePage<any>().props.user.settings.country_code + '.svg'"
+                                    alt="Country Flag" style="width: auto;height: 20px;"
+                                    src-placeholder="/assets/img/flags/other/pirate.svg" />
+                        </div>
+                        <div class="text-sm text-muted fw-semibold">
+                            {{ "@" + usePage<any>().props.user.username }}
+                        </div>
                     </div>
-                    <div class="text-sm text-muted fw-semibold">
-                        {{ "@" + usePage<any>().props.user.username }}
-                    </div>
-                </div>
-            </portal>
-            <portal to="bannerDescription">
-                {{ usePage<any>().props.user.status ?? 'This user does not have a status.' }}
-            </portal>
-            <portal to="bannerButtons">
-                <div v-if="usePage<any>().props.auth.user && usePage<any>().props.user.id != usePage<any>().props.auth.user.id"
-                    class="min-w-0 gap-2 mt-2 mb-3 flex-container">
-                    <button :class="['text-xl', 'squish', following ? 'text-danger' : 'text-info']"
-                        @click="toggleFollow(usePage<any>().props.user.id)" :content="following ? 'Unfollow' : 'Follow'"
-                        v-tippy="{ placement: 'bottom' }">
-                        <i :class="following ? 'fad fa-user-minus' : 'fad fa-user-plus'"></i>
-                    </button>
+                </template>
+                <template #bannerDescription>
+                    <span class="text-muted text-wrap fw-semibold">
+                        {{ usePage<any>().props.user.status ?? 'This user does not have a status.' }}
+                    </span>
+                </template>
+                <template #bannerButtons>
+                    <div v-if="usePage<any>().props.auth.user && usePage<any>().props.user.id != usePage<any>().props.auth.user.id"
+                        class="min-w-0 gap-2 mt-2 mb-3 flex-container">
+                        <button :class="['text-xl', 'squish', following ? 'text-danger' : 'text-info']"
+                            @click="toggleFollow(usePage<any>().props.user.id)"
+                            :content="following ? 'Unfollow' : 'Follow'" v-tippy="{ placement: 'bottom' }">
+                            <i :class="following ? 'fad fa-user-minus' : 'fad fa-user-plus'"></i>
+                        </button>
 
-                    <button class="text-xl text-success squish"
-                        :content="'Chat With ' + usePage<any>().props.user.display_name"
-                        v-tippy="{ placement: 'bottom' }">
-                        <i class="fad fa-message"></i>
-                    </button>
-                    <a v-if="usePage<any>().props.auth.user.staff" as="button"
-                        :href="route(`admin.users.manage-user`, { id: usePage<any>().props.user.id })"
-                        class="text-xl text-danger squish" content="View in Panel" v-tippy="{ placement: 'bottom' }">
-                        <i class="fad fa-pen-to-square"></i>
-                    </a>
-                </div>
-            </portal>
+                        <button class="text-xl text-success squish"
+                            :content="'Chat With ' + usePage<any>().props.user.display_name"
+                            v-tippy="{ placement: 'bottom' }">
+                            <i class="fad fa-message"></i>
+                        </button>
+                        <a v-if="usePage<any>().props.auth.user.staff" as="button"
+                            :href="route(`admin.users.manage-user`, { id: usePage<any>().props.user.id })"
+                            class="text-xl text-danger squish" content="View in Panel"
+                            v-tippy="{ placement: 'bottom' }">
+                            <i class="fad fa-pen-to-square"></i>
+                        </a>
+                    </div>
+                </template>
+            </SuperBanner>
         </template>
         <div class="cell medium-3">
             <div class="mb-2 align-middle flex-container align-justify">

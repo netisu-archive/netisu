@@ -25,7 +25,6 @@ import "@popperjs/core/dist/umd/popper.min.js";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
 
-import PortalVue from "portal-vue";
 
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
@@ -45,7 +44,6 @@ createInertiaApp({
             .use(plugin)
             .use(trail, { routes })
             .use(VueTippy)
-            .use(PortalVue)
             .component("Skeletor", Skeletor)
             .component("Pagination", Pagination)
             .component("AppHead", AppHead)

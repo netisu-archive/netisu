@@ -16,7 +16,6 @@ import { renderToString } from "@vue/server-renderer";
 import Pagination from "./Components/Pagination.vue";
 import { createInertiaApp, Head, Link } from "@inertiajs/vue3";
 import "../css/style.css";
-import PortalVue from "portal-vue";
 
 if (import.meta.hot) {
     import.meta.hot.accept();
@@ -29,6 +28,7 @@ import "@popperjs/core/dist/umd/popper.min.js";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
 const appName = import.meta.env?.["VITE_APP_NAME"] || "Laravel";
+
 createServer((page: Page) =>
     createInertiaApp({
         page,
@@ -50,7 +50,6 @@ createServer((page: Page) =>
                 })
                 .use(plugin)
                 .use(VueTippy)
-                .use(PortalVue)
                 .component("Skeletor", Skeletor)
                 .component("Pagination", Pagination)
                 .component("AppHead", AppHead)

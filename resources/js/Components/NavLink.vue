@@ -4,13 +4,13 @@ import { current } from 'momentum-trail';
 // Props
 defineProps<{
     link?: string,
-    active_link?: any,
+    ActiveLink?: any,
 }>();
 </script>
 <template>
     <li class="nav-item cell shrink show-for-large">
         <div class="side-item">
-            <Link class="nav-link" :href="link" :class="[current(active_link) ? 'active' : '']" prefetch>
+            <Link class="nav-link" :href="link" :class="[current(ActiveLink) ? 'active' : '']" prefetch>
                 <slot />
             </Link>
         </div>

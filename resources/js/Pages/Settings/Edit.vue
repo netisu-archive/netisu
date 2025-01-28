@@ -13,6 +13,8 @@ import type { Ref } from 'vue';
 import axios from "axios";
 import AppHead from '@/Components/AppHead.vue';
 import VLazyImage from 'v-lazy-image';
+import SuperBanner from '@/Components/LayoutParts/SuperBanner.vue';
+
 defineProps<{
     mustVerifyEmail?: Boolean,
     status?: String,
@@ -75,55 +77,58 @@ const isVerifiedEmail = computed(() => {
     <Navbar />
     <Sidebar :alertsEnabled="false"
         :image="usePage<any>().props.auth.user.settings.profile_banner_enabled ? usePage<any>().props.auth.user.settings.profile_banner_url : null"
-        :superBanActive="true" :OfficialImageBackground="false" superBanType="image">
-        <template>
-            <portal to="bannerAsset">
-                <v-lazy-image :style="usePage<any>().props.auth.user.settings.calling_card_enabled
-                    ? {
-                        margin: '0',
-                        'background-image':
-                            'url(' +
-                            usePage<any>().props.auth.user.settings.calling_card_url +
-                            ')',
-                        'background-repeat': 'no-repeat',
-                        'background-size': 'cover',
-                        'box-shadow':
-                            'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
-                    }
-                    : null
-                    " :src="usePage<any>().props.auth.user.headshot" width="100" class="space-image" alt="Headshot"
-                    src-placeholder="assets/img/space-error.png" />
-            </portal>
+        :superBanActive="true"
+        :OfficialImageBackground="false">
+        <template #SuperBanner>
+            <SuperBanner>
+                <template #bannerAsset>
+                    <v-lazy-image :style="usePage<any>().props.auth.user.settings.calling_card_enabled
+                        ? {
+                            margin: '0',
+                            'background-image':
+                                'url(' +
+                                usePage<any>().props.auth.user.settings.calling_card_url +
+                                ')',
+                            'background-repeat': 'no-repeat',
+                            'background-size': 'cover',
+                            'box-shadow':
+                                'inset 0 0 0 100vw rgba(var(--section-bg-rgb), 0.5)!important',
+                        }
+                        : null
+                        " :src="usePage<any>().props.auth.user.headshot" width="100" class="space-image" alt="Headshot"
+                        src-placeholder="assets/img/space-error.png" />
+                </template>
 
-            <portal to="bannerName">
-                <div class="text-xl" style="line-height: 16px">
-                    <div class="mb-1 flex-container align-middle gap-1 fw-semibold">
-                        {{ usePage<any>().props.auth.user.display_name }}
-                            <i v-if="usePage<any>().props.auth.user.staff"
-                                :content="usePage<any>().props.auth.user.staff.Position"
-                                v-tippy="{ placement: 'bottom' }" class="fad fa-gavel text-danger"></i>
-                            <i v-else-if="usePage<any>().props.auth.user.settings.beta_tester"
-                                class="fad fa-hard-hat text-success"></i>
-                            <v-lazy-image
-                                :src="'/assets/img/flags/' + usePage<any>().props.auth.user.settings.country_code + '.svg'"
-                                alt="Country Flag" style="width: auto;height: 20px;"
-                                src-placeholder="/assets/img/flags/other/pirate.svg" />
+                <template #bannerName>
+                    <div class="text-xl" style="line-height: 16px">
+                        <div class="mb-1 flex-container align-middle gap-1 fw-semibold">
+                            {{ usePage<any>().props.auth.user.display_name }}
+                                <i v-if="usePage<any>().props.auth.user.staff"
+                                    :content="usePage<any>().props.auth.user.staff.Position"
+                                    v-tippy="{ placement: 'bottom' }" class="fad fa-gavel text-danger"></i>
+                                <i v-else-if="usePage<any>().props.auth.user.settings.beta_tester"
+                                    class="fad fa-hard-hat text-success"></i>
+                                <v-lazy-image
+                                    :src="'/assets/img/flags/' + usePage<any>().props.auth.user.settings.country_code + '.svg'"
+                                    alt="Country Flag" style="width: auto;height: 20px;"
+                                    src-placeholder="/assets/img/flags/other/pirate.svg" />
+                        </div>
+                        <div class="text-sm text-muted fw-semibold">
+                            Profile Preview
+                        </div>
                     </div>
-                    <div class="text-sm text-muted fw-semibold">
-                        Profile Preview
-                    </div>
-                </div>
-            </portal>
-            <portal to="bannerButtons">
-                <button class="text-lg text-success squish" content="Change Calling Card"
-                    v-tippy="{ placement: 'bottom' }">
-                    <i class="fad fa-user"></i>
-                </button>
-                <button @click="showModal('banner-modal')" class="text-lg text-info squish" content="Change Banner"
-                    v-tippy="{ placement: 'bottom' }">
-                    <i class="fad fa-pen"></i>
-                </button>
-            </portal>
+                </template>
+                <template #bannerButtons>
+                    <button class="text-lg text-success squish" content="Change Calling Card"
+                        v-tippy="{ placement: 'bottom' }">
+                        <i class="fad fa-user"></i>
+                    </button>
+                    <button @click="showModal('banner-modal')" class="text-lg text-info squish" content="Change Banner"
+                        v-tippy="{ placement: 'bottom' }">
+                        <i class="fad fa-pen"></i>
+                    </button>
+                </template>
+            </SuperBanner>
         </template>
         <div class="modal" id="email-modal">
             <div class="modal-card modal-card-body modal-card-sm">
@@ -761,6 +766,8 @@ const isVerifiedEmail = computed(() => {
 </template>
 
 <script lang="ts">
+let theme;
+
 export default {
     data() {
         return {
@@ -768,7 +775,17 @@ export default {
         };
     },
     mounted() {
-        const theme = localStorage.getItem('theme') || 'light';
+        if (typeof localStorage !== 'undefined') {
+            theme = localStorage.getItem('theme') || 'light';
+        } else if (typeof sessionStorage !== 'undefined') {
+            // Fallback to sessionStorage
+            theme = sessionStorage.getItem('theme') || 'light';
+        } else {
+            // If neither localStorage nor sessionStorage is supported
+            console.log('Web Storage is not supported in this environment.');
+            theme = 'light';
+        }
+
         this.activeTheme = theme;
         this.applyTheme(theme);
         const storedTheme = localStorage.getItem('theme');
