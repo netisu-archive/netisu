@@ -98,9 +98,14 @@ class ForumController extends Controller
             abort(404);
         }
 
-        // Check permissions and abort if necessary
-        if (Auth::check() && !Auth::user()->isStaff() && $topic->is_staff_only_viewing) {
-            abort(403);
+        if ($topic->is_staff_only_viewing) {
+            if (Auth::check()) {
+                if (!Auth::user()->isStaff()) {
+                    abort(403); 
+                }
+            } else {
+                return abort(404); 
+            }
         }
 
         // Use caching to store the posts related to the selected topic
