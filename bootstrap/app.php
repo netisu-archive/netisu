@@ -51,7 +51,7 @@ return Application::configure(basePath: dirname(__DIR__))
             $pendingItems = Item::where('status', 'pending')->with('creator')->get();
 
             $pendingSpaces = Space::where('thumbnail_pending', true)->with('creator')->get();
-    
+
             $pendingItemsAndSpaces = $pendingItems->merge($pendingSpaces);
 
             if (app()->environment(['local', 'testing'])) {
@@ -165,6 +165,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->replace(\Illuminate\Http\Middleware\TrustProxies::class, \App\Http\Middleware\TrustProxies::class);
         $middleware->web(append: [
+            \Illuminate\Routing\Middleware\ThrottleRequests::class,
             \App\Http\Middleware\Cors::class,
             // \Fahlisaputra\Minify\Middleware\MinifyHtml::class,
             // \Fahlisaputra\Minify\Middleware\MinifyCss::class,

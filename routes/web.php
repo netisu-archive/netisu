@@ -104,7 +104,7 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
     });
 
     Route::group(['as' => 'chat.', 'prefix' => 'messages'], function () {
-        Route::get('/messages', [ChatController::class, 'messages'])
+        Route::get('/chat/{id}', [ChatController::class, 'messages'])
             ->name('messages');
         Route::post('/message/validate', [ChatController::class, 'validateMessage'])
             ->name('validate');

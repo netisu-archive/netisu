@@ -35,7 +35,7 @@ class SendMessage implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('userMessageFor_' . $this->user->id),
+            new PrivateChannel('chat.' . $this->user->id),
         ];
     }
     public function broadcastWith(): array
