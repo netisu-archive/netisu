@@ -83,14 +83,14 @@ class AvatarController extends Controller
         }
 
         // also finally status checking LOL
-        if ($item->status !== 'pending') {
+        if ($item->status !== 'approved') {
             return response()->json([
                 "thumbnail" => $user->thumbnail(),
                 'error' => 'This item is not approved.'
             ]);
         }
 
-        if ($item->public_view === true) {
+        if ($item->public_view === false) {
             return response()->json([
                 "thumbnail" => $user->thumbnail(),
                 'error' => 'This item is hidden.'

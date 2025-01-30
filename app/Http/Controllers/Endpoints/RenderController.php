@@ -143,7 +143,7 @@ class RenderController extends Controller
             $requestData['RenderJson'] = [
                     'ItemType' => $db->item_type,
                     'Item' => getItemHash($db->id),
-                    'PathMod' => null,
+                    'PathMod' => false,
             ];
         } elseif ($type == 'item_preview') {
             if ($db->item_type == 'hat') {
@@ -160,8 +160,7 @@ class RenderController extends Controller
                 ];
             } elseif ($db->item_type == 'face') {
                 $requestData['RenderJson'] = [
-                    'ItemType' => $db->item_type,
-
+                        'ItemType' => $db->item_type,
                         'Item' => getItemHash($db->id),
                         'PathMod' => true,
                 ];
