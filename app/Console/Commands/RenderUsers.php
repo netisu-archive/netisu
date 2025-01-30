@@ -27,7 +27,7 @@ class RenderUsers extends Command
      */
     public function handle()
     {
-        if ($this->confirm('Do you wish to rerender ALL users?')) {
+        if ($this->confirm('Do you wish to re-render ALL users?')) {
             $users = Avatar::where('image', '!=', 'default')->get();
             foreach ($users as $user) {
                 UserRenderer::dispatch($user->id)->onQueue('user-render');
