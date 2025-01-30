@@ -40,7 +40,7 @@ class RenderUsers extends Command
                     UserRenderer::dispatch($avatar->user_id)->onQueue('user-render');
                     sleep(3);
                 } else {
-                    $this->info("Avatar Record For ID {$avatar->user_id} Missing, Skipping...");
+                    $this->error("Avatar Record For ID {$avatar->user_id} Missing, Skipping...");
                 }
             }
         }

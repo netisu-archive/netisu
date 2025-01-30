@@ -14,7 +14,7 @@ class RenderItems extends Command
      *
      * @var string
      */
-    protected $signature = 'app:render-users';
+    protected $signature = 'app:render-items';
 
     /**
      * The console command description.
