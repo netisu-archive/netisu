@@ -26,7 +26,7 @@ class StartRenderer extends Command
      */
     public function handle()
     {
-        $StartServer = "cd /var/www/renderer && go run init.go > /dev/null 2>&1 &";
+        $StartServer = "cd /var/www/renderer && go run main.go > /dev/null 2>&1 &";
 
         exec($StartServer, $output, $resultCode);
 
