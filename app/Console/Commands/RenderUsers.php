@@ -32,7 +32,9 @@ class RenderUsers extends Command
             $avatars = Avatar::where('image', '!=', 'default')->get();
 
             foreach ($avatars as $avatar) {
-                if ($avatar) {
+                $user = User::find($avatar->user_id); // Check if the user exists
+
+                if ($user) {
                     // Only proceed if the user exists
                     $this->info('Rendering User Id: ' . $avatar->user_id);
                     UserRenderer::dispatch($avatar->user_id)->onQueue('user-render');
