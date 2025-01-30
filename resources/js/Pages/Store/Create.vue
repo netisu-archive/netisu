@@ -17,8 +17,8 @@ const form = useForm({
     type: "",
     name: "",
     description: "",
-    price_coins: "",
-    price_bucks: "",
+    coins: "",
+    bucks: "",
     image: "",
 });
 
@@ -93,16 +93,16 @@ const AttemptUpload = () => {
                     <div class="gap-3 mb-2 text-sm flex-container align-center">
                         <div class="w-100">
                             <div class="text-xs fw-bold text-muted text-uppercase">Price Coins</div>
-                            <input type="text" v-model="form.price_coins" class="form" placeholder="1" />
-                            <div v-if="form.errors.price_coins" class="text-xs text-danger fw-semibold">
-                                {{ form.errors.price_coins }}
+                            <input type="text" v-model="form.coins" class="form" placeholder="1" />
+                            <div v-if="form.errors.coins" class="text-xs text-danger fw-semibold">
+                                {{ form.errors.coins }}
                             </div>
                         </div>
                         <div class="w-100">
                             <div class="text-xs fw-bold text-muted text-uppercase">Price Bucks</div>
-                            <input type="text" v-model="form.price_bucks" class="form" placeholder="10" />
-                            <div v-if="form.errors.price_bucks" class="text-xs text-danger fw-semibold">
-                                {{ form.errors.price_bucks }}
+                            <input type="text" v-model="form.bucks" class="form" placeholder="10" />
+                            <div v-if="form.errors.bucks" class="text-xs text-danger fw-semibold">
+                                {{ form.errors.bucks }}
                             </div>
                         </div>
                     </div>

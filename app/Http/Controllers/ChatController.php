@@ -23,11 +23,12 @@ class ChatController extends Controller
         ->with(['sender', 'receiver'])
         ->orderBy('id', 'asc')
         ->get();
-        
+
         return inertia('Messages/User',[
             'messages' => $messages
-        ])
+        ]);
     }
+
     public function SendMessage(SendMessageRequest $request, int $userID)
     {
         if ($userID == Auth::id()) {

@@ -49,7 +49,6 @@ class AvatarController extends Controller
         /** @var \App\Models\User $user **/
         $user = Auth::user();
         $avatar = $user->avatar();
-        $newVrcInstance = new RenderController();
         $item = Item::where('id', '=', $itemId)->first();
 
         if (!$item) {
@@ -84,7 +83,7 @@ class AvatarController extends Controller
         }
 
         // also finally status checking LOL
-        if ($item->status !== 'approved') {
+        if ($item->status !== 'pending') {
             return response()->json([
                 "thumbnail" => $user->thumbnail(),
                 'error' => 'This item is not approved.'
@@ -132,8 +131,6 @@ class AvatarController extends Controller
         /** @var \App\Models\User $user **/
         $user = Auth::user();
         $avatar = $user->avatar();
-        $newVrcInstance = new RenderController();
-        $vrs = $newVrcInstance;
         $item = Item::where('id', '=', $itemId)->first();
 
         // Check if avatar record exists

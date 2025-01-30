@@ -136,8 +136,8 @@ class MarketController extends Controller
             'item_type' => $request->type,
             'status' => 'pending',
             'public_view' => false,
-            'cost_coins' => $request->cost_coins,
-            'cost_bucks' => $request->cost_bucks,
+            'cost_coins' => $request->coins,
+            'cost_bucks' => $request->bucks,
             'avatar_preview' => $previewName,
             'onsale' => true,
         ]);
@@ -171,8 +171,8 @@ class MarketController extends Controller
             'description' => 'required|string|max:255',
             'type' => 'required|string|in:shirt,tshirt,pants', // Allowed item types
             'image' => 'required|image|mimes:png', // Validate PNG image
-            'cost_coins' => 'required|integer|max:50000',
-            'cost_bucks' => 'required|integer|max:10000',
+            'coins' => 'required|integer|max:50000',
+            'bucks' => 'required|integer|max:10000',
         ]);
 
         if ($validator->fails()) { // Use Validator object's fails method on $validator
@@ -218,7 +218,7 @@ class MarketController extends Controller
            'description' => $request->description ??  $item->description,
            'cost_coins' => $request->cost_coins ??  $item->cost_coins,
            'cost_bucks' => $request->cost_bucks ??  $item->cost_bucks,
-           'onsale' => $request->isOnsale ??  $item->onsale, 
+           'onsale' => $request->isOnsale ??  $item->onsale,
         ]);
 
         return redirect()->route('store.item', $item->id)->with([
