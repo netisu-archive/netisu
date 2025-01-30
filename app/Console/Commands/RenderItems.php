@@ -31,14 +31,14 @@ class RenderItems extends Command
         if ($this->confirm('Do you wish to rerender ALL items?')) {
             $items = Item::all();
             foreach ($items as $item) {
-                if ($item->type !== 'face') {
+
+                if ($item->item_type !== 'face' || $item->item_type !== 'head') {
                     ItemRenderer::dispatch($item->id)->onQueue('render');
                     ItemPreviewRenderer::dispatch($item->id, true, $item->hash)->onQueue('render');
                     sleep(3);
-
                 }
 
-                if ($item->type === 'face') {
+                if ($item->item_type === 'face' || $item->item_type === 'head') {
                     ItemPreviewRenderer::dispatch($item->id, true, $item->hash)->onQueue('render');
                     sleep(3);
                 }
