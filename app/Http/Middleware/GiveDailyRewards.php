@@ -36,10 +36,9 @@ class GiveDailyRewards
             $user = Auth::user();
 
             if ($user->lastIP() == null) {
-                $AgentInfo = Location::get();
                 $ipLog = new IpLog;
                 $ipLog->user_id = Auth::user()->id;
-                $ipLog->ip = $AgentInfo->ip;
+                $ipLog->ip = $request->ip();
                 $ipLog->save();
             }
 

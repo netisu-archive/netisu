@@ -238,7 +238,6 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
 
     public function lastIP()
     {
-        // Assuming IpLog model has a 'ip' column
         $lastLog = $this->ipLogs()->latest()->first();
 
         return $lastLog ? $lastLog->ip : null;

@@ -15,10 +15,12 @@ class CompressResponse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $response = $next($request);
-        $response->headers->set('Content-Encoding', 'gzip'); // You can also use 'deflate' or 'br' (Brotli) as alternatives
-        $response->headers->set('Vary', 'Accept-Encoding');
-        return $response;
-
+        if (env('APP_ENV' !== 'local')) {
+            $response = $next($request);
+            $response->headers->set('Content-Encoding', 'gzip'); // You can also use 'deflate' or 'br' (Brotli) as alternatives
+            $response->headers->set('Vary', 'Accept-Encoding');
+            return $response;
+        }
+        return $next($request);
     }
 }

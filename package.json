@@ -66,6 +66,7 @@
         "momentum-trail": "^0.4.0",
         "path": "^0.12.7",
         "portal-vue": "^3.0.0",
+        "postcss-nested": "^7.0.2",
         "postcss-obfuscator": "^1.6.1",
         "prettier": "^3.4.2",
         "prettier-eslint": "^16.3.0",
