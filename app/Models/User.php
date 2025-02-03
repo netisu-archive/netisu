@@ -6,11 +6,6 @@ use Illuminate\{
     Database\Eloquent\Factories\HasFactory,
     Foundation\Auth\User as AeoAuthenticatable,
     Notifications\Notifiable,
-    Support\Facades\Cache,
-    Support\Facades\Redis,
-    Support\Facades\Auth,
-    Support\Collection,
-    Database\Eloquent\Relations\BelongsTo,
     Database\Eloquent\Relations\HasMany,
     Database\Eloquent\Relations\HasOne,
     Contracts\Auth\MustVerifyEmail,
@@ -22,15 +17,18 @@ use App\Models\{
     Admin,
     Level,
     Status,
-    ForumThread,
     IpLog,
+    ForumThread,
+    UserPromocodes,
     UsernameHistory,
 };
+
 use Laravel\{
     Cashier\Billable,
     Sanctum\HasApiTokens,
     Scout\Searchable,
 };
+
 use LevelUp\Experience\Concerns\{
     GiveExperience,
     HasAchievements,
@@ -142,6 +140,11 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         return $this->hasOne(Avatar::class)->first();
     }
 
+    public function promocodes()
+    {
+        return $this->belongsToMany(UserPromocodes::class, 'user_id')->withTimestamps();
+    }
+
     public function getNextLevelExp()
     {
         $currentLevel = min($this->getLevel() + 1, 100);
@@ -219,7 +222,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
     {
         return ItemPurchase::where('seller_id', '=', $this->id)->count();
     }
-    
+
     public function ownsItem($id)
     {
         return Inventory::where([

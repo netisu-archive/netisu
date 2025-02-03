@@ -17,13 +17,14 @@ use App\Http\Controllers\{
     AchievementController,
     Forum\ForumController,
     Leaderboard\LeaderboardController,
-    Admin\AdminController,
+    Promocodes\PromocodeController,
     Develop\DevelopController,
     Endpoints\NotificationController,
     Notification,
     MembershipController,
 };
 use Illuminate\Support\Facades\Password;
+use App\Models\User;
 
 use App\Models\UserSettings;
 use Illuminate\Support\Facades\Auth;
@@ -60,10 +61,10 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
             Route::get('/', [MoneyController::class, 'MoneyIndex'])->name('page');
             Route::post('/', [MoneyController::class, 'MoneyVal'])->name('validate');
         });
-            Route::group(['as' => 'dashboard.', 'prefix' => 'dashboard'], function () {
-                Route::get('/', [HomeController::class, 'DashboardIndex'])->name('page');
-                Route::post('/', [HomeController::class, 'DashboardVal'])->name('validate');
-            });
+        Route::group(['as' => 'dashboard.', 'prefix' => 'dashboard'], function () {
+            Route::get('/', [HomeController::class, 'DashboardIndex'])->name('page');
+            Route::post('/', [HomeController::class, 'DashboardVal'])->name('validate');
+        });
     });
 
     Route::group(['as' => 'user.', 'prefix' => 'user'], function () {
@@ -77,6 +78,11 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
             });
         });
     });
+    Route::group(['as' => 'promocodes.', 'prefix' => 'promocodes', 'middleware' => 'verified'], function () {
+        Route::get('/', [PromocodeController::class, 'PromocodeIndex'])->name('page');
+        Route::post('/validate', [PromocodeController::class, 'PromocodeVal'])->name('profile');
+    });
+
 
     Route::group(['as' => 'avatar.', 'prefix' => 'customize', 'middleware' => 'auth'], function () {
         Route::get('/', [GrabController::class, 'customizeIndex'])->name('page');
@@ -150,21 +156,21 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
 
             Route::group(['as' => 'forgot.', 'prefix' => 'forgot'], function () {
                 Route::get('/', [AuthController::class, 'ForgotIndex'])->name('page');
-                
+
                 Route::get('/reset-password/{token}', function (string $token) {
                     return view('auth.reset-password', ['token' => $token]);
                 })->middleware('guest')->name('password.reset');
-                
+
                 Route::post('/', function (Request $request) {
                     $request->validate(['email' => 'required|email']);
-                 
+
                     $status = Password::sendResetLink(
                         $request->only('email')
                     );
-                 
+
                     return $status === Password::ResetLinkSent
-                                ? back()->with(['status' => __($status)])
-                                : back()->withErrors(['email' => __($status)]);
+                        ? back()->with(['status' => __($status)])
+                        : back()->withErrors(['email' => __($status)]);
                 })->middleware('guest')->name('password.email');
             });
         });
@@ -216,7 +222,7 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
         Route::group(['as' => 'create.', 'prefix' => 'create', 'middleware' => ['auth', 'verified']], function () {
             Route::get('/', [SpaceController::class, 'SpaceCreate'])->name('page');
             Route::post('/create/validate', [SpaceController::class, 'SpaceVal'])->name('validate');
-        });       
+        });
         Route::post('/join/{id}', [SpaceController::class, 'JoinSpace'])->name('join');
 
         Route::get('/{id}/{slug}', [SpaceController::class, 'SpacesView'])->name('view');
@@ -242,9 +248,11 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
-    UserSettings::where('id', Auth::id())->update(['verified_email' => true]);
-
-    $request->user()->sendEmailVerificationNotification();
-
+    if (env('APP_ENV') === 'production') {
+        UserSettings::where('id', Auth::id())->update(['verified_email' => true]);
+        $request->user()->sendEmailVerificationNotification();
+    } else {
+        User::where('id', Auth::id())->update(['email_verified_at' => now()]);
+    }
     return back();
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
