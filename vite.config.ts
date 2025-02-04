@@ -1,12 +1,26 @@
-import { defineConfig } from 'vite';
+import type { UserConfig } from 'vite'
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import autoprefixer from "autoprefixer";
 import postcssNested from "postcss-nested";
 import { watch } from "vite-plugin-watch";
+import { VitePWA } from "vite-plugin-pwa";
+import { templateCompilerOptions } from '@tresjs/core'
+import path from "path";
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 
-export default defineConfig({
+export default {
+    server: {
+        host: '100.115.92.195',
+        cors: true,
+        hmr: {
+            host: '100.115.92.195',
+        },
+        watch: {
+            usePolling: false,
+        },
+    },
     css: {
         modules: {
             generateScopedName: "[hash:base64:5]",
@@ -20,6 +34,12 @@ export default defineConfig({
 
     },
     plugins: [
+        VitePWA({
+            registerType: "autoUpdate",
+            devOptions: {
+                enabled: true,
+            },
+        }),
         watch({
             pattern: "routes/*.php",
             command: "php artisan trail:generate",
@@ -38,6 +58,7 @@ export default defineConfig({
             ],*/
         }),
         vue({
+            ...templateCompilerOptions,
             template: {
                 transformAssetUrls: {
                     base: null,
@@ -45,5 +66,13 @@ export default defineConfig({
                 },
             },
         }),
+        basicSsl(),
+
     ],
-});
+    resolve: {
+        extensions: [".ts", ".tsx", ".js", ".json"],
+        alias: {
+            "@": path.resolve(__dirname, "resources/js"),
+        },
+    },
+} satisfies UserConfig;

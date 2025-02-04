@@ -8,6 +8,7 @@ use Kaankilic\WtFilter\Facades\WtFilter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Arr;
 
 use App\Models\{
     Item,
@@ -15,7 +16,8 @@ use App\Models\{
     Space,
     User,
     Inventory,
-    SiteSettings
+    SiteSettings,
+    UsernameHistory
 };
 use App\Notifications\GiftNotification;
 
@@ -26,14 +28,12 @@ class AdminController extends Controller
 
     public function __construct()
     {
-
-
         $this->admin = Admin::where('user_id', Auth::id())->first();
 
-        if(!$this->admin){
+        if (!$this->admin) {
             abort(403);
         }
-        
+
         $isProduction = app()->environment('production');
 
         if ($isProduction) {
@@ -66,12 +66,14 @@ class AdminController extends Controller
         ]);
     }
 
-    public function acceptPendingItem(Request $request)
+    public function ModeratePendingAsset(Request $request)
     {
-
         if (!Auth::check() || !Auth::user()->isStaff() && !$this->admin->rolePermissions("can_activate_maintenance") ?? false) {
             abort(403); // Immediately return a 403 for unauthorized users
         }
+
+        $ModerateType = $request->type;
+
         $this->site = SiteSettings::find(1);
 
         $this->site->site_maintenance = 1;
@@ -92,15 +94,29 @@ class AdminController extends Controller
 
     public function giftItem(int $itemId, int $userId)
     {
-        $user = User::where(['id' => $userId])->first();
-        $item = Item::where(['id' => $itemId])->first();
-
         if ((!$this->admin->rolePermissions("can_gift_users"))) {
             return response()->json([
                 'message' => 'Unauthorized',
                 'type' => 'danger',
             ]);
         }
+
+        $user = User::where(['id' => $userId])->first();
+        $item = Item::where(['id' => $itemId])->first();
+        if (!$item) {
+            return response()->json([
+                'message' =>  'Item Record not found',
+                'type' => 'danger'
+            ]);
+        }
+
+        if (!$user) {
+            return response()->json([
+                'message' =>  'User Record not found',
+                'type' => 'danger'
+            ]);
+        }
+
 
         $inventory = new Inventory;
 
@@ -112,12 +128,13 @@ class AdminController extends Controller
         $user->notify(new GiftNotification(Auth::user(), $item));
 
         return response()->json([
-            'message' =>  $item->name .' has been gifted to ' . $user->username . '.',
+            'message' =>  $item->name . ' has been gifted to ' . $user->username . '.',
             'type' => 'success'
         ]);
     }
 
-    public function purge(string $type, int $assetId){
+    public function purge(string $type, int $assetId)
+    {
         $canManage = [
             'item' => 'can_manage_items',
             'user' => 'can_manage_users',
@@ -130,20 +147,49 @@ class AdminController extends Controller
                 'type' => 'danger',
             ]);
         }
-    
+
         if ($type == "item") {
             $item = Item::where('id', $assetId)->first();
-    
+
             $item->update([
                 'name' => "[netisu-item:{$item->id}]"
             ]);
         } else if ($type == "user") {
             $user = User::where('id', $assetId)->first();
-            $user->update([
-                'display_name' => "[netisu-user:{$user->id}]",
-                'username' => "[netisu-user:{$user->id}]"
-            ]);
-    
+            $profanityList = Arr::wrap(config('filter.blacklist'));
+
+            // Normalize username (for profanity check only)
+            $normalizedName = strtolower(preg_replace('/[^\p{L}\p{N}]/u', '', $user->username));
+
+            $containsProfanity = false; // Flag to track profanity
+
+            foreach ($profanityList as $word) {
+                if (stripos($normalizedName, $word) !== false) {
+                    $containsProfanity = true;
+                    break;
+                }
+            }
+
+            if ($user->username != "[netisu-user:{$user->id}]" && !$containsProfanity) {
+                $usernameHistory = new UsernameHistory;
+                $usernameHistory->create([
+                    'user_id' => $user->id,
+                    'ip' => $user->lastIP(),
+                    'name' => $user->username
+                ]);
+            }
+            if ($user->username == "[netisu-user:{$user->id}]") {
+                $oldusername = UsernameHistory::where('user_id', '=', $user->id)->first();
+                $user->update([
+                    'display_name' => $oldusername->name,
+                    'username' => $oldusername->name
+                ]);
+            } else {
+                $user->update([
+                    'display_name' => "[netisu-user:{$user->id}]",
+                    'username' => "[netisu-user:{$user->id}]"
+                ]);
+            }
         } else if ($type == "space") {
             $space = Space::where('id', $assetId)->first();
             $space->update([

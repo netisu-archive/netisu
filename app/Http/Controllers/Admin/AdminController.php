@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Item;
+use App\Models\UsernameHistory;
 use App\Models\Avatar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -111,8 +112,13 @@ class AdminController extends Controller
         return $response;
     }
 
-    public function GiftUser($userID)
+    public function GiftUser(int $userID)
     {
+        $user = User::where(['id' => $userID])->first();
+        if (!$user) {
+            abort(404);
+        }
+
         if ($this->admin->rolePermissions('can_gift_users') ?? false != false):
             $response = inertia('Admin/Users/Gift', [
                 'userID' => $userID,
@@ -305,6 +311,7 @@ class AdminController extends Controller
         }
 
         $joindate = Carbon::parse($user->created_at)->format('M d Y');
+        $uh = $user->pastUsernames()->get();
 
         return inertia('Admin/Users/Manage', [
             'user' => [
@@ -319,6 +326,7 @@ class AdminController extends Controller
                 'coins' => $user->coins,
                 'DateHum' => $user->date_hum,
                 'joined' => $joindate,
+                'past_usernames' => $uh,
                 'settings' => [
                     'profile_banner_enabled' => $user->settings->profile_banner_enabled,
                     'profile_banner_url' => $user->settings->profile_banner_url,

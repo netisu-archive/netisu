@@ -19,8 +19,8 @@ class RedirectIfBanned
     /**
      * Handle an incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -37,11 +37,10 @@ class RedirectIfBanned
 
                 if($ban->length <= $ban->created_at)
                     $clear = true;
-                else 
+                else
                     $clear = false;
 
             if ($ban) {
-                //InetriaPage
                 return inertia('AccountDeleted', [
                     'ban' => $ban,
                     'ban.type' => $ban->getUserBanType(),

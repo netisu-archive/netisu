@@ -398,6 +398,11 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         }
     }
 
+    public function pastUsernames(): HasMany
+    {
+        return $this->hasMany(UsernameHistory::class, 'user_id', 'id');
+    }
+
     public function latestStatus(): HasOne
     {
         return $this->hasOne(Status::class, 'creator_id')->latest();

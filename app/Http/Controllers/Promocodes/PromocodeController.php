@@ -15,16 +15,9 @@ use App\Http\Controllers\Controller;
 class PromocodeController extends Controller
 {
     public function PromocodeIndex(Request $request)
-    {
+    {   
         return inertia('Promocodes/Index', [
-            'items' => [
-                [
-                    'id' => '1',
-                    'thumbnail' => 'https://100.115.92.195/cdn/thumbnails/0d05d842222622c90e0f485d08d330a838528238cbee_preview.png',
-                    'name' => 'test',
-                    'expiry' => 'test',
-                ]
-            ],
+            'items' => Promocode::where('code', $request->code)->first(),
         ]);
     }
     public function PromocodeVal(Request $request)

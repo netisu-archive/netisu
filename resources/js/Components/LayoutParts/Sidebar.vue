@@ -197,7 +197,7 @@ const lang = computed(() => usePage<any>().props.locale);
                     <Link :href="route(`spaces.view`, { id: space.id, slug: space.slug })"
                         class="side-link side-link-has-img">
                     <span class="side-img">
-                        <v-lazy-image :src="space.thumbnail" />
+                        <v-lazy-image class="headshot" :src="space.thumbnail" />
                     </span>
                     <span>{{ space.name }}</span>
                     </Link>

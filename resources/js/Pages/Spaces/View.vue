@@ -10,46 +10,61 @@ import AppHead from "@/Components/AppHead.vue";
 import Footer from "@/Components/LayoutParts/Footer.vue";
 import Sidebar from "@/Components/LayoutParts/Sidebar.vue";
 import VLazyImage from "v-lazy-image";
+import SuperBanner from '@/Components/LayoutParts/SuperBanner.vue';
 
 defineProps({
     spaces: { type: Array, required: true },
 });
 
-const submit = () => {
+const JoinSpace = () => {
     axios.get(`/sanctum/csrf-cookie`).then(() => {
         axios.post(route(`spaces.join`, { id: usePage<any>().props.space.id }), {
         });
     });
 };
-
+const LeaveSpace = () => {
+    axios.get(`/sanctum/csrf-cookie`).then(() => {
+        axios.post(route(`spaces.leave`, { id: usePage<any>().props.space.id }), {
+        });
+    });
+};
 </script>
 <template>
     <AppHead pageTitle="Spaces" description="Find a space to join or create one!" :url="route(`spaces.page`)" />
 
     <Navbar />
-    <template>
-        <portal to="bannerAsset">
-            <v-lazy-image :src="usePage<any>().props.space.thumbnail ?? '/assets/img/dummy-error.png'" width="100"
-                class="space-image" alt="Space Thumbnail" src-placeholder="/assets/img/dummy-error.png" />
-        </portal>
-        <portal to="bannerButtons">
-            <Link v-if="usePage<any>().props.auth.user && !usePage<any>().props.isInSpace"
-                class="text-xl text-success squish" href="#" @click="submit"
-                :content="'Join ' + usePage<any>().props.space.name" as="button" v-tippy="{ placement: 'bottom' }"
-                style="outline: none;">
-            <i class="fad fa-user-plus"></i>
-            </Link>
-        </portal>
-        <portal to="bannerName">
-            <div class="text-xl" style="line-height: 16px">
-                {{ usePage<any>().props.space.name }}
-            </div>
-        </portal>
-        <portal to="bannerDescription">
-            <p class="text-muted">{{ usePage<any>().props.space.description }}</p>
-        </portal>
-    </template>
-    <Sidebar :superBanActive="true" :alertsEnabled="false">
+    <Sidebar :superBanActive="true" :alertsEnabled="true">
+        <template #SuperBanner>
+            <SuperBanner>
+                <template #bannerAsset>
+                    <v-lazy-image :src="usePage<any>().props.space.thumbnail ?? '/assets/img/dummy-error.png'"
+                        width="100" class="space-image" alt="Space Thumbnail"
+                        src-placeholder="/assets/img/dummy-error.png" />
+                </template>
+                <template #bannerName>
+                    <div class="text-xl" style="line-height: 16px">
+                        {{ usePage<any>().props.space.name }}
+                    </div>
+                </template>
+                <template #bannerDescription>
+                    <p class="text-muted">{{ usePage<any>().props.space.description }}</p>
+                </template>
+                <template #bannerButtons>
+                    <Link v-if="usePage<any>().props.auth.user && !usePage<any>().props.isInSpace"
+                        class="text-xl text-success squish" href="#" @click="JoinSpace"
+                        :content="'Join ' + usePage<any>().props.space.name" as="button"
+                        v-tippy="{ placement: 'bottom' }" style="outline: none;">
+                    <i class="fad fa-user-plus"></i>
+                    </Link>
+                    <Link v-if="usePage<any>().props.auth.user && usePage<any>().props.auth.user.id != usePage<any>().props.space.creator.id  && usePage<any>().props.isInSpace"
+                        class="text-xl text-danger squish" href="#" @click="LeaveSpace"
+                        :content="'Leave ' + usePage<any>().props.space.name" as="button"
+                        v-tippy="{ placement: 'bottom' }" style="outline: none;">
+                    <i class="fad fa-user-minus"></i>
+                    </Link>
+                </template>
+            </SuperBanner>
+        </template>
         <div class="cell medium-3">
             <div class="mb-1 text-xl fw-semibold">Actions</div>
             <div class="gap-3 mt-3 mb-3 align-middle">

@@ -90,7 +90,7 @@ return Application::configure(basePath: dirname(__DIR__))
                             'id' => $request->user()->id,
                             'username' => $request->user()->username,
                             'display_name' => $request->user()->display_name,
-                            'email' => preg_replace('/[^@]+@([^\s]+)/', ''.substr($request->user()->email, 0, 3).'********@$1', $request->user()->email),
+                            'email' => preg_replace('/[^@]+@([^\s]+)/', '' . substr($request->user()->email, 0, 3) . '********@$1', $request->user()->email),
                             'birthdate' => $request->user()->birthdate,
                             'email_verified_at' => $request->user()->email_verified_at,
                             'event_currency' => shortNum($request->user()->event_currency),
@@ -154,6 +154,14 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__ . '/../routes/channels.php',
         ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
     )->withMiddleware(function (Middleware $middleware) {
+        $middleware->trustProxies(at: '*');
+        $middleware->trustProxies(
+            headers: Request::HEADER_X_FORWARDED_FOR |
+                Request::HEADER_X_FORWARDED_HOST |
+                Request::HEADER_X_FORWARDED_PORT |
+                Request::HEADER_X_FORWARDED_PROTO |
+                Request::HEADER_X_FORWARDED_AWS_ELB
+        );
         $middleware->validateCsrfTokens(except: [
             //
         ]);
@@ -163,7 +171,6 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
         ]);
-        $middleware->replace(\Illuminate\Http\Middleware\TrustProxies::class, \App\Http\Middleware\TrustProxies::class);
         $middleware->web(append: [
             \Illuminate\Routing\Middleware\ThrottleRequests::class,
             \App\Http\Middleware\Cors::class,
