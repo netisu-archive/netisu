@@ -26,7 +26,6 @@ class PromocodeController extends Controller
             'code' => 'required|string',
         ]);
 
-
         $promocode = Promocode::where('code', $request->code)->first();
 
         if (!$promocode) {

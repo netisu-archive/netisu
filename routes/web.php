@@ -78,9 +78,10 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
             });
         });
     });
+
     Route::group(['as' => 'promocodes.', 'prefix' => 'promocodes', 'middleware' => 'verified'], function () {
         Route::get('/', [PromocodeController::class, 'PromocodeIndex'])->name('page');
-        Route::post('/validate', [PromocodeController::class, 'PromocodeVal'])->name('profile');
+        Route::post('/validate', [PromocodeController::class, 'PromocodeVal'])->name('redeem');
     });
 
 

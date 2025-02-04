@@ -131,29 +131,23 @@ function remote_file_exists($url)
     }
 }
 
-function shortNum($num)
-{
-    if ($num < 999) {
-        return $num;
-    } else if ($num > 999 && $num <= 9999) {
-        $new_num = substr($num, 0, 1);
-        return $new_num . 'K+';
-    } else if ($num > 9999 && $num <= 99999) {
-        $new_num = substr($num, 0, 2);
-        return $new_num . 'K+';
-    } else if ($num > 99999 && $num <= 999999) {
-        $new_num = substr($num, 0, 3);
-        return $new_num . 'K+';
-    } else if ($num > 999999 && $num <= 9999999) {
-        $new_num = substr($num, 0, 1);
-        return $new_num . 'M+';
-    } else if ($num > 9999999 && $num <= 99999999) {
-        $new_num = substr($num, 0, 2);
-        return $new_num . 'M+';
-    } else if ($num > 99999999 && $num <= 999999999) {
-        $new_num = substr($num, 0, 3);
-        return $new_num . 'M+';
-    } else {
+function shortNum($num) {
+    if ($num < 1000) {
         return $num;
     }
+
+    $suffixes = ['', 'K', 'M', 'B', 'T']; // standard money suffexes
+    $exponent = floor(log10($num) / 3);
+    $divisor = pow(10, $exponent * 3);
+    $shortened = $num / $divisor;
+
+    // Format to one decimal place.
+    if ($shortened < 10) {
+        $formatted = number_format($shortened, 1);
+    } else {
+        $formatted = number_format($shortened, 0); // no decimals
+    }
+
+
+    return $formatted . $suffixes[$exponent];
 }

@@ -139,12 +139,21 @@ const sidebar = [
     {
         url: route(`leaderboard.page`),
         section: "SOCIAL",
-        ActiveLink: route(`leaderboard.page`),
+        ActiveLink: "leaderboard.page",
         icon: "fad fa-list-ol",
         en: { title: "Leaderboard" },
         es: { title: "Tabla de clasificación" },
         ru: { title: "Таблица лидеров" },
         ja: { title: "リーダーボード" },
+    }, {
+        url: route(`promocodes.page`),
+        section: "SOCIAL",
+        ActiveLink: "promocodes.page",
+        icon: "fad fa-ticket",
+        en: { title: "Promocodes" },
+        es: { title: "Códigos promocionales" },
+        ru: { title: "Промокоды" },
+        ja: { title: "プロモコード" },
     },
     {
         url: "#",

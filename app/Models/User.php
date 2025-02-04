@@ -236,7 +236,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         return $this->hasMany(IpLog::class, 'user_id');
     }
 
-    public function lastIP()
+    public function lastIP(): string
     {
         $lastLog = $this->ipLogs()->latest()->first();
 
@@ -289,7 +289,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
 
     public function primarySpace(): HasOne
     {
-        return $this->hasOne(Space::class, 'space_id', $this->settings->primary_space);
+        return $this->hasOne(Space::class, 'id', $this->settings->primary_space);
     }
 
     public function navSpaces()
@@ -304,7 +304,6 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
             ];
         });
     }
-
 
     public function canEditItem($id): bool
     {
