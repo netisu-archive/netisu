@@ -29,7 +29,7 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
 const appName = import.meta.env?.["VITE_APP_NAME"] || "Laravel";
 
-createServer((page: Page) =>
+createServer(page =>
     createInertiaApp({
         page,
         render: renderToString,
