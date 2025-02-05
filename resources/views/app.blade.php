@@ -11,7 +11,7 @@ Unauthorized use of this code (Not Mendcore) is strictly prohibited.
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <link id="theme-style" rel="stylesheet" defer>
 
-    @vite('resources/js/app.ts')
+    @vite(['resources/js/app.ts', "resources/js/Pages/{$page['component']}.vue"])
     @inertiaHead
 </head>
 <style>
