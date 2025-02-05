@@ -102,8 +102,9 @@ usePoll(10000, { only: ['replies'] })
                             <v-lazy-image :src="usePage<any>().props.post.creator.thumbnail" width="136px"
                                 class="border img-fluid" :alt="usePage<any>().props.post.creator.username"
                                 src-placeholder="/assets/img/dummy.png" /> </Link>
-                            <div class="text-center text-truncate" style="line-height: 16px">
-                                <div class="fw-semibold">{{ usePage<any>().props.post.creator.display_name }}
+                            <div class="text-center" style="line-height: 16px">
+                                <div class="fw-semibold  text-truncate">{{ usePage<any>
+                                        ().props.post.creator.display_name }}
                                 </div>
                                 <div class="text-xs fw-semibold text-muted text-truncate">
                                     {{ '@' + usePage<any>().props.post.creator.username }}
