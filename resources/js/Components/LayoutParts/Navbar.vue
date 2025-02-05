@@ -464,70 +464,11 @@ const props = usePage<any>().props;
 <script lang="ts">
 import { directive } from 'vue-tippy'
 
-let theme;
-
 export default {
-    beforeMount() {
-        Promise.resolve().then(() => { // Made this async 3/2/24
-            let theme = 'light';
-
-            if (typeof localStorage !== 'undefined') {
-                try {
-                    // Add try-catch to handle potential errors
-                    theme = localStorage.getItem('theme') || theme;
-                } catch (error) {
-                    console.error("Error accessing localStorage:", error);
-                }
-            } else if (typeof sessionStorage !== 'undefined') {
-                try {
-                    theme = sessionStorage.getItem('theme') || theme;
-                } catch (error) {
-                    console.error("Error accessing sessionStorage:", error);
-                }
-            } else {
-                console.log('Web Storage is not supported in this environment.');
-            }
-
-            return theme;
-        }).then(theme => {
-            this.$nextTick(() => {  // Apply theme after DOM is ready
-                this.applyTheme(theme);
-            });
-        });
-    },
     directives: {
         tippy: directive,
     },
     methods: {
-        applyTheme(theme) {
-            let lowercaseTheme = theme.toLowerCase();
-
-            const style = (document.getElementById("theme-style") as HTMLLinkElement);
-
-            if (!style) {
-                let style = (document.createElement("link") as HTMLLinkElement);
-                style.id = "theme-style";
-                style.rel = "stylesheet";
-                document.head.appendChild(style);
-            }
-
-            if (style) {
-                style.href = `/assets/css/themes/variables-${lowercaseTheme}.css`;
-            } else {
-                return console.log("Theme Error");
-            }
-
-            // Save the selected theme in Storage
-            if (typeof localStorage !== 'undefined') {
-                localStorage.setItem('theme', theme);
-            } else if (typeof sessionStorage !== 'undefined') {
-                // Fallback to sessionStorage if localStorage is not supported
-                sessionStorage.setItem('theme', theme);
-            } else {
-                // If neither localStorage nor sessionStorage is supported
-                console.log('Web Storage is not supported in this environment.');
-            }
-        },
         showModal(modalId: string): void {
             const modal = document.getElementById(modalId);
             if (modal) {
