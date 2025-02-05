@@ -3,7 +3,10 @@ return [
     'name' => 'Netisu',
     'logo' => '/assets/img/logo-theta.svg',
     'icon' => '/assets/img/logo.svg',
+    'marketLogo' => '/assets/img/site-banners/market-title-xoxo.png',
+
     'in_event' => true,
+    
     'system_account_id' => 2,
     'in_testing_phase' => true,
 
