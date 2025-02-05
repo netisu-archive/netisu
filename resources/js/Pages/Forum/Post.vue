@@ -102,10 +102,10 @@ usePoll(10000, { only: ['replies'] })
                             <v-lazy-image :src="usePage<any>().props.post.creator.thumbnail" width="136px"
                                 class="border img-fluid" :alt="usePage<any>().props.post.creator.username"
                                 src-placeholder="/assets/img/dummy.png" /> </Link>
-                            <div class="text-center" style="line-height: 16px">
+                            <div class="text-center text-truncate" style="line-height: 16px">
                                 <div class="fw-semibold">{{ usePage<any>().props.post.creator.display_name }}
                                 </div>
-                                <div class="text-xs fw-semibold text-muted">
+                                <div class="text-xs fw-semibold text-muted text-truncate">
                                     {{ '@' + usePage<any>().props.post.creator.username }}
                                 </div>
                                 <div class="text-center">
@@ -133,7 +133,7 @@ usePoll(10000, { only: ['replies'] })
                 </div>
                 <div v-if="usePage<any>().props.replies.data.length">
                     <div class="mx-1 my-3 divider"></div>
-                    <div v-for="reply in usePage<any>().props.replies.data" class="grid-x">
+                    <div v-for="reply in usePage<any>().props.replies.data" class="grid-x grid-margin-x">
                         <div class="cell medium-2">
                             <div class="gap-2 mb-3 text-center align-center">
                                 <Link :href="route('user.profile', { username: reply.creator.username })">
@@ -141,9 +141,9 @@ usePoll(10000, { only: ['replies'] })
                                     :alt="reply.creator.username" src-placeholder="/assets/img/dummy.png" />
                                 </Link>
                                 <div class="text-center" style="line-height: 16px">
-                                    <div class="fw-semibold">{{ reply.creator.display_name }}
+                                    <div class="fw-semibold text-truncate">{{ reply.creator.display_name }}
                                     </div>
-                                    <div class="text-xs fw-semibold text-muted">
+                                    <div class="text-xs fw-semibold text-muted text-truncate">
                                         {{ '@' + reply.creator.username }}
                                     </div>
                                 </div>
