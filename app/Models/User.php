@@ -140,7 +140,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         return $this->hasOne(Avatar::class)->first();
     }
 
-    public function promocode(): HasOne 
+    public function promocodes(): HasOne 
     {
         return $this->hasOne(UserPromocodes::class, 'user_id');
     }
