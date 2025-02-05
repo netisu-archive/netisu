@@ -142,7 +142,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
 
     public function promocodes()
     {
-        return $this->belongsToMany(UserPromocodes::class, 'user_id')->withTimestamps();
+        return $this->belongsToMany(UserPromocodes::class)->withTimestamps();
     }
 
     public function getNextLevelExp()
