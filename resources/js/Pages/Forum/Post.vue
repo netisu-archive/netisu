@@ -94,7 +94,7 @@ usePoll(10000, { only: ['replies'] })
         </template>
         <div class="cell medium-12">
             <div class="card-body">
-                <div class="grid-x">
+                <div class="grid-x grid-margin-x">
                     <div class="cell medium-2">
                         <div class="gap-2 mb-3 text-center align-center">
                             <Link
