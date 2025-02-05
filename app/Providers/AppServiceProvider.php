@@ -35,12 +35,13 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(UrlGenerator $url): void
-    {
+    {        
+        Vite::prefetch();
+
         $this->bootRoute();
         if (!$this->app->environment('local')) {
             $url->forceScheme('https');
         }
-        Vite::prefetch(concurrency: 3);
 
         Cashier::calculateTaxes();
 
