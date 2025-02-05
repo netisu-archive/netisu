@@ -155,32 +155,30 @@ Unauthorized use of this code (Not Mendcore) is strictly prohibited.
             animation-delay: 3s, 1.5s;
         }
     </style>
+    <style>
+        #snowflakeContainer {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            display: none;
+        }
+
+        .snowflake {
+            position: fixed;
+            background-color: #CCC;
+            user-select: none;
+            z-index: 1000;
+            pointer-events: none;
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+        }
+    </style>
 </head>
-<style>
-    #snowflakeContainer {
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        display: none;
-    }
-
-    .snowflake {
-        position: fixed;
-        background-color: #CCC;
-        user-select: none;
-        z-index: 1000;
-        pointer-events: none;
-        border-radius: 50%;
-        width: 10px;
-        height: 10px;
-    }
-</style>
-
+<body style="margin:0;padding:0">
 <div id="snowflakeContainer">
     <span class="snowflake"></span>
 </div>
-
-<body style="margin:0;padding:0">
     @inertia
 </body>
 
