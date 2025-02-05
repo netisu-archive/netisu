@@ -16,7 +16,7 @@ import VLazyImage from 'v-lazy-image';
 import SuperBanner from '@/Components/LayoutParts/SuperBanner.vue';
 
 defineProps<{
-    mustVerifyEmail?: Boolean,
+    hasVerifiedEmail?: Boolean,
     status?: String,
     categories?: Array<string>,
     themes?: Object,
@@ -67,7 +67,7 @@ const currentTheme = localStorage.getItem('theme');
 
 
 const isVerifiedEmail = computed(() => {
-    return usePage<any>().props.auth.user.settings.verified_email || false;
+    return usePage<any>().props.hasVerifiedEmail || false;
 });
 </script>
 
