@@ -154,6 +154,10 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__ . '/../routes/channels.php',
         ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
     )->withMiddleware(function (Middleware $middleware) {
+        $middleware->replace(
+            \Illuminate\Http\Middleware\TrustProxies::class,
+            \Monicahq\Cloudflare\Http\Middleware\TrustProxies::class
+        );
         $middleware->trustProxies(at: '*');
         $middleware->trustProxies(
             headers: Request::HEADER_X_FORWARDED_FOR |
