@@ -158,7 +158,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\TrustProxies::class,
             \Monicahq\Cloudflare\Http\Middleware\TrustProxies::class
         );
-        $middleware->trustProxies(at: '*');
+        $middleware->trustProxies(at: [
+            ['REMOTE_ADDR'],
+            Request::HEADER_X_FORWARDED_FOR
+        ]);
         $middleware->trustProxies(
             headers: Request::HEADER_X_FORWARDED_FOR |
                 Request::HEADER_X_FORWARDED_HOST |
