@@ -13,18 +13,21 @@ class SpacesController extends Controller
     public function getSpaceMembersByRank(int $spaceId, int $rankId)
     {
         $space = Space::find($spaceId);
-        $rank = SpaceRanks::find($rankId);
+        $rank = SpaceRanks::where('space_id', $spaceId)->find($rankId);
 
-        if (!$space || !$rank) {
-            return response()->json(['message' => 'Space or rank not found.']);
+        if (!$space) {
+            return response()->json(['type' => 'danger', 'message' => 'Space not found.']);
+        }
+        if (!$rank) {
+            return response()->json(['type' => 'danger', 'message' => 'Rank not found.']);
         }
 
 
         $memberQuery = SpaceMembers::where([
             ['space_id', $spaceId],
-            ['rank_id', $rankId]
+            ['rank', $rankId]
         ])
-            ->with(['user', 'rank'])
+            ->with(['user'])
             ->paginate(10);
 
         $members = $memberQuery->map(function ($member) {
@@ -32,7 +35,6 @@ class SpacesController extends Controller
                 'id' => $member->user->id,
                 'username' => $member->user->username,
                 'headshot' => $member->user->headshot(),
-                'role' => $member->rank->name,
             ];
         })->toArray();
 

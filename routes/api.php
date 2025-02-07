@@ -14,6 +14,7 @@ use App\Http\Controllers\{
     Endpoints\ThumbnailController,
     Endpoints\SearchSiteController,
     Endpoints\NotificationController,
+    Endpoints\SpacesController,
     Endpoints\SettingsController
 };
 
@@ -38,6 +39,10 @@ Route::group(['as' => 'api.'], function () {
 
         Route::post("/send-Message/to/{id}", [ChatController::class, "sendMessage"]);
         Route::get("/previous-messages", [ChatController::class, "previousMessages"]);
+    });
+    Route::group(['as' => 'spaces.', 'prefix' => 'spaces'], function () {
+
+        Route::get("/get-members/{spaceId}/{rankId}", [SpacesController::class, "getSpaceMembersByRank"]);
     });
 
     Route::get('/', function () {

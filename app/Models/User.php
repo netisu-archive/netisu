@@ -140,7 +140,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         return $this->hasOne(Avatar::class)->first();
     }
 
-    public function promocodes(): HasOne 
+    public function promocodes(): HasOne
     {
         return $this->hasOne(UserPromocodes::class, 'user_id');
     }
@@ -236,7 +236,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         return $this->hasMany(IpLog::class, 'user_id');
     }
 
-    public function lastIP(): string
+    public function lastIP(): string|null
     {
         $lastLog = $this->ipLogs()->latest()->first();
 
