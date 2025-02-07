@@ -158,10 +158,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\TrustProxies::class,
             \Monicahq\Cloudflare\Http\Middleware\TrustProxies::class
         );
-        $middleware->trustProxies(at: [
-            ['REMOTE_ADDR'],
-            Request::HEADER_X_FORWARDED_FOR
-        ]);
+
         $middleware->trustProxies(
             headers: Request::HEADER_X_FORWARDED_FOR |
                 Request::HEADER_X_FORWARDED_HOST |
@@ -169,6 +166,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 Request::HEADER_X_FORWARDED_PROTO |
                 Request::HEADER_X_FORWARDED_AWS_ELB
         );
+        $middleware->trustProxies(at: [
+            $_SERVER['REMOTE_ADDR'],
+            Request::HEADER_X_FORWARDED_FOR
+        ]);
         $middleware->validateCsrfTokens(except: [
             //
         ]);
