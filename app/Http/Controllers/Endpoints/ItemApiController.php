@@ -97,7 +97,7 @@ class ItemApiController extends Controller
     {
         $item = Item::where(['id' => $itemID])->first();
 
-    
+
         if ($item->item_type !== 'face' || $item->item_type !== 'head' ) {
             ItemRenderer::dispatch($item->id)->onQueue('render');
             ItemPreviewRenderer::dispatch($item->id, true, $item->hash)->onQueue('render');
@@ -390,16 +390,15 @@ class ItemApiController extends Controller
             ]);
 
             // Create purchase record
-            $AgentInfo = Location::get();
-
             $purchaseRecord = new ItemPurchase;
+            
             $purchaseRecord->create([
                 "seller_id" => $seller->id,
                 "buyer_id" => Auth::user()->id,
                 "item_id" => $item->id,
-                "ip" => $AgentInfo->ip,
+                "ip" => request()->ip,
                 "currency_used" => $currencyType,
-                "price" => $price,
+                "price" => $price ? $price : 'Free',
             ]);
 
 

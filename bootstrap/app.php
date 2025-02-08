@@ -166,10 +166,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 Request::HEADER_X_FORWARDED_PROTO |
                 Request::HEADER_X_FORWARDED_AWS_ELB
         );
-        $middleware->trustProxies(at: [
-            $_SERVER['REMOTE_ADDR'],
-            Request::HEADER_X_FORWARDED_FOR
-        ]);
         $middleware->validateCsrfTokens(except: [
             //
         ]);
