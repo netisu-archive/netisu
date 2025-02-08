@@ -35,6 +35,7 @@ server {
     # Add security headers
     add_header X-Frame-Options "SAMEORIGIN";
     add_header X-Content-Type-Options "nosniff";
+    real_ip_header CF-Connecting-IP;
 
     index index.php;
 
