@@ -1,15 +1,21 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\SiteSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class MaintenanceController extends Controller
 {
     public function show()
-    {
+
+    {   $siteFlags = SiteSettings::find(1);
+
         if (Session::has('maintenance_password')) {
             return redirect()->route('Welcome')->with(['success' => 'Already authenticated.']);
+        }
+        if ($siteFlags->site_maintentance == false) {
+            return redirect()->route('Welcome');
         }
 
         return inertia('Maintenance/Index',[

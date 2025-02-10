@@ -24,8 +24,8 @@ return [
 
     'production' => [
         'domains' => [
-            'main' => 'https://netisu11.test/',
-            'storage' => 'https://cdn.test/',
+            'main' => 'https://netisu11.test',
+            'storage' => 'https://cdn.test',
             'api' => 'https://netisu11.test/api',
             'careers' => 'https://careers.100.115.92.195',
             'support' => 'support@100.115.92.195'

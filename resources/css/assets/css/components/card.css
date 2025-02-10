@@ -2,7 +2,7 @@
     background: var(--section-bg);
     border: 2px solid var(--section-border-color);
     box-shadow: 0 1px 3px rgb(var(--section-shadow), 30%);
-    border-radius: 12px;
+    border-radius: 15px;
     position: relative;
 }
 .card-body {

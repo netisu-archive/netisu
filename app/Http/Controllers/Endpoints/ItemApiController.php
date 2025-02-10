@@ -98,7 +98,7 @@ class ItemApiController extends Controller
         $item = Item::where(['id' => $itemID])->first();
 
 
-        if ($item->item_type !== 'face' || $item->item_type !== 'head' ) {
+        if ($item->item_type !== 'face' || $item->item_type !== 'head') {
             ItemRenderer::dispatch($item->id)->onQueue('render');
             ItemPreviewRenderer::dispatch($item->id, true, $item->hash)->onQueue('render');
         }
@@ -254,38 +254,42 @@ class ItemApiController extends Controller
     private function getItemAndValidateAccess(int $itemId)
     {
         $item = Item::where('id', $itemId)->firstOrFail();
+        if (env('APP_ENV') != 'local') {
 
-        if (!Auth::user()->isStaff() && !$item->public_view) {
-            abort(403);
-        }
 
-        if ($item->status != 'approved' && $item->public_view != true && !Auth::user()->isStaff()) {
-            return response()->json(
-                [
-                    "message" => "This item is not approved.",
-                    "type" => "danger",
-                ],
-                500
-            );
-        } else if (!$item->onsale) {
-            return response()->json(
-                [
-                    "message" => "This item is not for sale.",
-                    "type" => "danger",
-                ],
-                500
-            );
-        } else if (Auth::user()->ownsItem($itemId)) {
-            return response()->json(
-                [
-                    "message" => "You already own the item.",
-                    "type" => "danger",
-                ],
-                500
-            );
-        } else {
-            return $item;
+            if (!Auth::user()->isStaff() && !$item->public_view) {
+                abort(403);
+            }
+
+            if ($item->status != 'approved' && $item->public_view != true && !Auth::user()->isStaff()) {
+                return response()->json(
+                    [
+                        "message" => "This item is not approved.",
+                        "type" => "danger",
+                    ],
+                    500
+                );
+            } else if (!$item->onsale) {
+                return response()->json(
+                    [
+                        "message" => "This item is not for sale.",
+                        "type" => "danger",
+                    ],
+                    500
+                );
+            } else if (Auth::user()->ownsItem($itemId)) {
+                return response()->json(
+                    [
+                        "message" => "You already own the item.",
+                        "type" => "danger",
+                    ],
+                    500
+                );
+            } else {
+                return $item;
+            }
         }
+        return $item;
     }
 
     private function handleResellerPurchase(Item $item, int $resellerId, string $currencyType)
@@ -382,23 +386,23 @@ class ItemApiController extends Controller
             ]);
 
             // Create inventory record
-           $inventory = new Inventory;
+            $inventory = new Inventory;
 
-           $inventory->create([
+            $inventory->create([
                 "user_id" => Auth::user()->id,
                 "item_id" => $item->id,
             ]);
 
             // Create purchase record
             $purchaseRecord = new ItemPurchase;
-            
+
             $purchaseRecord->create([
                 "seller_id" => $seller->id,
                 "buyer_id" => Auth::user()->id,
                 "item_id" => $item->id,
-                "ip" => request()->ip,
+                "ip" => \Request::ip(),
                 "currency_used" => $currencyType,
-                "price" => $price ? $price : 'Free',
+                "price" => $price,
             ]);
 
 

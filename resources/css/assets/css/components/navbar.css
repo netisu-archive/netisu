@@ -6,7 +6,6 @@
     background: var(--section-bg);
     border-bottom: 1px solid var(--section-border-color);
     padding: 10px 15px;
-    box-shadow: 1px 1px 5px rgb(var(--section-shadow), 0.1);
 }
 .navbar-landing {
     background: var(--info-600) !important;

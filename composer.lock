@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1acf1a3443bd04eb4b866ab968f67283",
+    "content-hash": "fe45f8b399563a94b28e7fd2e2110469",
     "packages": [
         {
             "name": "arandilopez/laravel-profane",
@@ -16016,5 +16016,5 @@
         "php": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
