@@ -139,7 +139,7 @@ class AdminController extends Controller
     public function UserIndex()
     {
         // Define a cache key for this query result
-        $cacheKey = 'users_index';
+        $cacheKey = 'admin_users_index';
         $users = Cache::remember($cacheKey, now()->addMinutes(30), function () {
             return User::orderBy('id', 'asc')->paginate(10)->through(function ($user) {
                 return [
