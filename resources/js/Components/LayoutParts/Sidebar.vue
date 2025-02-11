@@ -198,8 +198,23 @@ const lang = computed(() => usePage<any>().props.locale);
                 </SideLink>
             </template>
             <div v-if="usePage<any>().props.auth.user">
+                <div v-if="usePage<any>().props.auth.user.navSpaces.length">
                 <li class="side-item side-title">
-                    My Spaces
+                    Main Spaces
+                </li>
+                <li v-if="usePage<any>().props.auth.user.navSpaces.length"
+                    v-for="(space, index) in usePage<any>().props.auth.user.navSpaces" :key="index" class="side-item">
+                    <Link :href="route(`spaces.view`, { id: space.id, slug: space.slug })"
+                        class="side-link side-link-has-img">
+                    <span class="side-img">
+                        <v-lazy-image class="headshot" :src="space.thumbnail" />
+                    </span>
+                    <span>{{ space.name }}</span>
+                    </Link>
+                </li>
+            </div>
+                <li class="side-item side-title">
+                    Joined Spaces
                 </li>
                 <li v-if="usePage<any>().props.auth.user.navSpaces.length"
                     v-for="(space, index) in usePage<any>().props.auth.user.navSpaces" :key="index" class="side-item">

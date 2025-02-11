@@ -25,7 +25,7 @@ class UserController extends Controller
         $cacheKey = 'users_index';
         $currentPage = request()->get('page', 1);
 
-        $users = Cache::remember($cacheKey . '-' . $currentPage, 10, function () {
+        $users = Cache::remember($cacheKey . '-' . $currentPage, now()->addMinutes(3), function () {
             return User::orderBy('updated_at', 'desc')->paginate(12)->through(function ($user) {
                 $isFollowing = Auth::check() && Auth::user()->isFollowing($user) ?? false;
                 return [
@@ -54,7 +54,7 @@ class UserController extends Controller
         $cacheKey = 'user_profile_' . $username;
 
         // Retrieve the user profile from the cache, ensuring `$user` is accessible
-        $user = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($username) {
+        $user = Cache::remember($cacheKey, now()->addMinutes(3), function () use ($username) {
             return User::where('username', $username)->first();
         });
         // Check if the user exists

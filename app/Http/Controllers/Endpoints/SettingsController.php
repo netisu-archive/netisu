@@ -2,30 +2,36 @@
 
 namespace App\Http\Controllers\Endpoints;
 
-use App\Http\Requests\ProfileUpdateRequest;
+use App\{
+    Http\Controllers\Controller,
+    Http\Requests\ProfileUpdateRequest,
+    Models\Country,
+    Models\User,
+    Models\UserBan,
+    Models\UserSettings,
+
+};
 use Illuminate\{
- Contracts\Auth\MustVerifyEmail,
- Validation\ValidationException,
- Support\Facades\Redirect, 
- Support\Facades\Password,
- Http\RedirectResponse, 
- Support\Facades\Auth,  
- Support\Facades\Hash,
- Http\JsonResponse,  
- Validation\Rules,
- Support\Carbon,
- Http\Request,
- Support\Str,
+    Contracts\Auth\MustVerifyEmail,
+    Validation\ValidationException,
+    Support\Facades\Redirect,
+    Support\Facades\Password,
+    Http\RedirectResponse,
+    Support\Facades\Auth,
+    Support\Facades\Hash,
+    Http\UploadedFile,
+    Http\JsonResponse,
+    Support\Facades\Validator,
+    Validation\Rules,
+    Support\Facades\Storage,
+    Support\Carbon,
+    Http\Request,
+    Support\Str,
 };
 
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Models\Country;
-use App\Models\User;
 
-use App\Models\UserBan;
-use App\Models\UserSettings;
-use App\Http\Controllers\Controller;
 
 use Auth\Events\PasswordReset;
 
@@ -99,6 +105,59 @@ class SettingsController extends Controller
         }
 
         return response()->json(['status' => __($status)]);
+    }
+
+    private function uploadImage(string $folder, UploadedFile $file, string $name): string
+    {
+        $path = Storage::disk('spaces')->putFileAs($folder, $file, "{$name}.png", 'public');
+
+        return $path;
+    }
+    private function validateRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:png', // Validate PNG image
+        ]);
+
+        if ($validator->fails()) { // Use Validator object's fails method on $validator
+            throw ValidationException::withMessages([$validator->errors()]);
+        }
+    }
+
+    public function uploadProfilePicture(Request $request)
+    {
+        $this->validateRequest($request);
+        // Get the user
+
+        // Get the user's settings record
+        $settings = UserSettings::where('id', Auth::id());
+
+        // Get the image from the request
+        $image = $request->image;
+        $assetHash = bin2hex(random_bytes(22));
+
+        // Makes sure that its not null (dont think this will stop transparent images bub)
+        if (!$image) {
+            return response()->json([
+                "message" => "Image is null",
+                "type" => "danger",
+            ], 400); // Use 400 for Bad Request
+        }
+
+        $info = getimagesize($request->file('image'));
+        if ($info[2] == IMAGETYPE_JPEG) {
+            return response()->json([
+                'message' => 'This file needs to be a true PNG, none of that sneaky jpeg-in-disguise business.',
+                'type' => 'danger' // Optional: specify message type for styling
+            ], 502);
+        }
+
+        $this->uploadImage('thumbnails/profile-pictures', $request->file('image'), $assetHash);
+
+        $settings->profile_picture_enabled = false;
+        $settings->profile_picture_url = $assetHash;
+
+        return redirect()->back();
     }
 
     /**

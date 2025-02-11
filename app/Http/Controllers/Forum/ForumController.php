@@ -94,22 +94,25 @@ class ForumController extends Controller
         // Fetch the selected forum topic
         $topic = ForumTopic::where('id', '=', $id)->first();
 
-        if (!$topic){
+        if (!$topic) {
             abort(404);
         }
 
         if ($topic->is_staff_only_viewing) {
             if (Auth::check()) {
                 if (!Auth::user()->isStaff()) {
-                    abort(403); 
+                    abort(403);
                 }
             } else {
-                abort(404); 
+                abort(404);
             }
         }
 
         // Use caching to store the posts related to the selected topic
-        $posts = Cache::remember('topic_' . $id . '_posts', now()->addMinutes(15), function () use ($topic) {
+        $cacheKey = 'topic_' . $id . '_posts';
+        $currentPage = request()->get('page', 1);
+
+        $posts = Cache::remember($cacheKey . '-' . $currentPage, now()->addMinutes(5),  function () use ($topic) {
             return $topic->threads()->through(function ($post) {
                 return [
                     'id' => $post->id,
@@ -152,16 +155,15 @@ class ForumController extends Controller
         if ($slug != $post->slug() || $post->is_staff_only_viewing || $post->is_deleted) {
             abort(404);
         }
-
+        $cacheKey = 'post_' . $id . '_replies';
+        $currentPage = request()->get('page', 1);
         // Cache the post
         $post = Cache::remember('forum_post_' . $id, now()->addMinutes(10), fn() => $post);
 
         // Parse the post body
-        $post->body = $bbcodeService->parse($post->body);
         $post->body = $MarkdownService->parse($post->body);
+        $post->body = $bbcodeService->parse($post->body);
         $post->body = Purifier::clean($post->body);
-
-        // Cache the paginated replies
 
         return inertia('Forum/Post', [
             'post' => [
@@ -186,22 +188,25 @@ class ForumController extends Controller
                     ],
                 ],
             ],
-            'replies' => $post->replies()->paginate(10)->through(function ($reply) use ($bbcodeService) {
-                return [
-                    'body' => $bbcodeService->parse(Purifier::clean($reply->body)),
-                    'is_deleted' => $reply->is_deleted,
-                    'DateHum' => $reply->created_at->diffForHumans(),
-                    'creator' => [
-                        'username' => $reply->creator->username,
-                        'staff' => $reply->creator->isStaff(),
-                        'position' => $reply->creator->CurrentPosition(),
-                        'display_name' => $reply->creator->display_name,
-                        'thumbnail' => $reply->creator->thumbnail(),
-                        'settings' => [
-                            'beta_tester' => $reply->creator->settings->beta_tester,
+            // Cache the paginated replies
+            'replies' => Cache::remember($cacheKey . '-' . $currentPage, now()->addMinutes(3),  function ()  use ($bbcodeService, $post){
+                $post->replies()->paginate(10)->through(function ($reply) use ($bbcodeService) {
+                    return [
+                        'body' => $bbcodeService->parse(Purifier::clean($reply->body)),
+                        'is_deleted' => $reply->is_deleted,
+                        'DateHum' => $reply->created_at->diffForHumans(),
+                        'creator' => [
+                            'username' => $reply->creator->username,
+                            'staff' => $reply->creator->isStaff(),
+                            'position' => $reply->creator->CurrentPosition(),
+                            'display_name' => $reply->creator->display_name,
+                            'thumbnail' => $reply->creator->thumbnail(),
+                            'settings' => [
+                                'beta_tester' => $reply->creator->settings->beta_tester,
+                            ],
                         ],
-                    ],
-                ];
+                    ];
+                });
             }),
         ]);
     }
