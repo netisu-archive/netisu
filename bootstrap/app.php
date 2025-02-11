@@ -201,9 +201,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\TrustHosts::class,
             \App\Http\Middleware\UpdateOnlineStatus::class,
             \Inertia\EncryptHistoryMiddleware::class,
+            \Spatie\ResponseCache\Middlewares\CacheResponse::class,
         ]);
+        
         $middleware->alias([
             'admin' => \App\Http\Middleware\Admin::class,
+            'doNotCacheResponse' => \Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class,
         ]);
         $middleware->redirectGuestsTo(fn(Request $request) => route('auth.login.page'));
     })->create();

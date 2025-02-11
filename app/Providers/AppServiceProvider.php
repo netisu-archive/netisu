@@ -39,7 +39,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(UrlGenerator $url): void
     {
 
-        $this->app->bind(Gateway::class, HttpGateway::class);
 
         $this->bootRoute();
         if (!$this->app->environment('local')) {

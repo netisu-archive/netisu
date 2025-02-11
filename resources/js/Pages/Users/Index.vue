@@ -15,7 +15,7 @@ import VLazyImage from "v-lazy-image";
     <Sidebar>
         <div class="cell small-12">
             <div class="mb-2 text-3xl fw-semibold align-center">Users</div>
-            <div class="grid-x align-center">
+            <div class="grid-x align-center grid-margin-x">
                 <div class="mx-2 mb-3 row card avatar card-body card-status"
                     :class="[user.online ? 'online' : 'offline']" v-for="user in usePage<any>().props.users.data"
                     :key="usePage<any>().props.users.id">
