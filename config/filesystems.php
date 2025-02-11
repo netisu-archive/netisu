@@ -62,6 +62,7 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+
         'spaces' => [
             'driver' => 's3',
             'key' => env('DO_SPACES_KEY'),
@@ -69,7 +70,7 @@ return [
             'region' => env('DO_SPACES_REGION'),
             'bucket' => env('DO_SPACES_BUCKET'),
             'endpoint' => env('DO_SPACES_ENDPOINT'),
-            'visibility' => 'public',
+            'visibility' => \League\Flysystem\Visibility::PUBLIC,
         ],
 
     ],

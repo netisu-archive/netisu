@@ -70,8 +70,8 @@ class SpaceController extends Controller
             abort(404);
         }
         $memberQuery = SpaceMembers::where([['space_id', $id], ['user_id', Auth::id()]])
-        ->with('user')
-        ->paginate(10);
+            ->with('user')
+            ->paginate(10);
         $members = $memberQuery->map(function ($member) {
             return [
                 'id' => $member->user->id, // Direct access, efficient
@@ -224,7 +224,7 @@ class SpaceController extends Controller
 
     private function uploadImage(UploadedFile $file, string $name): string
     {
-        $path = Storage::disk('public')->putFileAs('uploads', $file, "{$name}.png");
+        $path = Storage::disk('spaces')->putFileAs('uploads', $file, "{$name}.png");
 
         return $path;
     }

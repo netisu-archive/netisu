@@ -265,21 +265,21 @@ class AdminController extends Controller
 
     private function uploadToThumbnails(UploadedFile $file, string $name): string
     {
-        $path = Storage::disk('public')->putFileAs('thumbnails', $file, "{$name}.png");
+        $path = Storage::disk('spaces')->putFileAs('thumbnails', $file, "{$name}.png");
 
         return $path;
     }
 
     private function uploadImage(UploadedFile $file, string $name): string
     {
-        $path = Storage::disk('public')->putFileAs('uploads', $file, "{$name}.png");
+        $path = Storage::disk('spaces')->putFileAs('uploads', $file, "{$name}.png");
 
         return $path;
     }
 
     private function uploadOBJ(UploadedFile $file, string $name): string
     {
-        $path = Storage::disk('public')->putFileAs('uploads', $file, "{$name}.obj");
+        $path = Storage::disk('spaces')->putFileAs('uploads', $file, "{$name}.obj");
 
         return $path;
     }
