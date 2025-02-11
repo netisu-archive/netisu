@@ -39,12 +39,19 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
         'redis' => [
-            'driver' => 'redis',
-            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
-            'queue' => env('REDIS_QUEUE', '{default}'),
-            'retry_after' => env('REDIS_QUEUE_RETRY_AFTER', 90),
-            'block_for' => null,
-            'after_commit' => false,
+            'client' => env('REDIS_CLIENT', 'phpredis'),
+
+            'clusters' => [
+                'default' => [
+                    'url' => env('REDIS_URL'),
+                    'host' => env('REDIS_HOST', '127.0.0.1'),
+                    'username' => env('REDIS_USERNAME'),
+                    'password' => env('REDIS_PASSWORD'),
+                    'port' => env('REDIS_PORT', '6379'),
+                    'database' => env('REDIS_DB', '0'),
+                    'read_write_timeout' => 60,
+                ],
+            ]
         ],
         'mysql' => [
             'driver' => 'mysql',
