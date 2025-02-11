@@ -165,6 +165,26 @@ class ForumController extends Controller
         $post->body = $bbcodeService->parse($post->body);
         $post->body = Purifier::clean($post->body);
 
+        $replies = Cache::remember($cacheKey . '-' . $currentPage, now()->addMinutes(3),  function ()  use ($bbcodeService, $post){
+            $post->replies()->paginate(10)->through(function ($reply) use ($bbcodeService) {
+                return [
+                    'body' => $bbcodeService->parse(Purifier::clean($reply->body)),
+                    'is_deleted' => $reply->is_deleted,
+                    'DateHum' => $reply->created_at->diffForHumans(),
+                    'creator' => [
+                        'username' => $reply->creator->username,
+                        'staff' => $reply->creator->isStaff(),
+                        'position' => $reply->creator->CurrentPosition(),
+                        'display_name' => $reply->creator->display_name,
+                        'thumbnail' => $reply->creator->thumbnail(),
+                        'settings' => [
+                            'beta_tester' => $reply->creator->settings->beta_tester,
+                        ],
+                    ],
+                ];
+            });
+        });
+
         return inertia('Forum/Post', [
             'post' => [
                 'id' => $post->id,
@@ -188,26 +208,7 @@ class ForumController extends Controller
                     ],
                 ],
             ],
-            // Cache the paginated replies
-            'replies' => Cache::remember($cacheKey . '-' . $currentPage, now()->addMinutes(3),  function ()  use ($bbcodeService, $post){
-                $post->replies()->paginate(10)->through(function ($reply) use ($bbcodeService) {
-                    return [
-                        'body' => $bbcodeService->parse(Purifier::clean($reply->body)),
-                        'is_deleted' => $reply->is_deleted,
-                        'DateHum' => $reply->created_at->diffForHumans(),
-                        'creator' => [
-                            'username' => $reply->creator->username,
-                            'staff' => $reply->creator->isStaff(),
-                            'position' => $reply->creator->CurrentPosition(),
-                            'display_name' => $reply->creator->display_name,
-                            'thumbnail' => $reply->creator->thumbnail(),
-                            'settings' => [
-                                'beta_tester' => $reply->creator->settings->beta_tester,
-                            ],
-                        ],
-                    ];
-                });
-            }),
+            'replies' => $replies
         ]);
     }
 

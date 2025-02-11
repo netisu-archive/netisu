@@ -132,7 +132,7 @@ usePoll(10000, { only: ['replies'] })
                         </div>
                     </div>
                 </div>
-                <div v-if="usePage<any>().props.replies.data.length">
+                <div v-if="usePage<any>().props.replies">
                     <div class="mx-1 my-3 divider"></div>
                     <div v-for="reply in usePage<any>().props.replies.data" class="grid-x grid-margin-x">
                         <div class="cell medium-2">
@@ -174,7 +174,7 @@ usePoll(10000, { only: ['replies'] })
 
 
                 </div>
-                <AeoPagination v-if="usePage<any>().props.replies.data.length"
+                <AeoPagination v-if="usePage<any>().props.replies"
                     v-bind:pagedata="usePage<any>().props.replies" />
             </div>
             <div v-if="!isHidden" class="cell medium-9">
