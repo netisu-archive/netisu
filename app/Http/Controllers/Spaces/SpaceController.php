@@ -224,8 +224,7 @@ class SpaceController extends Controller
 
     private function uploadImage(UploadedFile $file, string $name): string
     {
-        $path = Storage::disk('spaces')->putFileAs('uploads', $file, "{$name}.png");
-
+        $path = Storage::disk('spaces')->putFileAs('uploads', $file, "{$name}.png", 'public');
         return $path;
     }
 
