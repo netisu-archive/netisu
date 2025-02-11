@@ -21,7 +21,7 @@ defineProps({
 });
 
 
-const canPost = (section: string) => computed(() => {
+const canPost = () => computed(() => {
     const sectionData = usePage<any>().props.topic;
     return usePage<any>().props.auth.user.positionID >= sectionData.role_required_to_post;
 });
@@ -39,7 +39,7 @@ const canPost = (section: string) => computed(() => {
                 :section_three="section_three" />
         </div>
         <div class="cell large-10">
-            <div class="mb-2 grid-x">
+            <div class="mb-2 grid-x grid-margin-x">
                 <div class="cell large-5">
                         <div class="text-xl fw-semibold">{{ usePage<any>().props.topic.name }}</div>
                         <div class="text-xs text-muted fw-semibold">{{ usePage<any>().props.topic.description }}</div>

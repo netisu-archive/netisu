@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Cashier\Cashier;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Facades\Event;
+use Inertia\Ssr\Gateway;
+use App\Http\Ssr\HttpGateway;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,13 +32,14 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::unguard();
     }
-    
+
     /**
      * Bootstrap any application services.
      */
     public function boot(UrlGenerator $url): void
-    {        
-        Vite::prefetch();
+    {
+
+        $this->app->bind(Gateway::class, HttpGateway::class);
 
         $this->bootRoute();
         if (!$this->app->environment('local')) {
@@ -52,7 +55,6 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
             $event->extendSocialite('discord', \SocialiteProviders\Discord\Provider::class);
         });
-
 
         Inertia::share([
             'locale' => function () {

@@ -55,19 +55,33 @@ class ItemApiController extends Controller
         $items = [];
 
         $categoryPossibleNames = [
-            "Showpieces",
-            "Exclusives",
-            "Collectibles",
-            "Limited",
+            "showpiece_*",
+            "exclusives_*",
+            "collectible_*",
+            "limited_*",
+            "special_*"
         ];
 
+        $internalValue = $categoryData->internal ?? $categoryData['internal'] ?? null; // Handle both object and array access, null if not present
+
+        $matchFound = false;
+        if ($internalValue !== null) { // Only proceed if the internal value exists
+            foreach ($categoryPossibleNames as $pattern) {
+                if (fnmatch($pattern, $internalValue)) {
+                    $matchFound = true;
+                    break; // Exit the loop once a match is found
+                }
+            }
+        }
+
         // Handle all of the "Exclusives" category
-        if (in_array($categoryData, $categoryPossibleNames)) {
+        //dd($categoryData);
+        if ($matchFound) {
             $exclusiveType = $category;
             if ($exclusiveType === "exclusive_all") {
                 $items = Item::where(['rare' => true, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
             } else {
-                $exclusiveType = explode('exclusive_', $exclusiveType);
+                $exclusiveType = str_replace("exclusive_", "", $exclusiveType); // Change to str_replace instread of explode
                 $trimmedType = $exclusiveType[1] ?? ""; // Get the second element (or empty string if not found)
                 dd($trimmedType);
                 $items = Item::where(['rare' => true, 'item_type' => $trimmedType, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
