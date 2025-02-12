@@ -167,31 +167,31 @@ class ForumController extends Controller
         $post->body = Purifier::clean($post->body);
 
         $replies = Cache::remember($cacheKey, now()->addMinutes(3), function () use ($post) {
-    // Cache the *query* itself.  Don't paginate here.
-    return $post->replies()->getQuery(); // Get the underlying Query Builder
-});
+            // Cache the *query* itself.  Don't paginate here.
+            return $post->replies(); // Get the underlying Query Builder
+        });
 
-// Now, *after* retrieving the query from the cache, apply pagination
-$paginatedReplies = $replies->paginate(10);  // Paginate AFTER getting from cache
+        // Now, *after* retrieving the query from the cache, apply pagination
+        $paginatedReplies = $replies->paginate(10);  // Paginate AFTER getting from cache
 
 
-$processedReplies = $paginatedReplies->through(function ($reply) use ($bbcodeService) {
-    return [
-        'body' => $bbcodeService->parse(Purifier::clean($reply->body)),
-        'is_deleted' => $reply->is_deleted,
-        'DateHum' => $reply->created_at->diffForHumans(),
-        'creator' => [
-            'username' => $reply->creator->username,
-            'staff' => $reply->creator->isStaff(),
-            'position' => $reply->creator->CurrentPosition(),
-            'display_name' => $reply->creator->display_name,
-            'thumbnail' => $reply->creator->thumbnail(),
-            'settings' => [
-                'beta_tester' => $reply->creator->settings->beta_tester,
-            ],
-        ],
-    ];
-});
+        $processedReplies = $paginatedReplies->through(function ($reply) use ($bbcodeService) {
+            return [
+                'body' => $bbcodeService->parse(Purifier::clean($reply->body)),
+                'is_deleted' => $reply->is_deleted,
+                'DateHum' => $reply->created_at->diffForHumans(),
+                'creator' => [
+                    'username' => $reply->creator->username,
+                    'staff' => $reply->creator->isStaff(),
+                    'position' => $reply->creator->CurrentPosition(),
+                    'display_name' => $reply->creator->display_name,
+                    'thumbnail' => $reply->creator->thumbnail(),
+                    'settings' => [
+                        'beta_tester' => $reply->creator->settings->beta_tester,
+                    ],
+                ],
+            ];
+        });
 
         return inertia('Forum/Post', [
             'post' => [
