@@ -10,6 +10,9 @@
     white-space: nowrap;
     transition: all 0.2s;
     font-weight: 600;
+    height: 38px;
+    line-height: auto;
+    font-size: 15px;
 }
 .btn:hover {
     box-shadow: 0 2px 2px rgb(0, 0, 0, 0.2);

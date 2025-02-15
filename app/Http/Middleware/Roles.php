@@ -30,11 +30,11 @@ class Roles
                 'ip' => $request->ip(),
             ]);
         };
-
-        if (Auth::check() && config('Values.in_testing_phase') && $user->settings->beta_tester !== true) {
-            $user = UserSettings::where('id', Auth::id())->update(['beta_tester' => true]);
-        };
-
+        if (env('APP_ENV') != 'local') {
+            if (Auth::check() && config('Values.in_testing_phase') && $user->settings->beta_tester !== true) {
+                $user = UserSettings::where('id', Auth::id())->update(['beta_tester' => true]);
+            };
+        }
         if (Auth::check() && !Avatar::where(['user_id' => Auth::id()])->exists()) {
             $user = Avatar::create([
                 'user_id' => Auth::id(),

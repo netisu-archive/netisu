@@ -15,11 +15,7 @@ class RenderController extends Controller
 {
     function getAvatarRecord(int $id)
     {
-        $cacheKey = 'user_avatar_record' . $id; // Use a specific cache key for hat searches
-
-        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($id) {
-            return User::findOrFail($id)->avatar();
-        });
+        return Avatar::where('id', $id)->first();
     }
 
     public function UserRender(int $id)

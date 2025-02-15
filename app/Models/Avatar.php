@@ -80,7 +80,7 @@ class Avatar extends Model
     {
         return Item::where('id', '=', $this->tshirt)->first();
     }
-    
+
     public function head()
     {
         return Item::where('id', '=', $this->head)->first();
@@ -101,7 +101,7 @@ class Avatar extends Model
     {
         return Item::where('id', '=', $this->pants)->first();
     }
-
+    
     public function resetAvatar()
     {
         // Set the paths for thumbnail and headshot

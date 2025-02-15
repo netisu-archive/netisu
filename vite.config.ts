@@ -12,10 +12,10 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default {
     server: {
-        host: '100.115.92.195',
+        host: 'localhost',
         cors: true,
         hmr: {
-            host: '100.115.92.195',
+            host: 'localhost',
         },
         watch: {
             usePolling: false,

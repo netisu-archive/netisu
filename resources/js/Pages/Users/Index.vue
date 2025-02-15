@@ -28,7 +28,7 @@ import VLazyImage from "v-lazy-image";
         <div class="cell medium-9">
             <div class="mb-2 text-md text-muted fw-semibold ">Users</div>
             <div class="grid-x grid-margin-x">
-                <div class="cell medium-6 " v-for="user in usePage<any>().props.users.data"
+                <div class="cell medium-6 mb-2" v-for="user in usePage<any>().props.users.data"
                     :key="usePage<any>().props.users.id">
                     <div class="card card-body card-status" :class="[user.online ? 'online' : 'offline']">
                         <div class="grid-x grid-margin-x">
@@ -55,11 +55,10 @@ import VLazyImage from "v-lazy-image";
                                     </div>
                                 </div>
                             </div>
-                            <div class="cell show-for-large small-5 medium-3 flex-container gap-2">
-                                <div class="badge badge-danger" style="height:25px;"><i class="fad fa-gavel"></i></div>
-                                <div class="badge badge-success" style="height:25px;"><i class="fad fa-hard-hat"></i>
+                            <div class="cell show-for-large small-5 medium-3 flex-container gap-2" v-if="user.staff || user.settings.beta_tester">
+                                <div v-if="user.staff" class="badge badge-danger" style="height:25px;"><i class="fad fa-gavel"></i></div>
+                                <div v-if="user.settings.beta_tester" class="badge badge-success" style="height:25px;"><i class="fad fa-hard-hat"></i>
                                 </div>
-
                             </div>
                         </div>
                     </div>

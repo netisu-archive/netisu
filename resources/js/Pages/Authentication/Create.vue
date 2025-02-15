@@ -438,11 +438,11 @@ watch(() => form.birthdate.month, updateDays);
                                                             rgb(0, 0, 0, 0.2)
                                                     );
                                                 " />
-                                            Sign Up with Google
+                                             Google Sign Up
                                         </button>
                                         <button class="btn btn-discord btn-block">
                                             <i class="fab fa-discord me-1"></i>
-                                            Sign Up with Discord
+                                             Discord Sign Up
                                         </button>
                                     </div>
                                 </div>

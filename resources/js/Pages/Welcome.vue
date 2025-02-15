@@ -2,7 +2,7 @@
 import AppHead from "@/Components/AppHead.vue";
 import Navbar from "@/Components/LayoutParts/Navbar.vue";
 import Footer from "@/Components/LayoutParts/Footer.vue";
-import { computed, onMounted, ref } from "vue";
+import { computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { route } from 'momentum-trail';
 
@@ -39,9 +39,7 @@ const Welcome = [
 ];
 const lang = computed<any>(() => usePage<any>().props.locale);
 
-onMounted(() => {
-    showLoading();
-});
+
 
 function onImgErrorSmall(id) {
     let source = document.getElementById(id) as HTMLImageElement;
@@ -77,11 +75,11 @@ function onImgErrorSmall(id) {
                             </h3>
                             <div class="min-w-0 gap-2 mt-3 flex-container">
                                 <Link :href="route('auth.register.page')" class="btn btn-landing btn-success">
-                                <i class="mr-1 fa-solid fa-person-to-Teleport show-for-medium"></i>
+                                <i class="mr-1 fa-duotone fa-person-to-portal show-for-medium"></i>
                                 Get Started
                                 </Link>
                                 <Link :href="route('auth.login.page')" class="btn btn-landing btn-info">
-                                <i class="mr-1 fa-solid fa-person-to-Teleport show-for-medium"></i>
+                                <i class="mr-1 fa-duotone fa-door-open show-for-medium"></i>
                                 Login
                                 </Link>
                             </div>

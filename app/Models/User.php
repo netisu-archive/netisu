@@ -9,7 +9,8 @@ use Illuminate\{
     Database\Eloquent\Relations\HasMany,
     Database\Eloquent\Relations\HasOne,
     Contracts\Auth\MustVerifyEmail,
-    Contracts\Auth\CanResetPassword
+    Contracts\Auth\CanResetPassword,
+    Support\Str,
 };
 
 use App\Models\{
@@ -137,7 +138,40 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
     // Classes
     public function avatar(): Avatar
     {
-        return $this->hasOne(Avatar::class)->first();
+        return $this->hasOne(Avatar::class)->first() ?? $this->createDefaultAvatar();
+    }
+
+    public function createDefaultAvatar()
+    {
+        $avatar = Avatar::create([
+            'user_id' => $this->id,
+        ]);
+
+        $defaultAttributes = [
+            'image' => 'default',
+            'hat_1' => null,
+            'hat_2' => null,
+            'hat_3' => null,
+            'hat_4' => null,
+            'hat_5' => null,
+            'hat_6' => null,
+            'addon' => null,
+            'head' => null,
+            'face' => null,
+            'tool' => null,
+            'tshirt' => null,
+            'shirt' => null,
+            'pants' => null,
+            'color_head' => 'd3d3d3',
+            'color_torso' => '055e96',
+            'color_left_arm' => 'd3d3d3',
+            'color_right_arm' => 'd3d3d3',
+            'color_left_leg' => 'd3d3d3',
+            'color_right_leg' => 'd3d3d3',
+        ];
+        $avatar->timestamps = false;
+        $avatar->fill($defaultAttributes);
+        $avatar->save();
     }
 
     public function promocodes(): HasOne
@@ -361,12 +395,17 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
 
     public function thumbnail()
     {
-        $url = env('STORAGE_URL');
-        $image = ($this->avatar()?->image === 'default') ? env('DEFAULT_AVATAR_FILE') : $this->avatar()?->image;
-        if ($this->avatar()?->image === 'default') {
-            return "{$image}.png";
+        if (env('APP_ENV') != 'local') {
+
+            $url = env('STORAGE_URL');
+            $image = ($this->avatar()?->image === 'default') ? env('DEFAULT_AVATAR_FILE') : $this->avatar()?->image;
+            if ($this->avatar()?->image === 'default') {
+                return "{$image}.png";
+            } else {
+                return "{$url}/thumbnails/{$image}.png";
+            }
         } else {
-            return "{$url}/thumbnails/{$image}.png";
+            return config('Values.icon');
         }
     }
     public function usernameHistory()
@@ -376,24 +415,28 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
 
     public function headshot()
     {
-        $url = env('STORAGE_URL');
-        if ($this->settings->profile_picture_enabled != false) {
-            $imageUrl = $this->settings->profile_picture_url;
+        if (env('APP_ENV') != 'local') {
+            $url = env('STORAGE_URL');
+            if ($this->settings->profile_picture_enabled != false) {
+                $imageUrl = $this->settings->profile_picture_url;
 
-            // Check if profile_picture_url doesn't contain an external domain
-            if (!preg_match('/https?:\/\/[^\/]+/', $imageUrl)) {
-                return "{$url}/thumbnails/profile-pictures/{$imageUrl}.png";
+                // Check if profile_picture_url doesn't contain an external domain
+                if (!preg_match('/https?:\/\/[^\/]+/', $imageUrl)) {
+                    return "{$url}/thumbnails/profile-pictures/{$imageUrl}.png";
+                } else {
+                    // Return the external URL from settings if present
+                    return $imageUrl;
+                }
             } else {
-                // Return the external URL from settings if present
-                return $imageUrl;
+                $image = ($this->avatar()?->image === 'default') ? env('DEFAULT_AVATAR_FILE') : $this->avatar()?->image;
+                if ($this->avatar()?->image === 'default') {
+                    return "{$image}_headshot.png";
+                } else {
+                    return "{$url}/thumbnails/{$image}_headshot.png";
+                }
             }
         } else {
-            $image = ($this->avatar()?->image === 'default') ? env('DEFAULT_AVATAR_FILE') : $this->avatar()?->image;
-            if ($this->avatar()?->image === 'default') {
-                return "{$image}_headshot.png";
-            } else {
-                return "{$url}/thumbnails/{$image}_headshot.png";
-            }
+            return config('Values.icon');
         }
     }
 
@@ -410,5 +453,17 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
     public function getStatusAttribute()
     {
         return $this->latestStatus?->message;
+    }
+    public function definition()
+    {
+        return [
+            'username' => $this->faker->name(),
+            'display_name' => $this->faker->name(),
+            'email' => $this->faker->email(),
+            'status' => 'Mock Account',
+            'about_me' => 'Mock Account',
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'remember_token' => Str::random(10),
+        ];
     }
 }

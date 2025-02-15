@@ -17,7 +17,7 @@ defineProps({
     user: { type: Object },
     is_following: { type: Boolean },
     statuses: { type: Object },
-    categories: { type: Array },
+    categorizedItems: { type: Object },
 
 });
 
@@ -100,7 +100,7 @@ async function fetchCurrentlyWearing() {
 const itemRoute = (itemId) => route(`store.item`, { id: itemId });
 const creatorRoute = (username) => route(`user.profile`, { username: username });
 
-const ActiveCategory: Ref<string> = ref("Posts");
+const ActiveCategory: Ref<string> = ref("Profile");
 
 function setActiveCategory(category): void {
     ActiveCategory.value = category;
@@ -169,83 +169,7 @@ watch(following, (newValue, oldValue) => {
     <Navbar />
     <Sidebar :alertsEnabled="false"
         :image="usePage<any>().props.user.settings.profile_banner_enabled ? usePage<any>().props.user.settings.profile_banner_url : null"
-        :superBanActive="true" :OfficialImageBackground="false" superBanType="image">
-        <div class="modal" id="following-modal">
-            <div class="modal-card modal-card-body">
-                <div class="section-borderless">
-                    <div class="gap-2 align-middle flex-container align-justify">
-                        <div class="text-lg fw-semibold">
-                            {{ usePage<any>().props.user.display_name }}'s Following
-                        </div>
-                        <button @click="showModal('following-modal')" class="btn-circle"
-                            data-toggle-modal="#following-modal" style="margin-right: -10px">
-                            <i class="fad fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="section-borderless">
-                    <div class="section">
-                        <template v-for="(followingUser, index) in usePage<any>().props.user.following" :key="index">
-                            <div class="gap-2 mt-2 mb-2 align-middle flex-container align-justify">
-                                <div class="w-100">
-                                    <div class="fw-semibold">{{ followingUser.display_name }}</div>
-                                    <div class="text-sm fw-semibold text-muted">
-                                        @{{ followingUser.username }}
-                                    </div>
-                                </div>
-                                <div class="gap-2 mt-2 mb-2 align-middle flex-container align-justify">
-
-                                    <Link :href="route(`user.profile`, { username: followingUser.username })"
-                                        class="min-w-0 btn btn-info btn-sm text-truncate">
-                                    View Profile
-                                    </Link>
-                                </div>
-                            </div>
-                            <!-- Add divider after each follower except the last one -->
-                            <div class="divider w-100" v-if="index < usePage<any>().props.user.following.length - 1" />
-                        </template>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal" id="followers-modal">
-            <div class="modal-card modal-card-body">
-                <div class="section-borderless">
-                    <div class="gap-2 align-middle flex-container align-justify">
-                        <div class="text-lg fw-semibold">
-                            {{ usePage<any>().props.user.display_name }}'s Followers
-                        </div>
-                        <button @click="showModal('followers-modal')" class="btn-circle"
-                            data-toggle-modal="#followers-modal" style="margin-right: -10px">
-                            <i class="fad fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="section-borderless">
-                    <div class="section">
-                        <template v-for="(followerUser, index) in usePage<any>().props.user.followers" :key="index">
-                            <div class="gap-2 mt-2 mb-2 align-middle flex-container align-justify">
-                                <div class="w-100">
-                                    <div class="fw-semibold">{{ followerUser.display_name }}</div>
-                                    <div class="text-sm fw-semibold text-muted">
-                                        {{ '@' + followerUser.username }}
-                                    </div>
-                                </div>
-                                <div class="gap-2 mt-2 mb-2 align-middle flex-container align-justify">
-                                    <Link :href="route(`user.profile`, { username: followerUser.username })"
-                                        class="min-w-0 btn btn-info btn-sm text-truncate">
-                                    View Profile
-                                    </Link>
-                                </div>
-                            </div>
-                            <!-- Add divider after each follower except the last one -->
-                            <div class="divider w-100" v-if="index < usePage<any>().props.user.followers.length - 1" />
-                        </template>
-                    </div>
-                </div>
-            </div>
-        </div>
+        :superBanActive="true" :OfficialImageBackground="false">
         <template #SuperBanner>
             <SuperBanner>
                 <template #bannerAsset>
@@ -339,13 +263,11 @@ watch(following, (newValue, oldValue) => {
             <div class="mb-1 card-body">
                 <div class="mt-2 text-center">
                     <div class="gap-3 text-sm flex-container align-center">
-                        <button class="min-w-0 px-0 text-center fw-semibold text-muted text-truncate"
-                            @click="showModal('following-modal')">
+                        <button class="min-w-0 px-0 text-center fw-semibold text-muted text-truncate">
                             <span class="text-body">{{ usePage<any>().props.user.following_count }}</span>
                             Following
                         </button>
-                        <button class="min-w-0 px-0 text-center fw-semibold text-muted text-truncate"
-                            @click="showModal('followers-modal')">
+                        <button class="min-w-0 px-0 text-center fw-semibold text-muted text-truncate">
                             <span class="text-body">{{ followercount }}</span>
                             Followers
                         </button>
@@ -391,48 +313,6 @@ watch(following, (newValue, oldValue) => {
                     </div>
                 </div>
             </div>
-            <div class="mb-1 text-xl fw-semibold">Spaces</div>
-            <div class="mb-3 card card-body">
-                <div class="gap-3 text-center flex-container flex-dir-column">
-                    <i class="text-5xl fad fa-planet-ringed text-muted"></i>
-                    <div style="line-height: 16px">
-                        <div class="text-xs fw-bold text-muted text-uppercase">
-                            No Spaces
-                        </div>
-                        <div class="text-xs text-muted fw-semibold">
-                            {{ usePage<any>().props.user.username }} has not joined any spaces.
-                        </div>
-                    </div>
-                </div>
-                <div class="grid-x grid-margin-x grid-padding-y">
-                    <div class="text-center cell medium-4 small-4">
-                        <a href="#" class="text-body">
-
-                            <img src="/assets/img/space_placeholder.png" class="mb-1" />
-                            <div>
-                                <div class="text-sm fw-semibold text-truncate">
-                                    <i class="mb-1 text-xs text-info fw-bold text-uppercase fad fa-star"></i>&nbsp;
-                                    Namesnipe
-                                </div>
-                                <div class="text-xs text-muted fw-semibold">
-                                    12K Members
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="text-center cell medium-4 small-4">
-                        <a href="#" class="text-body">
-                            <img src="/assets/img/icon.png" class="mb-1" />
-                            <div>
-                                <div class="text-sm fw-semibold text-truncate">
-                                    Project Eclipse
-                                </div>
-                                <div class="text-xs text-muted fw-semibold">4 Members</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="cell medium-6">
             <div v-if="ActiveCategory === 'Profile'">
@@ -472,7 +352,9 @@ watch(following, (newValue, oldValue) => {
 
                 </div>
             </div>
-            <div v-else-if="ActiveCategory === 'Posts'" class="mb-3 card card-body">
+            <div v-else-if="ActiveCategory === 'Posts'">
+                <div class="mb-1 text-xl fw-semibold">Posts</div>
+<div class="mb-3 card card-body">
                 <div v-if="!statuses?.['data']?.['length']" class="section">
                     <div class="gap-3 text-center flex-container flex-dir-column">
                         <i class="text-5xl fad fa-face-sleeping text-muted"></i>
@@ -554,15 +436,16 @@ watch(following, (newValue, oldValue) => {
                         </div>
                     </div>
                 </div>
+                </div>
                 <Pagination v-if="statuses?.['data']?.['length']" v-bind:pagedata="statuses" />
             </div>
 
-            <div v-else-if="ActiveCategory === 'Inventory'" class="my-2">
+            <div v-else-if="ActiveCategory === 'Inventory'">
                 <span class="text-xl fw-semibold">Current Outfit</span>
                 <div class="grid-x">
                     <div class="text-center cell large-4 align-left">
                         <div class="text-center flex-container align-left">
-                            <div class="text-center" style="transform:scale(0.7);margin-top:-25px;">
+                            <div class="text-center" style="transform:scale(0.6);margin-top:-25px;">
                                 <div style="margin-bottom: 5px">
                                     <button class="avatar-body-part" id="head" :style="{
                                         backgroundColor: '#' + userAvatar.color_head,
@@ -765,15 +648,120 @@ watch(following, (newValue, oldValue) => {
                     </div>
                 </div>
             </div>
+            <div v-else-if="ActiveCategory === 'Spaces'">
+                <div class="mb-1 text-xl fw-semibold">Spaces</div>
+                <div class="mb-3 card card-body">
+                    <div class="gap-3 text-center flex-container flex-dir-column">
+                        <i class="text-5xl fad fa-planet-ringed text-muted"></i>
+                        <div style="line-height: 16px">
+                            <div class="text-xs fw-bold text-muted text-uppercase">
+                                No Spaces
+                            </div>
+                            <div class="text-xs text-muted fw-semibold">
+                                {{ usePage<any>().props.user.username }} has not joined any spaces.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-x grid-margin-x grid-padding-y">
+                        <div class="text-center cell medium-4 small-4">
+                            <a href="#" class="text-body">
+                                <img width="100px" src="/assets/img/icon.png" class="mb-1" />
+                                <div>
+                                    <div class="text-sm fw-semibold text-truncate">
+                                        Project Eclipse
+                                    </div>
+                                    <div class="text-xs text-muted fw-semibold">4 Members</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+</div>
+<div v-else-if="ActiveCategory === 'Followers'" class="my-2">
+    <div class="mb-1 text-xl fw-semibold">Followers</div>
+            <div class="grid-x grid-margin-x">
+                <div class="cell medium-6 mb-2" v-for="(followerUser, index) in usePage<any>().props.user.followers" :key="index">
+                    <div class="card card-body">
+                        <div class="grid-x grid-margin-x">
+
+                            <div class="gap-2 cell small-7 medium-9 flex-container">
+                                <Link :href="route('user.profile', { username: followerUser.username })">
+                                <v-lazy-image :src="followerUser.avatar" width="45px"
+                                    class="border img-fluid headshot rounded-circle border-secondary bg-dark"
+                                    :alt="followerUser.username" />
+                                </Link>
+                                <div class="flex-wrap col-md-4 d-flex justify-content-center align-content-start"
+                                    style="flex-direction: column">
+                                    <div class="text-start">
+                                        <Link :href="route('user.profile', { username: followerUser.username })"
+                                            class="text-md">
+                                        {{ followerUser.dname }}
+                                        </Link>
+                                        <div></div>
+                                        <Link :href="route('user.profile', { username: followerUser.username })"
+                                            class="text-sm fw-semibold text-body">
+                                        {{ '@' + followerUser.username }}
+                                        </Link>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cell show-for-large small-5 medium-3 flex-container gap-2" v-if="followerUser.staff || followerUser.settings.beta_tester">
+                                <div v-if="followerUser.staff" class="badge badge-danger" style="height:25px;"><i class="fad fa-gavel"></i></div>
+                                <div v-if="followerUser.settings.beta_tester" class="badge badge-success" style="height:25px;"><i class="fad fa-hard-hat"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+           <div v-else-if="ActiveCategory === 'Following'" class="my-2">
+            <div class="mb-1 text-xl fw-semibold">Following</div>
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell medium-6 mb-2" v-for="(followingUser, index) in usePage<any>().props.user.following" :key="index">
+                            <div class="card card-body">
+                                <div class="grid-x grid-margin-x">
+
+                                    <div class="gap-2 cell small-7 medium-9 flex-container">
+                                        <Link :href="route('user.profile', { username: followingUser.username })">
+                                        <v-lazy-image :src="followingUser.avatar" width="45px"
+                                            class="border img-fluid headshot rounded-circle border-secondary bg-dark"
+                                            :alt="followingUser.username" />
+                                        </Link>
+                                        <div class="flex-wrap col-md-4 d-flex justify-content-center align-content-start"
+                                            style="flex-direction: column">
+                                            <div class="text-start">
+                                                <Link :href="route('user.profile', { username: followingUser.username })"
+                                                    class="text-md">
+                                                {{ followingUser.dname }}
+                                                </Link>
+                                                <div></div>
+                                                <Link :href="route('user.profile', { username: followingUser.username })"
+                                                    class="text-sm fw-semibold text-body">
+                                                {{ '@' + followingUser.username }}
+                                                </Link>
+                                                <div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="cell show-for-large small-5 medium-3 flex-container gap-2" v-if="followingUser.staff || followingUser.settings.beta_tester">
+                                        <div v-if="followingUser.staff" class="badge badge-danger" style="height:25px;"><i class="fad fa-gavel"></i></div>
+                                        <div v-if="followingUser.settings.beta_tester" class="badge badge-success" style="height:25px;"><i class="fad fa-hard-hat"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
 
         <div class="cell medium-3">
             <ul class="tabs flex-dir-column">
-                <li class="tab-item" v-for="category in categories">
-                    <a href="#" @click="setActiveCategory(category)" :class="{ active: category === ActiveCategory }"
-                        class="tab-link squish">
-                        {{ capitalized(category) }}
-                    </a>
+                <li v-for="(sectionItems, sectionName) in categorizedItems" class="tab-item" :key="sectionName">
+                    <span class="text-xs fw-semibold text-muted text-uppercase">{{ sectionName }}</span>
+                      <a href="#" v-for="category in sectionItems" @click="setActiveCategory(category)"  class="tab-link squish" :class="{ active: category === ActiveCategory }" :key="category">   {{ capitalized(category) }}</a>
                 </li>
             </ul>
         </div>

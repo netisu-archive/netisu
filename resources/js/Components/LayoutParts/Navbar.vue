@@ -292,7 +292,7 @@ const props = usePage<any>().props;
             </li>
             <Button v-if="!props.auth?.user" :link="route('auth.register.page')" ColorClass="btn-success"
                 class="nav-item cell show-for-large shrink me-1">
-                <i class="fad fa-person-to-Teleport"></i> &nbsp; Get Started
+                <i class="fad fa-person-to-portal"></i> &nbsp; Get Started
             </Button>
             <Button v-if="!props.auth?.user" :link="route('auth.login.page')" ColorClass="btn-info"
                 class="nav-item cell show-for-large shrink me-1">

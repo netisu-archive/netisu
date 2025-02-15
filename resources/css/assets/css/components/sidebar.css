@@ -8,6 +8,7 @@
     border-right: 1px solid var(--section-border-color);
     padding-top: 62px;
     overflow-y: auto;
+    margin:0 auto;
 }
 .sidebar:dir(rtl) {
     background: var(--section-bg);

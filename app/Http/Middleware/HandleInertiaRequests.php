@@ -79,7 +79,7 @@ class HandleInertiaRequests extends Middleware
                         'headshot' => $request->user()->headshot(),
                         'thumbnail' => $request->user()->thumbnail(),
                         'following' => $request->user()->following(),
-                        'settings' => $request->user()->settings,
+                        'settings' => $request->user()->settings ?? null,
                         'level' => $request->user()->getLevel(),
                         'xp' => $request->user()->getPoints(),
                         'navSpaces' => $request->user()->navSpaces(),

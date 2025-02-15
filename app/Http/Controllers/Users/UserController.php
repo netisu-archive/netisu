@@ -39,6 +39,9 @@ class UserController extends Controller
                     'avatar' => $user->headshot(),
                     'online' => $user->online(),
                     'is_following' => $isFollowing,
+                    'settings' => [
+                        'beta_tester' => $user->settings->beta_tester ?? false,
+                    ],
                 ];
             });
         });
@@ -65,21 +68,28 @@ class UserController extends Controller
             abort(404);
         }
 
-        if ($user->settings->private_profile) {
-            if (!Auth::check() || (Auth::check() && $user->id != Auth::id())) {
-                return inertia('App/ProfileDisabled', [
-                    'username' => $user->username,
-                ]);
+        if (!is_null($user->settings->private_profile ?? null)) {
+            if ($user->settings->private_profile) {
+                if (!Auth::check() || (Auth::check() && $user->id != Auth::id())) {
+                    return inertia('App/ProfileDisabled', [
+                        'username' => $user->username,
+                    ]);
+                }
             }
         }
 
         switch ($request->category) {
             case '':
             case 'Profile':
+            case 'Inventory':
             case 'Followers':
             case 'Following':
+            case 'Spaces':
             case 'Posts':
-                $categories = ['Profile', 'Followers', 'Following', 'Posts'];
+                $categories = [
+                    'Main' => ['Profile', 'Inventory', 'Posts', 'Spaces'],
+                    'Social' => ['Followers', 'Following'],
+                ];
                 break;
             default:
                 abort(404);
@@ -145,40 +155,40 @@ class UserController extends Controller
                 'status' => $user->status,
                 'online' => $user->online(),
                 'avatar' => [
-                    'color_head' => $user->avatar()->color_head,
-                    'color_left_arm' => $user->avatar()->color_left_arm,
-                    'color_torso' => $user->avatar()->color_torso,
-                    'color_right_arm' => $user->avatar()->color_right_arm,
-                    'color_left_leg' => $user->avatar()->color_left_leg,
-                    'color_right_leg' => $user->avatar()->color_right_leg,
+                    'color_head' => $user->avatar()->color_head ?? 'ffffff',
+                    'color_left_arm' => $user->avatar()->color_left_arm ?? 'ffffff',
+                    'color_torso' => $user->avatar()->color_torso ?? '055e96',
+                    'color_right_arm' => $user->avatar()->color_right_arm ?? 'ffffff',
+                    'color_left_leg' => $user->avatar()->color_left_leg ?? 'ffffff',
+                    'color_right_leg' => $user->avatar()->color_right_leg ?? 'ffffff',
                     'current_face' => env('STORAGE_URL') . (
                         $user->avatar()->face ? '/uploads/' . getItemHash($user->avatar()->face) . ".png" : '/assets/default.png'
                     ),
                 ],
                 'settings' => [
-                    "verified" => $user->settings->is_verified,
-                    "beta_tester" => $user->settings->beta_tester,
-                    "private_profile" => $user->settings->private_profile,
-                    "followers_enabled" => $user->settings->followers_enabled,
-                    "trading_enabled" => $user->settings->trading_enabled,
-                    "posting_enabled" => $user->settings->posting_enabled,
-                    "chat_enabled" => $user->settings->chat_enabled,
-                    "alert_enabled" => $user->settings->alert_enabled,
-                    "alert_message" => $user->settings->alert_message,
-                    "calling_card_enabled" => $user->settings->calling_card_enabled,
-                    "calling_card_url" => $user->settings->calling_card_url,
-                    "profile_banner_enabled" => $user->settings->profile_banner_enabled,
-                    "profile_banner_url" => $user->settings->profile_banner_url,
-                    "primary_space" => $user->settings->primary_space,
-                    "secondary_space" => $user->settings->secondary_space,
-                    "ugc_creator" => $user->settings->ugc_creator,
-                    "content_creator" => $user->settings->content_creator,
-                    "country_code" => $user->settings->country_code,
+                    "verified" => $user->settings->is_verified ?? false,
+                    "beta_tester" => $user->settings->beta_tester ?? false,
+                    "private_profile" => $user->settings->private_profile ?? false,
+                    "followers_enabled" => $user->settings->followers_enabled  ?? false,
+                    "trading_enabled" => $user->settings->trading_enabled ?? false,
+                    "posting_enabled" => $user->settings->posting_enabled ?? false,
+                    "chat_enabled" => $user->settings->chat_enabled ?? false,
+                    "alert_enabled" => $user->settings->alert_enabled ?? false,
+                    "alert_message" => $user->settings->alert_message ?? null,
+                    "calling_card_enabled" => $user->settings->calling_card_enabled ?? false,
+                    "calling_card_url" => $user->settings->calling_card_url ?? null,
+                    "profile_banner_enabled" => $user->settings->profile_banner_enabled ?? false,
+                    "profile_banner_url" => $user->settings->profile_banner_url ?? null,
+                    "primary_space" => $user->settings->primary_space ?? false,
+                    "secondary_space" => $user->settings->secondary_space ?? false,
+                    "ugc_creator" => $user->settings->ugc_creator ?? false,
+                    "content_creator" => $user->settings->content_creator ?? false,
+                    "country_code" => $user->settings->country_code ?? null,
                 ]
             ],
             'is_following' => $isFollowing,
             'statuses' => $statuses,
-            'categories' =>  $categories,
+            'categorizedItems' =>  $categories,
         ]);
 
         return $response;
