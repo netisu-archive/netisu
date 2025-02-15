@@ -55,7 +55,7 @@ import VLazyImage from "v-lazy-image";
                                     </div>
                                 </div>
                             </div>
-                            <div class="cell show-for-large small-5 medium-3 flex-container gap-2" v-if="user.staff || user.settings.beta_tester">
+                            <div class="cell show-for-large small-5 medium-3 flex-container align-right gap-2" v-if="user.staff || user.settings.beta_tester">
                                 <div v-if="user.staff" class="badge badge-danger" style="height:25px;"><i class="fad fa-gavel"></i></div>
                                 <div v-if="user.settings.beta_tester" class="badge badge-success" style="height:25px;"><i class="fad fa-hard-hat"></i>
                                 </div>
