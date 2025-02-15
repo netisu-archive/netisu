@@ -1,9 +1,12 @@
 .container {
-    padding-top: 75px; /* 100px */
+    flex-grow: 1;
+    padding-top: 25px; /* 100px */
+    margin: 0 auto;
+    position: relative;
+    max-width: 1400px;
+    width: auto;
     padding-left: 235px;
     padding-right: 15px;
-    max-width: 1400px;
-    margin: 0 auto;
 }
 
 .container-navbar {

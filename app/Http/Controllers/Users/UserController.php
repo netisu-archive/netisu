@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Followers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -24,9 +25,9 @@ class UserController extends Controller
         // Define a cache key for this query result
         $cacheKey = 'users_index';
         $currentPage = request()->get('page', 1);
-
+        $userCount = User::count();
         $users = Cache::remember($cacheKey . '-' . $currentPage, now()->addMinutes(3), function () {
-            return User::orderBy('updated_at', 'desc')->paginate(12)->through(function ($user) {
+            return User::orderBy('updated_at', 'desc')->paginate(6)->through(function ($user) {
                 $isFollowing = Auth::check() && Auth::user()->isFollowing($user) ?? false;
                 return [
                     'id' => $user->id,
@@ -44,11 +45,12 @@ class UserController extends Controller
 
         return inertia('Users/Index', [
             'users' => $users,
+            'user_count' => $userCount
         ]);
     }
 
 
-    public function ProfileIndex($username)
+    public function ProfileIndex($username, Request $request)
     {
         // Define a unique cache key for this user's profile
         $cacheKey = 'user_profile_' . $username;
@@ -57,8 +59,8 @@ class UserController extends Controller
         $user = Cache::remember($cacheKey, now()->addMinutes(3), function () use ($username) {
             return User::where('username', $username)->first();
         });
-        // Check if the user exists
 
+        // Check if the user exists
         if (!$user) {
             abort(404);
         }
@@ -70,6 +72,19 @@ class UserController extends Controller
                 ]);
             }
         }
+
+        switch ($request->category) {
+            case '':
+            case 'Profile':
+            case 'Followers':
+            case 'Following':
+            case 'Posts':
+                $categories = ['Profile', 'Followers', 'Following', 'Posts'];
+                break;
+            default:
+                abort(404);
+        }
+
         // Load relationships and counts
         $userFollowing = $user->following()->get();
         $FollowingCount = $userFollowing->count();
@@ -95,6 +110,7 @@ class UserController extends Controller
             ])->orderBy('created_at', 'desc')->paginate(6)->through(function ($status) {
                 return [
                     'name' => $status->creator->username,
+                    'headshot' => $status->creator->headshot(),
                     'dname' => $status->creator->display_name,
                     'timecreated' => $status->created_at,
                     'message' => $status->message,
@@ -162,6 +178,7 @@ class UserController extends Controller
             ],
             'is_following' => $isFollowing,
             'statuses' => $statuses,
+            'categories' =>  $categories,
         ]);
 
         return $response;

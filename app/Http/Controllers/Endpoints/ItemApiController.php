@@ -56,13 +56,13 @@ class ItemApiController extends Controller
 
         $categoryPossibleNames = [
             "showpiece_*",
-            "exclusives_*",
+            "exclusive_*",
             "collectible_*",
             "limited_*",
             "special_*"
         ];
 
-        $internalValue = $categoryData->internal ?? $categoryData['internal'] ?? null; // Handle both object and array access, null if not present
+        $internalValue = $category ?? null; // Handle both object and array access, null if not present
 
         $matchFound = false;
         if ($internalValue !== null) { // Only proceed if the internal value exists
@@ -75,16 +75,13 @@ class ItemApiController extends Controller
         }
 
         // Handle all of the "Exclusives" category
-        //dd($categoryData);
         if ($matchFound) {
             $exclusiveType = $category;
             if ($exclusiveType === "exclusive_all") {
                 $items = Item::where(['rare' => true, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
             } else {
                 $exclusiveType = str_replace("exclusive_", "", $exclusiveType); // Change to str_replace instread of explode
-                $trimmedType = $exclusiveType[1] ?? ""; // Get the second element (or empty string if not found)
-                dd($trimmedType);
-                $items = Item::where(['rare' => true, 'item_type' => $trimmedType, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
+                $items = Item::where(['rare' => true, 'item_type' => $exclusiveType, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
             }
         } else {
             // Get items for the specific category

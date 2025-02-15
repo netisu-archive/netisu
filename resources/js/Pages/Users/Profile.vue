@@ -17,6 +17,8 @@ defineProps({
     user: { type: Object },
     is_following: { type: Boolean },
     statuses: { type: Object },
+    categories: { type: Array },
+
 });
 
 let following = ref(usePage<any>().props.is_following); // Initial follow status
@@ -30,6 +32,7 @@ const toggleFollow = (id) => {
         followUser(id);
     }
 };
+
 const items = ref<any>([]);
 const CurentlyWearingItems = ref<any>([]);
 
@@ -106,6 +109,12 @@ function setActiveCategory(category): void {
 const showSuccessMessage = (message) => {
 
     console.log('Success:', message);
+};
+const capitalized = (name: string) => {
+    const capitalizedFirst = name[0].toUpperCase();
+    const rest = name.slice(1);
+
+    return capitalizedFirst + rest;
 };
 let followercount = ref(usePage<any>().props.user.followers_count);
 const followUser = (id) => {
@@ -357,10 +366,6 @@ watch(following, (newValue, oldValue) => {
                     </div>
                 </div>
             </a>
-            <div class="mb-1 text-xl fw-semibold">About Me</div>
-            <div class="mb-3 card card-body">
-                {{ usePage<any>().props.user.about_me }}
-            </div>
             <div class="mb-1 text-xl fw-semibold">Statistics</div>
             <div class="mb-3 card card-body">
                 <div class="gap-1 align-middle flex-container flex-dir-column">
@@ -429,259 +434,251 @@ watch(following, (newValue, oldValue) => {
                 </div>
             </div>
         </div>
-        <div class="cell medium-9">
-            <div style="height: 10px"></div>
-            <div class="mb-1 align-middle flex-container align-justify">
-                <div class="mb-1 text-xl fw-semibold">Acheivements</div>
-                <a href="#" class="btn btn-secondary btn-sm">View All</a>
-            </div>
-            <div class="mb-3 card card-body">
-                <div v-if="!usePage<any>().props.user.acheivements || !usePage<any>().props.user.acheivements.length"
-                    class="gap-3 text-center flex-container flex-dir-column">
-                    <i class="text-5xl fad fa-badge text-muted"></i>
-                    <div style="line-height: 16px">
-                        <div class="text-xs fw-bold text-muted text-uppercase">
-                            No Acheivements
+        <div class="cell medium-6">
+            <div v-if="ActiveCategory === 'Profile'">
+                <div class="mb-1 text-xl fw-semibold">About Me</div>
+                <div class="mb-3 card card-body">
+                    {{ usePage<any>().props.user.about_me }}
+                </div>
+                <div class="mb-1 align-middle flex-container align-justify">
+                    <div class="mb-1 text-xl fw-semibold">Acheivements</div>
+                    <Link :href="route(`acheivements`)" class="btn btn-secondary btn-sm">View All</Link>
+                </div>
+                <div class="mb-3 card card-body">
+                    <div v-if="!usePage<any>().props.user.acheivements || !usePage<any>().props.user.acheivements.length"
+                        class="gap-3 text-center flex-container flex-dir-column">
+                        <i class="text-5xl fad fa-badge text-muted"></i>
+                        <div style="line-height: 16px">
+                            <div class="text-xs fw-bold text-muted text-uppercase">
+                                No Acheivements
+                            </div>
+                            <div class="text-xs text-muted fw-semibold">
+                                {{ usePage<any>().props.user.username }} has no acheivements.
+                            </div>
                         </div>
-                        <div class="text-xs text-muted fw-semibold">
-                            {{ usePage<any>().props.user.username }} has no acheivements.
+                    </div>
+
+                    <div class="flex-wrap gap-3 flex-container align-center">
+                        <div class="min-w-0 text-center" v-for="acheivement in usePage<any>().props.user.acheivements"
+                            style="width: 80px">
+                            <Link :href="route(`acheivements`)">
+                            <img :src="acheivement.image" />
+                            <div class="text-sm text-muted fw-semibold text-truncate">
+                                {{ acheivement.name }}
+                            </div>
+                            </Link>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div v-else-if="ActiveCategory === 'Posts'" class="mb-3 card card-body">
+                <div v-if="!statuses?.['data']?.['length']" class="section">
+                    <div class="gap-3 text-center flex-container flex-dir-column">
+                        <i class="text-5xl fad fa-face-sleeping text-muted"></i>
+                        <div style="line-height: 16px">
+                            <div class="text-xs fw-bold text-muted text-uppercase">
+                                No Posts
+                            </div>
+                            <div class="text-xs text-muted fw-semibold">
+                                {{ usePage<any>().props.user.username }} has not posted anything to their
+                                    feed.
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="flex-wrap gap-3 flex-container align-center">
-                    <div class="min-w-0 text-center" v-for="acheivement in usePage<any>().props.user.acheivements"
-                        style="width: 80px">
-                        <Link :href="route(`achivements`)">
-                        <img :src="acheivement.image" />
-                        <div class="text-sm text-muted fw-semibold text-truncate">
-                            {{ acheivement.name }}
-                        </div>
-                        </Link>
-                    </div>
-                </div>
-
-            </div>
-            <div class="mb-3 card card-body">
-                <div class="section">
-                    <ul class="tabs">
-                        <li class="tab-item">
-                            <a class="tab-link squish" :class="{ active: 'Posts' === ActiveCategory }" @click="
-                                setActiveCategory('Posts')">Posts</a>
-                        </li>
-                        <li class="tab-item">
-                            <a class="tab-link squish" :class="{ active: 'Inventory' === ActiveCategory }"
-                                @click="setActiveCategory('Inventory')">Inventory</a>
-                        </li>
-                    </ul>
-                </div>
-                <div v-if="ActiveCategory === 'Posts'">
-                    <div v-if="!statuses?.['data']?.['length']" class="section">
-                        <div class="gap-3 text-center flex-container flex-dir-column">
-                            <i class="text-5xl fad fa-face-sleeping text-muted"></i>
+                <div v-else v-for="status in statuses?.['data']"
+                    class="gap-3 section flex-container flex-dir-column-sm">
+                    <div class="mx-auto flex-child-grow" style="width: 100px">
+                        <a href="#" class="text-sm text-center d-block squish">
+                            <img src="/assets/img/dummy_headshot.png" class="mb-1 headshot" width="60" />
                             <div style="line-height: 16px">
-                                <div class="text-xs fw-bold text-muted text-uppercase">
-                                    No Posts
+                                <div class="text-membership text-truncate">
+                                    {{ status.dname }}
                                 </div>
-                                <div class="text-xs text-muted fw-semibold">
-                                    {{ usePage<any>().props.user.username }} has not posted anything to their
-                                        feed.
+                                <div class="text-xs text-muted text-truncate">{{ '@' + status.name }}
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
-                    <div v-else v-for="status in statuses?.['data']"
-                        class="gap-3 section flex-container flex-dir-column-sm">
-                        <div class="mx-auto flex-child-grow" style="width: 100px">
-                            <a href="#" class="text-sm text-center d-block squish">
-                                <img src="/assets/img/dummy_headshot.png" class="mb-1 headshot" width="60" />
-                                <div style="line-height: 16px">
-                                    <div class="text-membership text-truncate">
-                                        {{ status.dname }}
-                                    </div>
-                                    <div class="text-xs text-muted text-truncate">{{ '@' + status.name }}
-                                    </div>
+                    <div class="card card-body card-inner w-100">
+                        <div class="align-middle flex-container align-justify">
+                            <div class="w-100">
+                                <div class="text-xs text-muted">
+                                    <i class="far fa-clock me-1"
+                                        style="vertical-align: middle;margin-top: -2.5px;font-size: 10px;"></i>
+                                    {{ status.DateHum }}
                                 </div>
-                            </a>
-                        </div>
-                        <div class="card card-body card-inner w-100">
-                            <div class="align-middle flex-container align-justify">
-                                <div class="w-100">
-                                    <div class="text-xs text-muted">
-                                        <i class="far fa-clock me-1"
-                                            style="vertical-align: middle;margin-top: -2.5px;font-size: 10px;"></i>
-                                        {{ status.DateHum }}
-                                    </div>
-                                    <div>
-                                        {{ status.message }}
-                                    </div>
-                                    <div class="text-sm" style="margin-left: -6px">
-                                        <button class="btn-like active squish">
-                                            <i class="far fa-heart"></i>1
-                                        </button>
-                                    </div>
+                                <div>
+                                    {{ status.message }}
                                 </div>
-                                <div class="dropdown ms-auto position-relative">
-                                    <button class="btn-circle" style="margin-right: -10px">
-                                        <i class="fad fa-ellipsis-vertical"></i>
+                                <div class="text-sm" style="margin-left: -6px">
+                                    <button class="btn-like active squish">
+                                        <i class="far fa-heart"></i>1
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li class="dropdown-item">
-                                            <a href="#" class="dropdown-link dropdown-link-has-icon">
-                                                <i class="fad fa-flag dropdown-icon"></i> Report
-                                            </a>
-                                        </li>
-                                        <div class="align-middle flex-container">
-                                            <div class="dropdown-title">Moderation</div>
-                                            <li class="divider flex-child-grow"></li>
-                                        </div>
-                                        <li class="dropdown-item">
-                                            <a href="#" class="dropdown-link dropdown-link-has-icon text-danger">
-                                                <i class="fad fa-trash text-danger dropdown-icon"></i>
-                                                Delete
-                                            </a>
-                                        </li>
-                                    </ul>
                                 </div>
                             </div>
-                            <div class="my-2 align-middle flex-container">
-                                <div class="text-xs fw-bold text-muted text-uppercase">
-                                    Comments
-                                </div>
-                                <div class="divider flex-child-grow"></div>
-                            </div>
-                            <div class="gap-2 mb-2 flex-container">
-                                <input type="text" class="form form-sm form-has-section-color"
-                                    placeholder="What are your thoughts on this post?" />
-                                <input type="button" class="btn btn-success btn-sm" value="Post" />
+                            <div class="dropdown ms-auto position-relative">
+                                <button class="btn-circle" style="margin-right: -10px">
+                                    <i class="fad fa-ellipsis-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li class="dropdown-item">
+                                        <a href="#" class="dropdown-link dropdown-link-has-icon">
+                                            <i class="fad fa-flag dropdown-icon"></i> Report
+                                        </a>
+                                    </li>
+                                    <div class="align-middle flex-container">
+                                        <div class="dropdown-title">Moderation</div>
+                                        <li class="divider flex-child-grow"></li>
+                                    </div>
+                                    <li class="dropdown-item">
+                                        <a href="#" class="dropdown-link dropdown-link-has-icon text-danger">
+                                            <i class="fad fa-trash text-danger dropdown-icon"></i>
+                                            Delete
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
+                        <div class="my-2 align-middle flex-container">
+                            <div class="text-xs fw-bold text-muted text-uppercase">
+                                Comments
+                            </div>
+                            <div class="divider flex-child-grow"></div>
+                        </div>
+                        <div class="gap-2 mb-2 flex-container">
+                            <input type="text" class="form form-sm form-has-section-color"
+                                placeholder="What are your thoughts on this post?" />
+                            <input type="button" class="btn btn-success btn-sm" value="Post" />
+                        </div>
                     </div>
-                    <Pagination v-if="statuses?.['data']?.['length']" v-bind:pagedata="statuses" />
                 </div>
-                <div v-else-if="ActiveCategory === 'Inventory'" class="my-2">
-                    <span class="text-xl fw-semibold">Current Outfit</span>
-                    <div class="grid-x">
-                        <div class="text-center cell large-4 align-left">
-                            <div class="text-center flex-container align-left">
-                                <div class="text-center" style="transform:scale(0.7);margin-top:-25px;">
-                                    <div style="margin-bottom: 5px">
-                                        <button class="avatar-body-part" id="head" :style="{
-                                            backgroundColor: '#' + userAvatar.color_head,
-                                            padding: '5px',
-                                            borderRadius: '15px',
-                                            marginTop: '-1px',
-                                            width: '60', height: '50',
-                                        }">
-                                            <VLazyImage :src="userAvatar.current_face"
-                                                :src-placeholder="usePage<any>().props.site.production.domains.storage + '/assets/default.png'"
-                                                width="50" height="50" />
-                                        </button>
-                                    </div>
-                                    <div style="display: flex; margin-bottom: 5px">
-                                        <button class="avatar-body-part" id="left_arm" :style="{
-                                            backgroundColor: '#' + userAvatar.color_left_arm,
-                                            padding: '50px',
-                                            paddingRight: '0px',
-                                        }"></button>
+                <Pagination v-if="statuses?.['data']?.['length']" v-bind:pagedata="statuses" />
+            </div>
 
-                                        <button class="avatar-body-part" id="torso" :style="{
-                                            backgroundColor: '#' + userAvatar.color_torso,
-                                            padding: '50px',
-                                        }"></button>
+            <div v-else-if="ActiveCategory === 'Inventory'" class="my-2">
+                <span class="text-xl fw-semibold">Current Outfit</span>
+                <div class="grid-x">
+                    <div class="text-center cell large-4 align-left">
+                        <div class="text-center flex-container align-left">
+                            <div class="text-center" style="transform:scale(0.7);margin-top:-25px;">
+                                <div style="margin-bottom: 5px">
+                                    <button class="avatar-body-part" id="head" :style="{
+                                        backgroundColor: '#' + userAvatar.color_head,
+                                        padding: '5px',
+                                        borderRadius: '15px',
+                                        marginTop: '-1px',
+                                        width: '60', height: '50',
+                                    }">
+                                        <VLazyImage :src="userAvatar.current_face"
+                                            :src-placeholder="usePage<any>().props.site.production.domains.storage + '/assets/default.png'"
+                                            width="50" height="50" />
+                                    </button>
+                                </div>
+                                <div style="display: flex; margin-bottom: 5px">
+                                    <button class="avatar-body-part" id="left_arm" :style="{
+                                        backgroundColor: '#' + userAvatar.color_left_arm,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                    }"></button>
 
-                                        <button class="avatar-body-part" id="right_arm" :style="{
-                                            backgroundColor: '#' + userAvatar.color_right_arm,
-                                            padding: '50px',
-                                            paddingRight: '0px',
-                                        }"></button>
-                                    </div>
-                                    <div class="display: flex; margin-bottom: 5px">
-                                        <button class="avatar-body-part" name="left_leg" :style="{
-                                            backgroundColor: '#' + userAvatar.color_left_leg,
-                                            padding: '50px',
-                                            paddingRight: '0px',
-                                            paddingLeft: '47px',
-                                        }"></button>
+                                    <button class="avatar-body-part" id="torso" :style="{
+                                        backgroundColor: '#' + userAvatar.color_torso,
+                                        padding: '50px',
+                                    }"></button>
 
-                                        <button class="avatar-body-part" name="right_leg" :style="{
-                                            backgroundColor: '#' + userAvatar.color_right_leg,
-                                            padding: '50px',
-                                            paddingRight: '0px',
-                                            borderBottom: '15px',
-                                            paddingLeft: '47px',
-                                        }"></button>
-                                    </div>
+                                    <button class="avatar-body-part" id="right_arm" :style="{
+                                        backgroundColor: '#' + userAvatar.color_right_arm,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                    }"></button>
+                                </div>
+                                <div class="display: flex; margin-bottom: 5px">
+                                    <button class="avatar-body-part" name="left_leg" :style="{
+                                        backgroundColor: '#' + userAvatar.color_left_leg,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                        paddingLeft: '47px',
+                                    }"></button>
+
+                                    <button class="avatar-body-part" name="right_leg" :style="{
+                                        backgroundColor: '#' + userAvatar.color_right_leg,
+                                        padding: '50px',
+                                        paddingRight: '0px',
+                                        borderBottom: '15px',
+                                        paddingLeft: '47px',
+                                    }"></button>
                                 </div>
                             </div>
                         </div>
-                        <div class="text-center cell large-8">
-                            <div
-                                class="flex-container text-start flex-row flex-nowrap overflow-x-scroll px-3 px-lg-0 mb-2 mb-lg-0">
-                                <div v-if="ItemLoading || (items && items.length > 0)"
-                                    class="grid-x grid-margin-x grid-padding-y">
-                                    <template v-if="ItemLoading">
-                                        <ItemCardSkeleton v-for="n in 12" :key="n" />
-                                    </template>
-                                    <div v-else class="cell large-4 medium-3 small-6"
-                                        v-for="(item, index) in CurentlyWearingItems" :key="index">
-                                        <Link :href="itemRoute(item.id)" class="d-block">
-                                        <div class="p-2 mb-1 card card-item position-relative">
-                                            <div style="
+                    </div>
+                    <div class="text-center cell large-8">
+                        <div
+                            class="flex-container text-start flex-row flex-nowrap overflow-x-scroll px-3 px-lg-0 mb-2 mb-lg-0">
+                            <div v-if="ItemLoading || (items && items.length > 0)"
+                                class="grid-x grid-margin-x grid-padding-y">
+                                <template v-if="ItemLoading">
+                                    <ItemCardSkeleton v-for="n in 12" :key="n" />
+                                </template>
+                                <div v-else class="cell large-4 medium-3 small-6"
+                                    v-for="(item, index) in CurentlyWearingItems" :key="index">
+                                    <Link :href="itemRoute(item.id)" class="d-block">
+                                    <div class="p-2 mb-1 card card-item position-relative">
+                                        <div style="
                                     position: absolute;
                                     bottom: 10px;
                                     left: 10px;
                                 ">
-                                                <div v-if="item.in_event" class="mb-1 badge badge-warning fw-semibold">
-                                                    <i class="fas fa-calendar-star" style="width: 18px"></i>Event
-                                                </div>
-                                                <div v-else-if="item.rare" class="mb-1 badge badge-info fw-semibold">
-                                                    <i class="fas fa-star" style="width: 18px"></i>Rare
-                                                </div>
+                                            <div v-if="item.in_event" class="mb-1 badge badge-warning fw-semibold">
+                                                <i class="fas fa-calendar-star" style="width: 18px"></i>Event
                                             </div>
-                                            <img :src="item.thumbnail" :id="item.thumbnail"
-                                                @error="onImgErrorSmall(item.thumbnail)" />
+                                            <div v-else-if="item.rare" class="mb-1 badge badge-info fw-semibold">
+                                                <i class="fas fa-star" style="width: 18px"></i>Rare
+                                            </div>
                                         </div>
-                                        <div class="text-body fw-semibold text-truncate">
-                                            {{ item.name }}
-                                        </div>
-                                        </Link>
-                                        <div class="text-xs fw-semibold text-truncate">
-                                            <span class="text-muted">By:</span>&nbsp;
-                                            <Link :href="creatorRoute(item.creator.username)">
-                                            {{ "@" + item.creator.username
-                                            }}<i class="fas fa-shield-check text-success ms-1"></i></Link>
+                                        <img :src="item.thumbnail" :id="item.thumbnail"
+                                            @error="onImgErrorSmall(item.thumbnail)" />
+                                    </div>
+                                    <div class="text-body fw-semibold text-truncate">
+                                        {{ item.name }}
+                                    </div>
+                                    </Link>
+                                    <div class="text-xs fw-semibold text-truncate">
+                                        <span class="text-muted">By:</span>&nbsp;
+                                        <Link :href="creatorRoute(item.creator.username)">
+                                        {{ "@" + item.creator.username
+                                        }}<i class="fas fa-shield-check text-success ms-1"></i></Link>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else-if="items.message" class="">
+                                <div class="pb-0 card-body">
+                                    <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
+                                        <i class="text-5xl fas fa-store-slash text-muted"></i>
+                                        <div style="line-height: 16px">
+                                            <div class="text-xs fw-bold text-muted">
+                                                Looks like a gremlin got into the code again!
+                                                We're sending our best programmers with bug
+                                                spray to fix the issue
+                                            </div>
+                                            <div class="text-muted fw-semibold">
+                                                <p class="text-xs">{{ items.message }}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div v-else-if="items.message" class="">
-                                    <div class="pb-0 card-body">
-                                        <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
-                                            <i class="text-5xl fas fa-store-slash text-muted"></i>
-                                            <div style="line-height: 16px">
-                                                <div class="text-xs fw-bold text-muted">
-                                                    Looks like a gremlin got into the code again!
-                                                    We're sending our best programmers with bug
-                                                    spray to fix the issue
-                                                </div>
-                                                <div class="text-muted fw-semibold">
-                                                    <p class="text-xs">{{ items.message }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div v-else class="align-center justify-center text-center flex-container">
-                                    <div class="pb-0 card-body">
-                                        <div
-                                            class="gap-3 mb-2  align-center justify-center text-center flex-container flex-dir-column">
-                                            <i class="text-5xl fad fa-person text-muted"></i>
-                                            <div style="line-height: 16px">
-                                                <div class="text-muted fw-semibold">
-                                                    <p class="text-xs">
-                                                        {{ usePage<any>().props.user.username }} isn't wearing anything.
-                                                    </p>
-                                                </div>
+                            </div>
+                            <div v-else class="align-center justify-center text-center flex-container">
+                                <div class="pb-0 card-body">
+                                    <div
+                                        class="gap-3 mb-2  align-center justify-center text-center flex-container flex-dir-column">
+                                        <i class="text-5xl fad fa-person text-muted"></i>
+                                        <div style="line-height: 16px">
+                                            <div class="text-muted fw-semibold">
+                                                <p class="text-xs">
+                                                    {{ usePage<any>().props.user.username }} isn't wearing anything.
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -689,80 +686,78 @@ watch(following, (newValue, oldValue) => {
                             </div>
                         </div>
                     </div>
-                    <div class="divider mx-1 my-4" />
-                    <div>
-                        <span class="text-xl fw-semibold">Inventory</span>
-                        <div v-if="ItemLoading || (items && items.length > 0)"
-                            class="grid-x grid-margin-x grid-padding-y">
-                            <template v-if="ItemLoading">
-                                <ItemCardSkeleton v-for="n in 12" :key="n" />
-                            </template>
-                            <div v-else class="cell large-3 medium-3 small-6" v-for="(item, index) in items"
-                                :key="index">
-                                <Link :href="itemRoute(item.id)" class="d-block">
-                                <div class="p-2 mb-1 card card-item position-relative">
-                                    <div style="
+                </div>
+                <div class="divider mx-1 my-4" />
+                <div>
+                    <span class="text-xl fw-semibold">Inventory</span>
+                    <div v-if="ItemLoading || (items && items.length > 0)" class="grid-x grid-margin-x grid-padding-y">
+                        <template v-if="ItemLoading">
+                            <ItemCardSkeleton v-for="n in 12" :key="n" />
+                        </template>
+                        <div v-else class="cell large-3 medium-3 small-6" v-for="(item, index) in items" :key="index">
+                            <Link :href="itemRoute(item.id)" class="d-block">
+                            <div class="p-2 mb-1 card card-item position-relative">
+                                <div style="
                                     position: absolute;
                                     bottom: 10px;
                                     left: 10px;
                                 ">
-                                        <div v-if="item.in_event" class="mb-1 badge badge-warning fw-semibold">
-                                            <i class="fas fa-calendar-star" style="width: 18px"></i>Event
-                                        </div>
-                                        <div v-else-if="item.rare" class="mb-1 badge badge-info fw-semibold">
-                                            <i class="fas fa-star" style="width: 18px"></i>Rare
-                                        </div>
-                                        <div v-else-if="item.sale_ongoing" class="mb-1 badge badge-danger fw-semibold">
-                                            <i class="fas fa-badge-percent" style="width: 18px"></i>{{
-                                                item.percent_off + "%" }} off
-                                        </div>
+                                    <div v-if="item.in_event" class="mb-1 badge badge-warning fw-semibold">
+                                        <i class="fas fa-calendar-star" style="width: 18px"></i>Event
                                     </div>
-                                    <img :src="item.thumbnail" :id="item.thumbnail"
-                                        @error="onImgErrorSmall(item.thumbnail)" />
+                                    <div v-else-if="item.rare" class="mb-1 badge badge-info fw-semibold">
+                                        <i class="fas fa-star" style="width: 18px"></i>Rare
+                                    </div>
+                                    <div v-else-if="item.sale_ongoing" class="mb-1 badge badge-danger fw-semibold">
+                                        <i class="fas fa-badge-percent" style="width: 18px"></i>{{
+                                            item.percent_off + "%" }} off
+                                    </div>
                                 </div>
-                                <div class="text-body fw-semibold text-truncate">
-                                    {{ item.name }}
-                                </div>
-                                </Link>
-                                <div class="text-xs fw-semibold text-truncate">
-                                    <span class="text-muted">By:</span>&nbsp;
-                                    <Link :href="creatorRoute(item.creator.username)">
-                                    {{ "@" + item.creator.username
-                                    }}<i class="fas fa-shield-check text-success ms-1"></i></Link>
+                                <img :src="item.thumbnail" :id="item.thumbnail"
+                                    @error="onImgErrorSmall(item.thumbnail)" />
+                            </div>
+                            <div class="text-body fw-semibold text-truncate">
+                                {{ item.name }}
+                            </div>
+                            </Link>
+                            <div class="text-xs fw-semibold text-truncate">
+                                <span class="text-muted">By:</span>&nbsp;
+                                <Link :href="creatorRoute(item.creator.username)">
+                                {{ "@" + item.creator.username
+                                }}<i class="fas fa-shield-check text-success ms-1"></i></Link>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else-if="items.message" class="">
+                        <div class="pb-0 card-body">
+                            <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
+                                <i class="text-5xl fas fa-store-slash text-muted"></i>
+                                <div style="line-height: 16px">
+                                    <div class="text-xs fw-bold text-muted">
+                                        Looks like a gremlin got into the code again!
+                                        We're sending our best programmers with bug
+                                        spray to fix the issue
+                                    </div>
+                                    <div class="text-muted fw-semibold">
+                                        <p class="text-xs">{{ items.message }}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div v-else-if="items.message" class="">
-                            <div class="pb-0 card-body">
-                                <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
-                                    <i class="text-5xl fas fa-store-slash text-muted"></i>
-                                    <div style="line-height: 16px">
-                                        <div class="text-xs fw-bold text-muted">
-                                            Looks like a gremlin got into the code again!
-                                            We're sending our best programmers with bug
-                                            spray to fix the issue
-                                        </div>
-                                        <div class="text-muted fw-semibold">
-                                            <p class="text-xs">{{ items.message }}</p>
-                                        </div>
+                    </div>
+                    <div v-else class="">
+                        <div class="pb-0 card-body">
+                            <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
+                                <i class="text-5xl fad fa-crate-empty text-muted"></i>
+                                <div style="line-height: 16px">
+                                    <div class="text-xs fw-bold text-muted text-uppercase">
+                                        No Items
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-else class="">
-                            <div class="pb-0 card-body">
-                                <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
-                                    <i class="text-5xl fad fa-crate-empty text-muted"></i>
-                                    <div style="line-height: 16px">
-                                        <div class="text-xs fw-bold text-muted text-uppercase">
-                                            No Items
-                                        </div>
-                                        <div class="text-muted fw-semibold">
-                                            <p class="text-xs">
-                                                {{ usePage<any>().props.user.username }} has no items in their
-                                                    inventory.
-                                            </p>
-                                        </div>
+                                    <div class="text-muted fw-semibold">
+                                        <p class="text-xs">
+                                            {{ usePage<any>().props.user.username }} has no items in their
+                                                inventory.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -770,7 +765,17 @@ watch(following, (newValue, oldValue) => {
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="cell medium-3">
+            <ul class="tabs flex-dir-column">
+                <li class="tab-item" v-for="category in categories">
+                    <a href="#" @click="setActiveCategory(category)" :class="{ active: category === ActiveCategory }"
+                        class="tab-link squish">
+                        {{ capitalized(category) }}
+                    </a>
+                </li>
+            </ul>
         </div>
     </Sidebar>
     <Footer />

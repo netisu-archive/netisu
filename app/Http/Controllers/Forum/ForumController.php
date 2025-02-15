@@ -157,8 +157,9 @@ class ForumController extends Controller
         }
         $cacheKey = 'forum_post_' . $id . '_replies';
         $currentPage = request()->get('page', 1);
+        
         // Cache the post
-        $post = Cache::remember('forum_post_' . $id, now()->addMinutes(10), fn() => $post);
+        $post = Cache::remember('forum_post_' . $id, now()->addMinutes(5), fn() => $post);
 
         // Parse the post body
         $post->body = $MarkdownService->parse($post->body);

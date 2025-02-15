@@ -2,9 +2,7 @@
     z-index: 1;
     position: relative;
     left: 0;
-    top:47px;
     right: 0;
-    padding: 10px 0px;
 }
 .alert.alert-event {
     padding: 50px 230px;
@@ -29,9 +27,4 @@
     text-shadow: 0 1px 2px rgb(0, 0, 0, 0.2);
     box-shadow: 0 1px 3px rgb(0, 0, 0, 0.2);
     width: 100%;
-}
-@media screen and (max-width: 63.99875em) {
-    .sitewide-alert {
-        padding: 10px 0px;
-    }
 }
