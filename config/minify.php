@@ -56,8 +56,8 @@ return [
     |
     */
     'insert_semicolon' => [
-        'css' => env('MINIFY_CSS_SEMICOLON', true),
-        'js'  => env('MINIFY_JS_SEMICOLON', true),
+        'css' =>  false,
+        'js'  =>  false,
     ],
 
     /*
@@ -70,7 +70,7 @@ return [
     | Default: true
     |
     */
-    'remove_comments' => env('MINIFY_REMOVE_COMMENTS', true),
+    'remove_comments' => true,
 
     /*
     |--------------------------------------------------------------------------

@@ -3,7 +3,10 @@ return [
     'name' => 'Netisu',
     'logo' => '/assets/img/logo-theta.svg',
     'icon' => '/assets/img/logo.svg',
+    'marketLogo' => '/assets/img/site-banners/market-title-xoxo.png',
+
     'in_event' => true,
+
     'system_account_id' => 2,
     'in_testing_phase' => true,
 
@@ -22,7 +25,7 @@ return [
     'production' => [
         'domains' => [
             'main' => 'https://100.115.92.195',
-            'storage' => 'https://cdn.100.115.92.195/',
+            'storage' => 'https://100.115.92.195',
             'api' => 'https://100.115.92.195/api',
             'careers' => 'https://careers.100.115.92.195',
             'support' => 'support@100.115.92.195'

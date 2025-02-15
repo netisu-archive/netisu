@@ -16,7 +16,7 @@ import VLazyImage from 'v-lazy-image';
 import SuperBanner from '@/Components/LayoutParts/SuperBanner.vue';
 
 defineProps<{
-    mustVerifyEmail?: Boolean,
+    hasVerifiedEmail?: Boolean,
     status?: String,
     categories?: Array<string>,
     themes?: Object,
@@ -49,6 +49,20 @@ function changeCountry(country): void {
     console.log(country);
 };
 
+function uploadProfilePicture(image): void {
+    axios.post(route(`api.settings.uploadProfilePicture`, { image: image }))
+        .then(response => {
+            // Handle the success response here
+            console.error('Success:', response);
+
+        })
+        .catch(error => {
+            // Handle the error response here
+            console.error('Error uploading your profile picture:', error);
+        });
+    console.log(image);
+};
+
 function enableBannerVisibility(visible): void {
     axios.post(route(`api.settings.bannerVisibility`, { value: visible }))
         .then(response => {
@@ -67,7 +81,7 @@ const currentTheme = localStorage.getItem('theme');
 
 
 const isVerifiedEmail = computed(() => {
-    return usePage<any>().props.auth.user.settings.verified_email || false;
+    return usePage<any>().props.hasVerifiedEmail || false;
 });
 </script>
 
@@ -77,8 +91,7 @@ const isVerifiedEmail = computed(() => {
     <Navbar />
     <Sidebar :alertsEnabled="false"
         :image="usePage<any>().props.auth.user.settings.profile_banner_enabled ? usePage<any>().props.auth.user.settings.profile_banner_url : null"
-        :superBanActive="true"
-        :OfficialImageBackground="false">
+        :superBanActive="true" :OfficialImageBackground="false">
         <template #SuperBanner>
             <SuperBanner>
                 <template #bannerAsset>
@@ -119,9 +132,13 @@ const isVerifiedEmail = computed(() => {
                     </div>
                 </template>
                 <template #bannerButtons>
-                    <button class="text-lg text-success squish" content="Change Calling Card"
-                        v-tippy="{ placement: 'bottom' }">
+                    <button @click="showModal('picture-modal')" class="text-lg text-success squish"
+                        content="Change Profile Picture" v-tippy="{ placement: 'bottom' }">
                         <i class="fad fa-user"></i>
+                    </button>
+                    <button class="text-lg text-warning squish" content="Change Calling Card"
+                        v-tippy="{ placement: 'bottom' }">
+                        <i class="fad fa-cards"></i>
                     </button>
                     <button @click="showModal('banner-modal')" class="text-lg text-info squish" content="Change Banner"
                         v-tippy="{ placement: 'bottom' }">
@@ -161,6 +178,50 @@ const isVerifiedEmail = computed(() => {
                 </div>
                 <div class="flex-wrap gap-2 flex-container justify-content-end section-borderless">
                     <button class="btn btn-secondary" @click="showModal('email-modal')">
+                        Cancel
+                    </button>
+                    <input type="submit" class="btn btn-success" value="Change Email" />
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="picture-modal">
+            <div class="modal-card modal-card-body modal-card-sm">
+                <div class="section-borderless">
+                    <div class="gap-2 align-middle flex-container align-justify">
+                        <div class="text-lg fw-semibold">Change Banner</div>
+                        <button @click="showModal('picture-modal')" class="btn-circle" data-toggle-modal="#email-modal"
+                            style="margin-right: -10px">
+                            <i class="fad fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="section-borderless">
+                    <div class="mb-2">
+                        <div class="text-xs fw-bold text-muted text-uppercase">
+                            Visibility
+                        </div>
+                        <button @change="changeCountry($event.target.value)" class="btn btn-success btn-sm w-100">
+                            Enable Profile Picture</button>
+                    </div>
+                    <div class="mb-2">
+                        <div class="gap-2 align-middle flex-container-lg">
+                            <div class="text-xs fw-bold text-muted text-uppercase">
+                                Image
+                            </div>
+                        </div>
+                        <form>
+
+                            <input class="form text-body" type="file">
+
+                        </form>
+                    </div>
+                    <div class="text-xs text-muted fw-semibold">
+                        After changing your email address, a confirmation email
+                        will be sent to your inbox to confirm your identity.
+                    </div>
+                </div>
+                <div class="flex-wrap gap-2 flex-container justify-content-end section-borderless">
+                    <button class="btn btn-secondary" @click="showModal('picture-modal')">
                         Cancel
                     </button>
                     <input type="submit" class="btn btn-success" value="Change Email" />

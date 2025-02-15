@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Item;
+use App\Models\UsernameHistory;
 use App\Models\Avatar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -111,8 +112,13 @@ class AdminController extends Controller
         return $response;
     }
 
-    public function GiftUser($userID)
+    public function GiftUser(int $userID)
     {
+        $user = User::where(['id' => $userID])->first();
+        if (!$user) {
+            abort(404);
+        }
+
         if ($this->admin->rolePermissions('can_gift_users') ?? false != false):
             $response = inertia('Admin/Users/Gift', [
                 'userID' => $userID,
@@ -133,7 +139,7 @@ class AdminController extends Controller
     public function UserIndex()
     {
         // Define a cache key for this query result
-        $cacheKey = 'users_index';
+        $cacheKey = 'admin_users_index';
         $users = Cache::remember($cacheKey, now()->addMinutes(30), function () {
             return User::orderBy('id', 'asc')->paginate(10)->through(function ($user) {
                 return [
@@ -259,22 +265,20 @@ class AdminController extends Controller
 
     private function uploadToThumbnails(UploadedFile $file, string $name): string
     {
-        $path = Storage::disk('public')->putFileAs('thumbnails', $file, "{$name}.png");
+        $path = Storage::disk('spaces')->putFileAs('thumbnails', $file, "{$name}.png");
 
         return $path;
     }
 
     private function uploadImage(UploadedFile $file, string $name): string
     {
-        $path = Storage::disk('public')->putFileAs('uploads', $file, "{$name}.png");
-
+        $path = Storage::disk('spaces')->putFileAs('uploads', $file, "{$name}.png", 'public');
         return $path;
     }
 
     private function uploadOBJ(UploadedFile $file, string $name): string
     {
-        $path = Storage::disk('public')->putFileAs('uploads', $file, "{$name}.obj");
-
+        $path = Storage::disk('spaces')->putFileAs('uploads', $file, "{$name}.obj", 'public');
         return $path;
     }
     private function validateRequest(Request $request)
@@ -305,6 +309,7 @@ class AdminController extends Controller
         }
 
         $joindate = Carbon::parse($user->created_at)->format('M d Y');
+        $uh = $user->pastUsernames()->get();
 
         return inertia('Admin/Users/Manage', [
             'user' => [
@@ -319,6 +324,7 @@ class AdminController extends Controller
                 'coins' => $user->coins,
                 'DateHum' => $user->date_hum,
                 'joined' => $joindate,
+                'past_usernames' => $uh,
                 'settings' => [
                     'profile_banner_enabled' => $user->settings->profile_banner_enabled,
                     'profile_banner_url' => $user->settings->profile_banner_url,

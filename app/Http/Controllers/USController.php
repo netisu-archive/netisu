@@ -33,9 +33,9 @@ class USController extends Controller
             default:
                 abort(404);
         }
-        
+
         return inertia('Settings/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'hasVerifiedEmail' => $request->user()->hasVerifiedEmail(),
             'status' => session('status'),
             'countries' => $countries,
             'categories' => $categories,
@@ -64,20 +64,12 @@ class USController extends Controller
 
     private function updateGeneralSettings($request, $user)
     {
-        $this->validate($request, [
+        $request->validate([
             'description' => ['max:1024'],
-            'country' => ['max:2'],
-            'forum_signature' => ['max:100']
         ]);
 
         $user->description = $request->description;
-        $user->description = $request->country;
-        $user->forum_signature = $request->forum_signature;
         $user->save();
-
-        $settings = $user->settings;
-        $settings->theme = $request->has('theme') || 'light';
-        $settings->save();
 
         return back()->with('message', 'Successfully updated general settings.');
     }
@@ -85,7 +77,7 @@ class USController extends Controller
     private function updateAccountSettings($request, $user)
     {
         // Validate and update privacy settings
-        $this->validate($request, [
+        $request->validate([
             'private_profile' => ['boolean'],
             'followers_enabled' => ['boolean'],
             'trading_enabled' => ['boolean'],
@@ -94,9 +86,9 @@ class USController extends Controller
             'notifications_enabled' => ['boolean'],
             'profile_picture_enabled' => ['boolean'],
         ]);
-        
+
         $settings = $user->settings;
-        
+
         $settings->private_profile = $request->has('private_profile');
         $settings->followers_enabled = $request->has('followers_enabled');
         $settings->trading_enabled = $request->has('trading_enabled');

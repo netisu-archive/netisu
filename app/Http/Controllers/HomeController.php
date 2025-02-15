@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Level;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use App\Services\BBCodeService;
@@ -95,40 +95,35 @@ class HomeController extends Controller
         ]);
 
         $maxAttempts = 5; // Allow 5 requests per two minutes (adjust as needed)
-        $key = 'statuses-for:' . Auth::id();
+        $key = 'latest-status:' . Auth::id();
 
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
 
             return response()->json([
-                'message' => 'Too many requests. You may try again in ' . $seconds . ' seconds.',
+                'message' => 'Too many requests. You may try again in '.$seconds.' seconds.',
                 'type' => 'error'
             ], 429);
         }
 
-        Redis::throttle($key)->allow($maxAttempts)->every(60)->then(function () use ($request) {
-            info('Lock obtained...');
+        RateLimiter::increment($key);
 
-            if ($request->message != Auth::user()->latestStatus) {
-                // Logging
-                $status = new Status;
-                $status->creator_id = Auth::id();
-                $status->message = $request->message;
-                $status->save();
+        if ($request->message != Auth::user()->latestStatus) {
+            // Logging
+            $status = new Status;
+            $status->creator_id = Auth::id();
+            $status->message = $request->message;
+            $status->save();
 
-                $user = User::find(Auth::id());
-                $user->status = $request->message;
-                $user->save();
-                return response()->json(
-                    [
-                        'message' => 'Your status has been changed.',
-                        'type' => 'success'
-                    ]
-                );
-            }
-        }, function () use ($maxAttempts) {
-            // Could not obtain lock...
-            return $this->release($maxAttempts);
-        });
+            $user = User::find(Auth::id());
+            $user->status = $request->message;
+            $user->save();
+            return response()->json(
+                [
+                    'message' => 'Your status has been changed.',
+                    'type' => 'success'
+                ]
+            );
+        }
     }
 }

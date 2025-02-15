@@ -27,18 +27,19 @@ class Roles
         if (Auth::check() && is_null($user->lastIP())) {
             IpLog::create([
                 'user_id' => Auth::id(),
-                'ip' => request()->ip(),
+                'ip' => $request->ip(),
             ]);
         };
-        if (Auth::check() && config('Values.in_testing_phase') && $user->settings->beta_tester !== false) {
+
+        if (Auth::check() && config('Values.in_testing_phase') && $user->settings->beta_tester !== true) {
             $user = UserSettings::where('id', Auth::id())->update(['beta_tester' => true]);
-        }
-        
+        };
+
         if (Auth::check() && !Avatar::where(['user_id' => Auth::id()])->exists()) {
             $user = Avatar::create([
                 'user_id' => Auth::id(),
             ]);
-        }
+        };
 
 
         return $next($request);

@@ -4,7 +4,6 @@ import { usePage, Head } from "@inertiajs/vue3";
 // Props
 defineProps({
     pageTitle: { type: String },
-    maintenance: { type: Boolean, default: false },
     description: { type: String },
     url: { type: String },
     cover: { type: String },
@@ -44,13 +43,9 @@ const getFormattedDate = (timeStamp: number) => {
 
         <!-- Fonts -->
         <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/v6.1.2/css/pro.min.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" />
-
-        <link v-if="maintenance" rel="stylesheet" href="/assets/css/themes/variables-dark.css" />
-
         <meta :content="pageTitle" name="title" />
         <meta :content="description || 'A page on ' + usePage<any>().props.site.name + '.'" name="description" />
-        
+
         <meta :content="url" property="og:url" />
         <meta content="website" property="og:type" />
         <meta :content="pageTitle" property="og:title" />

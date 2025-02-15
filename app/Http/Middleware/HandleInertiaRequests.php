@@ -91,7 +91,6 @@ class HandleInertiaRequests extends Middleware
                     ] : null,
                 ];
             },
-            'site' => config('Values'),
         ]);
     }
 }

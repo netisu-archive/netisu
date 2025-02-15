@@ -31,6 +31,7 @@ server {
     listen [::]:80 default_server;
     server_name netisu.com;
     root /var/www/html/public;
+    real_ip_header CF-Connecting-IP;
 
     # SSL configuration
 

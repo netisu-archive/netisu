@@ -139,12 +139,21 @@ const sidebar = [
     {
         url: route(`leaderboard.page`),
         section: "SOCIAL",
-        ActiveLink: route(`leaderboard.page`),
+        ActiveLink: "leaderboard.page",
         icon: "fad fa-list-ol",
         en: { title: "Leaderboard" },
         es: { title: "Tabla de clasificación" },
         ru: { title: "Таблица лидеров" },
         ja: { title: "リーダーボード" },
+    }, {
+        url: route(`promocodes.page`),
+        section: "SOCIAL",
+        ActiveLink: "promocodes.page",
+        icon: "fad fa-ticket",
+        en: { title: "Promocodes" },
+        es: { title: "Códigos promocionales" },
+        ru: { title: "Промокоды" },
+        ja: { title: "プロモコード" },
     },
     {
         url: "#",
@@ -189,15 +198,30 @@ const lang = computed(() => usePage<any>().props.locale);
                 </SideLink>
             </template>
             <div v-if="usePage<any>().props.auth.user">
+                <div v-if="usePage<any>().props.auth.user.navSpaces.length">
                 <li class="side-item side-title">
-                    My Spaces
+                    Main Spaces
                 </li>
                 <li v-if="usePage<any>().props.auth.user.navSpaces.length"
                     v-for="(space, index) in usePage<any>().props.auth.user.navSpaces" :key="index" class="side-item">
                     <Link :href="route(`spaces.view`, { id: space.id, slug: space.slug })"
                         class="side-link side-link-has-img">
                     <span class="side-img">
-                        <v-lazy-image :src="space.thumbnail" />
+                        <v-lazy-image class="headshot" :src="space.thumbnail" />
+                    </span>
+                    <span>{{ space.name }}</span>
+                    </Link>
+                </li>
+            </div>
+                <li class="side-item side-title">
+                    Joined Spaces
+                </li>
+                <li v-if="usePage<any>().props.auth.user.navSpaces.length"
+                    v-for="(space, index) in usePage<any>().props.auth.user.navSpaces" :key="index" class="side-item">
+                    <Link :href="route(`spaces.view`, { id: space.id, slug: space.slug })"
+                        class="side-link side-link-has-img">
+                    <span class="side-img">
+                        <v-lazy-image class="headshot" :src="space.thumbnail" />
                     </span>
                     <span>{{ space.name }}</span>
                     </Link>

@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SpacePurchase;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Level;
+use App\Models\SpaceMembers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -21,7 +22,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\UploadedFile;
-use App\Models\SpaceJoinRequest;
+use App\Models\SpaceRanks;
 
 class SpaceController extends Controller
 {
@@ -55,9 +56,9 @@ class SpaceController extends Controller
             'search' => $search,
         ]);
     }
-    public function SpaceCreate(){
-        return inertia('Spaces/Create', [
-        ]);
+    public function SpaceCreate()
+    {
+        return inertia('Spaces/Create', []);
     }
 
     public function SpacesView(Request $request, int $id, string $slug)
@@ -65,12 +66,21 @@ class SpaceController extends Controller
 
         $space = Space::where([['id', '=', $id]])->first();
 
-        if (!$space){
+        if (!$space) {
             abort(404);
         }
-
-        if ($slug != $space->slug()){
-            echo("Did you mean: ". $space->slug());
+        $memberQuery = SpaceMembers::where([['space_id', $id], ['user_id', Auth::id()]])
+            ->with('user')
+            ->paginate(10);
+        $members = $memberQuery->map(function ($member) {
+            return [
+                'id' => $member->user->id, // Direct access, efficient
+                'username' => $member->user->username,
+                'headshot' => $member->user->headshot(),
+            ];
+        })->toArray();
+        if ($slug != $space->slug()) {
+            echo ("Did you mean: " . $space->slug());
             abort(404);
         }
 
@@ -81,7 +91,9 @@ class SpaceController extends Controller
                 'name' => $space->name,
                 'slug' => $space->slug(),
                 'name' => $space->name,
+                'members' => $members,
                 'creator' => [
+                    'id' => $space->creator->id,
                     'username' => $space->creator->username,
                     'display_name' => $space->creator->display_name
                 ],
@@ -108,7 +120,7 @@ class SpaceController extends Controller
 
             $space->members()->create([
                 'user_id' => Auth::id(),
-                'rank' => 1,
+                'rank' => true,
             ]);
 
             $message = 'You have joined this space.';
@@ -154,6 +166,55 @@ class SpaceController extends Controller
             'thumbnail_pending' => true,
         ]);
 
+        $ownerRank = SpaceRanks::create([
+            'space_id' => $Space->id,
+            'rank' => 100,
+            'name' => 'Owners',
+            'can_make_games' => true,
+            'can_view_wall' => true,
+            'can_kick_users' => true,
+            'can_manage_members' => true,
+            'can_edit_space' => true,
+            'can_moderate_content' => true,
+            'can_manage_ranks' => true,
+            'can_invite_users' => true,
+        ]);
+
+
+        SpaceRanks::create([
+            'space_id' => $Space->id,
+            'rank' => 75,
+            'name' => 'Admin',
+            'can_view_wall' => true,
+            'can_kick_users' => true,
+            'can_make_games' => false,
+            'can_manage_members' => true,
+            'can_edit_space' => true,
+            'can_moderate_content' => true,
+            'can_manage_ranks' => true,
+            'can_invite_users' => true,
+        ]);
+
+        SpaceRanks::create([
+            'space_id' => $Space->id,
+            'rank' => true,
+            'name' => 'Member',
+            'can_make_games' => false,
+            'can_view_wall' => true,
+            'can_kick_users' => false,
+            'can_manage_members' => false,
+            'can_edit_space' => false,
+            'can_moderate_content' => false,
+            'can_manage_ranks' => false,
+            'can_invite_users' => false,
+        ]);
+
+        SpaceMembers::create([
+            'space_id' => $Space->id,
+            'user_id' => Auth::id(),
+            'rank' => $ownerRank->id,
+        ]);
+
 
         return redirect()->route('spaces.view', $Space->id, $Space->slug())->with([
             'message' => 'Space created successfully!',
@@ -163,8 +224,7 @@ class SpaceController extends Controller
 
     private function uploadImage(UploadedFile $file, string $name): string
     {
-        $path = Storage::disk('public')->putFileAs('uploads', $file, "{$name}.png");
-
+        $path = Storage::disk('spaces')->putFileAs('uploads', $file, "{$name}.png", 'public');
         return $path;
     }
 

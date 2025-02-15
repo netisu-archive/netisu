@@ -63,15 +63,9 @@
     width: 1.5em;
 }
 
-.card {
-    flex-direction: columm;
-    min-width: 0;
-    word-wrap: break-word;
-    background-clip: border-box;
-    border: 1px solid rgba(0, 0, 0, 0, 0.12549);
-    margin-bottom: 16px;
-    border-radius: 2px;
-}
+
+
+
 
 .ColorPickerItem:hover {
     border-color: var(--info-600);

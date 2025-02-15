@@ -31,21 +31,19 @@ class GiveDailyRewards
        }
 
         if (Auth::check() && !empty(Auth::user()->next_reward_payout) && strtotime(Auth::user()->next_reward_payout) < time()) {
-            // Continue with the regular logic if no adblock detected
             /** @var \App\Models\User $user **/
             $user = Auth::user();
 
             if ($user->lastIP() == null) {
-                $AgentInfo = Location::get();
                 $ipLog = new IpLog;
                 $ipLog->user_id = Auth::user()->id;
-                $ipLog->ip = $AgentInfo->ip;
+                $ipLog->ip = $request->ip();
                 $ipLog->save();
             }
 
 
-            $coinAmount = $user->settings->beta_tester ? 50 : 10;
-            $buckAmount = $user->settings->beta_tester ? 10 : 1;
+            $coinAmount = $user->settings->beta_tester ? 50 : 25;
+            $buckAmount = $user->settings->beta_tester ? 10 : 5;
             $pointsAmount = $user->settings->beta_tester ? 100 : 50;
 
             $user->update([

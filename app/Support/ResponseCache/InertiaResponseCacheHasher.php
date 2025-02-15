@@ -3,6 +3,7 @@ namespace App\Support\ResponseCache;
 
 use Illuminate\Http\Request;
 use \Spatie\ResponseCache\Hasher\DefaultHasher;
+use App\Actions\ResolveCurrencyForCustomerAction;
 
 class InertiaResponseCacheHasher extends DefaultHasher
 {

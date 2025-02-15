@@ -79,7 +79,7 @@ provide("selectedSubCategory", selectedSubCategory);
 
                 <template #bannerName>
                     <div class="text-xl" style="line-height: 16px">
-                        <v-lazy-image src="/assets/img/site-banners/market-title.png" alt="Market"
+                        <v-lazy-image :src="usePage<any>().props.site.marketLogo" alt="Market"
                             style="width: auto; height: 50px" />
                     </div>
                 </template>

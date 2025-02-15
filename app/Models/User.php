@@ -6,11 +6,6 @@ use Illuminate\{
     Database\Eloquent\Factories\HasFactory,
     Foundation\Auth\User as AeoAuthenticatable,
     Notifications\Notifiable,
-    Support\Facades\Cache,
-    Support\Facades\Redis,
-    Support\Facades\Auth,
-    Support\Collection,
-    Database\Eloquent\Relations\BelongsTo,
     Database\Eloquent\Relations\HasMany,
     Database\Eloquent\Relations\HasOne,
     Contracts\Auth\MustVerifyEmail,
@@ -22,15 +17,18 @@ use App\Models\{
     Admin,
     Level,
     Status,
-    ForumThread,
     IpLog,
+    ForumThread,
+    UserPromocodes,
     UsernameHistory,
 };
+
 use Laravel\{
     Cashier\Billable,
     Sanctum\HasApiTokens,
     Scout\Searchable,
 };
+
 use LevelUp\Experience\Concerns\{
     GiveExperience,
     HasAchievements,
@@ -142,6 +140,11 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         return $this->hasOne(Avatar::class)->first();
     }
 
+    public function promocodes(): HasOne
+    {
+        return $this->hasOne(UserPromocodes::class, 'user_id');
+    }
+
     public function getNextLevelExp()
     {
         $currentLevel = min($this->getLevel() + 1, 100);
@@ -219,7 +222,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
     {
         return ItemPurchase::where('seller_id', '=', $this->id)->count();
     }
-    
+
     public function ownsItem($id)
     {
         return Inventory::where([
@@ -233,9 +236,8 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         return $this->hasMany(IpLog::class, 'user_id');
     }
 
-    public function lastIP()
+    public function lastIP(): string|null
     {
-        // Assuming IpLog model has a 'ip' column
         $lastLog = $this->ipLogs()->latest()->first();
 
         return $lastLog ? $lastLog->ip : null;
@@ -287,7 +289,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
 
     public function primarySpace(): HasOne
     {
-        return $this->hasOne(Space::class, 'space_id', $this->settings->primary_space);
+        return $this->hasOne(Space::class, 'id', $this->settings->primary_space);
     }
 
     public function navSpaces()
@@ -302,7 +304,6 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
             ];
         });
     }
-
 
     public function canEditItem($id): bool
     {
@@ -394,6 +395,11 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
                 return "{$url}/thumbnails/{$image}_headshot.png";
             }
         }
+    }
+
+    public function pastUsernames(): HasMany
+    {
+        return $this->hasMany(UsernameHistory::class, 'user_id', 'id');
     }
 
     public function latestStatus(): HasOne

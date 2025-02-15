@@ -231,7 +231,6 @@ const props = usePage<any>().props;
             </li>
             <Link as="li" class="nav-item cell shrink" :href="route(`Welcome`)">
             <v-lazy-image :src="props.site.logo" class="show-for-medium" width="180" />
-            <v-lazy-image :src="props.site.icon" class="show-for-small-only" width="43" />
             </Link>
             <template v-for="topbarlinks in topbar">
                 <NavLink :link="topbarlinks.url" :ActiveLink="topbarlinks.ActiveLink">
@@ -279,7 +278,7 @@ const props = usePage<any>().props;
                                 <div>
                                     Show all results for "<span class="search-keyword">{{
                                         search
-                                        }}</span>"
+                                    }}</span>"
                                 </div>
                             </div>
                             <i class="px-1 fad fa-chevron-right text-muted"></i>
@@ -346,7 +345,7 @@ const props = usePage<any>().props;
                                                 notification.data.object }} &nbsp;</span>
                                             <span class="text-sm text-muted">{{
                                                 notification.data.message
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div class="text-xs text-muted">
                                             {{ notification.DateHum }}
@@ -386,12 +385,8 @@ const props = usePage<any>().props;
                     </ul>
                 </div>
             </li>
-            <li v-if="props.auth?.user" class="nav-item cell shrink show-for-large">
-                <a href="#" class="text-sm nav-link" style="line-height: 20px" v-tippy :content="props.auth?.user?.coins + '' +
-                    ` Coin${props.auth?.user?.coins > 1 ? 's' : ''} & ` +
-                    props.auth?.user?.bucks +
-                    ` Buck${props.auth?.user?.bucks > 1 ? 's' : ''} `
-                    " data-tooltip-placement="bottom">
+            <Link  as="li" :href="route(`my.money.page`)" v-if="props.auth?.user" class="nav-item cell shrink">
+                <a href="#" class="text-sm nav-link" style="line-height: 20px" v-tippy :content="props.auth?.user?.next_currency_payout" data-tooltip-placement="bottom">
                     <div class="text-warning">
                         <i class="fad fa-coins" style="width: 22px"></i>{{ props.auth?.user?.coins }}
                     </div>
@@ -399,7 +394,7 @@ const props = usePage<any>().props;
                         <i class="fad fa-money-bill-1-wave" style="width: 22px"></i>{{ props.auth?.user?.bucks }}
                     </div>
                 </a>
-            </li>
+            </Link>
             <li v-if="props.auth?.user && props.site.frontend.sidebar_menu"
                 class="dropdown position-relative nav-item cell shrink ms-1" id="user_dropdown">
                 <button @click="showModal('profile-modal')" class="gap-2 align-middle flex-container squish">
@@ -469,60 +464,11 @@ const props = usePage<any>().props;
 <script lang="ts">
 import { directive } from 'vue-tippy'
 
-let theme;
-
 export default {
-    beforeMount() {
-        this.$nextTick(function () {
-
-            if (typeof localStorage !== 'undefined') {
-                theme = localStorage.getItem('theme');
-            } else if (typeof sessionStorage !== 'undefined') {
-                // Fallback to sessionStorage
-                theme = sessionStorage.getItem('theme');
-            } else {
-                // If neither localStorage nor sessionStorage is supported
-                console.log('Web Storage is not supported in this environment.');
-                theme = 'light';
-            }
-
-            theme = localStorage.getItem("theme");
-            this.applyTheme(theme);
-        })
-    },
     directives: {
         tippy: directive,
     },
     methods: {
-        applyTheme(theme) {
-            let lowercaseTheme = theme.toLowerCase();
-
-            const style = (document.getElementById("theme-style") as HTMLLinkElement);
-
-            if (!style) {
-                let style = (document.createElement("link") as HTMLLinkElement);
-                style.id = "theme-style";
-                style.rel = "stylesheet";
-                document.head.appendChild(style);
-            }
-
-            if (style) {
-                style.href = `/assets/css/themes/variables-${lowercaseTheme}.css`;
-            } else {
-                return console.log("Theme Error");
-            }
-
-            // Save the selected theme in Storage
-            if (typeof localStorage !== 'undefined') {
-                localStorage.setItem('theme', theme);
-            } else if (typeof sessionStorage !== 'undefined') {
-                // Fallback to sessionStorage if localStorage is not supported
-                sessionStorage.setItem('theme', theme);
-            } else {
-                // If neither localStorage nor sessionStorage is supported
-                console.log('Web Storage is not supported in this environment.');
-            }
-        },
         showModal(modalId: string): void {
             const modal = document.getElementById(modalId);
             if (modal) {

@@ -28,7 +28,7 @@ const { props } = usePage<any>();
 <template>
     <AppHead pageTitle="Maintenence"
         :description="'We are working on ' + usePage<any>().props.site.name + ', We\'ll be back soon.'"
-        :url="route(`maintenance.page`)" :maintenance="true" />
+        :url="route(`maintenance.page`)" />
     <div class="modal" id="DeveloperCode">
         <form @submit.prevent="submitPassword">
             <div class="modal-card modal-card-body modal-card-sm">

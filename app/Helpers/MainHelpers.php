@@ -15,6 +15,20 @@ function translations($json)
     return json_decode(file_get_contents($json), true);
 }
 
+function getIp() {
+    foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){
+        if (array_key_exists($key, $_SERVER) === true){
+            foreach (explode(',', $_SERVER[$key]) as $ip){
+                $ip = trim($ip); // just to be safe
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false){
+                    return $ip;
+                }
+            }
+        }
+    }
+    return request()->ip(); // it will return the server IP if the client IP is not found using this method.
+}
+
 function truncate($text, $length)
 {
     if ($length >= \strlen($text)) {
@@ -117,29 +131,23 @@ function remote_file_exists($url)
     }
 }
 
-function shortNum($num)
-{
-    if ($num < 999) {
-        return $num;
-    } else if ($num > 999 && $num <= 9999) {
-        $new_num = substr($num, 0, 1);
-        return $new_num . 'K+';
-    } else if ($num > 9999 && $num <= 99999) {
-        $new_num = substr($num, 0, 2);
-        return $new_num . 'K+';
-    } else if ($num > 99999 && $num <= 999999) {
-        $new_num = substr($num, 0, 3);
-        return $new_num . 'K+';
-    } else if ($num > 999999 && $num <= 9999999) {
-        $new_num = substr($num, 0, 1);
-        return $new_num . 'M+';
-    } else if ($num > 9999999 && $num <= 99999999) {
-        $new_num = substr($num, 0, 2);
-        return $new_num . 'M+';
-    } else if ($num > 99999999 && $num <= 999999999) {
-        $new_num = substr($num, 0, 3);
-        return $new_num . 'M+';
-    } else {
+function shortNum($num) {
+    if ($num < 1000) {
         return $num;
     }
+
+    $suffixes = ['', 'K', 'M', 'B', 'T']; // standard money suffexes
+    $exponent = floor(log10($num) / 3);
+    $divisor = pow(10, $exponent * 3);
+    $shortened = $num / $divisor;
+
+    // Format to one decimal place.
+    if ($shortened < 10) {
+        $formatted = number_format($shortened, 1);
+    } else {
+        $formatted = number_format($shortened, 0); // no decimals
+    }
+
+
+    return $formatted . $suffixes[$exponent];
 }

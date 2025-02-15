@@ -21,7 +21,7 @@ defineProps({
 });
 
 
-const canPost = (section: string) => computed(() => {
+const canPost = () => computed(() => {
     const sectionData = usePage<any>().props.topic;
     return usePage<any>().props.auth.user.positionID >= sectionData.role_required_to_post;
 });
@@ -39,10 +39,14 @@ const canPost = (section: string) => computed(() => {
                 :section_three="section_three" />
         </div>
         <div class="cell large-10">
-            <div class="mb-2 align-right grid-x">
-
+            <div class="mb-2 grid-x grid-margin-x">
+                <div class="cell large-5">
+                        <div class="text-xl fw-semibold">{{ usePage<any>().props.topic.name }}</div>
+                        <div class="text-xs text-muted fw-semibold">{{ usePage<any>().props.topic.description }}</div>
+                </div>
                 <div class="cell large-7" v-if="usePage<any>().props.auth.user">
                     <div class="gap-2 align-middle flex-container-lg">
+
                         <input type="text" class="flex-container mb-2 form form-xs form-has-section-color"
                             placeholder="Search..." name="search" />
 
@@ -62,21 +66,6 @@ const canPost = (section: string) => computed(() => {
                     </div>
                 </div>
             </div>
-            <nav class="alert alert-info py-1 alert-landing">
-                <div class="text-center fw-semibold">
-                    <div class="gap-2 flex-container">
-                        <div>
-                            <div class="gap-2 align-middle flex-container">
-                                <div class="text-start">
-
-                                    <div class="text-md fw-semibold">{{ usePage<any>().props.topic.name }}</div>
-                                    <div class="text-xs fw-semibold">{{ usePage<any>().props.topic.description }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
             <div class="card">
                 <div class="pb-0 card-body">
                     <div class="gap-3 text-center flex-container flex-dir-column"

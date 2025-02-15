@@ -55,22 +55,33 @@ class ItemApiController extends Controller
         $items = [];
 
         $categoryPossibleNames = [
-            "Showpieces",
-            "Exclusives",
-            "Collectibles",
-            "Limited",
+            "showpiece_*",
+            "exclusive_*",
+            "collectible_*",
+            "limited_*",
+            "special_*"
         ];
 
+        $internalValue = $category ?? null; // Handle both object and array access, null if not present
+
+        $matchFound = false;
+        if ($internalValue !== null) { // Only proceed if the internal value exists
+            foreach ($categoryPossibleNames as $pattern) {
+                if (fnmatch($pattern, $internalValue)) {
+                    $matchFound = true;
+                    break; // Exit the loop once a match is found
+                }
+            }
+        }
+
         // Handle all of the "Exclusives" category
-        if (in_array($categoryData, $categoryPossibleNames)) {
+        if ($matchFound) {
             $exclusiveType = $category;
             if ($exclusiveType === "exclusive_all") {
                 $items = Item::where(['rare' => true, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
             } else {
-                $exclusiveType = explode('exclusive_', $exclusiveType);
-                $trimmedType = $exclusiveType[1] ?? ""; // Get the second element (or empty string if not found)
-                dd($trimmedType);
-                $items = Item::where(['rare' => true, 'item_type' => $trimmedType, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
+                $exclusiveType = str_replace("exclusive_", "", $exclusiveType); // Change to str_replace instread of explode
+                $items = Item::where(['rare' => true, 'item_type' => $exclusiveType, 'status' => 'approved', 'public_view' => true])->with('creator')->orderBy('updated_at')->get();
             }
         } else {
             // Get items for the specific category
@@ -97,8 +108,8 @@ class ItemApiController extends Controller
     {
         $item = Item::where(['id' => $itemID])->first();
 
-    
-        if ($item->item_type !== 'face' || $item->item_type !== 'head' ) {
+
+        if ($item->item_type !== 'face' || $item->item_type !== 'head') {
             ItemRenderer::dispatch($item->id)->onQueue('render');
             ItemPreviewRenderer::dispatch($item->id, true, $item->hash)->onQueue('render');
         }
@@ -254,38 +265,42 @@ class ItemApiController extends Controller
     private function getItemAndValidateAccess(int $itemId)
     {
         $item = Item::where('id', $itemId)->firstOrFail();
+        if (env('APP_ENV') != 'local') {
 
-        if (!Auth::user()->isStaff() && !$item->public_view) {
-            abort(403);
-        }
 
-        if ($item->status != 'approved' && $item->public_view != true && !Auth::user()->isStaff()) {
-            return response()->json(
-                [
-                    "message" => "This item is not approved.",
-                    "type" => "danger",
-                ],
-                500
-            );
-        } else if (!$item->onsale) {
-            return response()->json(
-                [
-                    "message" => "This item is not for sale.",
-                    "type" => "danger",
-                ],
-                500
-            );
-        } else if (Auth::user()->ownsItem($itemId)) {
-            return response()->json(
-                [
-                    "message" => "You already own the item.",
-                    "type" => "danger",
-                ],
-                500
-            );
-        } else {
-            return $item;
+            if (!Auth::user()->isStaff() && !$item->public_view) {
+                abort(403);
+            }
+
+            if ($item->status != 'approved' && $item->public_view != true && !Auth::user()->isStaff()) {
+                return response()->json(
+                    [
+                        "message" => "This item is not approved.",
+                        "type" => "danger",
+                    ],
+                    500
+                );
+            } else if (!$item->onsale) {
+                return response()->json(
+                    [
+                        "message" => "This item is not for sale.",
+                        "type" => "danger",
+                    ],
+                    500
+                );
+            } else if (Auth::user()->ownsItem($itemId)) {
+                return response()->json(
+                    [
+                        "message" => "You already own the item.",
+                        "type" => "danger",
+                    ],
+                    500
+                );
+            } else {
+                return $item;
+            }
         }
+        return $item;
     }
 
     private function handleResellerPurchase(Item $item, int $resellerId, string $currencyType)
@@ -382,22 +397,21 @@ class ItemApiController extends Controller
             ]);
 
             // Create inventory record
-           $inventory = new Inventory;
+            $inventory = new Inventory;
 
-           $inventory->create([
+            $inventory->create([
                 "user_id" => Auth::user()->id,
                 "item_id" => $item->id,
             ]);
 
             // Create purchase record
-            $AgentInfo = Location::get();
-
             $purchaseRecord = new ItemPurchase;
+
             $purchaseRecord->create([
                 "seller_id" => $seller->id,
                 "buyer_id" => Auth::user()->id,
                 "item_id" => $item->id,
-                "ip" => $AgentInfo->ip,
+                "ip" => \Request::ip(),
                 "currency_used" => $currencyType,
                 "price" => $price,
             ]);

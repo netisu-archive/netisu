@@ -105,7 +105,7 @@ const AttemptUpload = () => {
                         v-bind:class="{ 'is-loading': Uploading }" value="Upload"
                         class="my-2 mt-2 btn btn-success btn-block">
                         <i class="fad fa-pen me-1"></i>
-                        edit
+                        Edit Item
                     </button>
                 </form>
             </div>

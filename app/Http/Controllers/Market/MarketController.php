@@ -159,7 +159,7 @@ class MarketController extends Controller
 
     private function uploadImage(UploadedFile $file, string $name): string
     {
-        $path = Storage::disk('public')->putFileAs('uploads', $file, "{$name}.png");
+        $path = Storage::disk('spaces')->putFileAs('uploads', $file, "{$name}.png", 'public');
 
         return $path;
     }
@@ -198,7 +198,7 @@ class MarketController extends Controller
                 'thumbnail' => $item->thumbnail(),
                 'description' => $item->name,
 
-                ]
+            ]
         ]);
     }
 
@@ -214,11 +214,11 @@ class MarketController extends Controller
         }
 
         $item->update([
-           'name' => $request->name ??  $item->name,
-           'description' => $request->description ??  $item->description,
-           'cost_coins' => $request->cost_coins ??  $item->cost_coins,
-           'cost_bucks' => $request->cost_bucks ??  $item->cost_bucks,
-           'onsale' => $request->isOnsale ??  $item->onsale,
+            'name' => $request->name ??  $item->name,
+            'description' => $request->description ??  $item->description,
+            'cost_coins' => $request->cost_coins ??  $item->cost_coins,
+            'cost_bucks' => $request->cost_bucks ??  $item->cost_bucks,
+            'onsale' => $request->isOnsale ??  $item->onsale,
         ]);
 
         return redirect()->route('store.item', $item->id)->with([
