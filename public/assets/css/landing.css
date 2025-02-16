@@ -93,7 +93,7 @@ header.bh-landing {
 
 @media screen and (max-width: 1024px) {
 
-    .container,
+    .container-landing,
     .site,
     .container-fluid.site,
     .site.container-sm,
@@ -104,14 +104,14 @@ header.bh-landing {
     }
 }
 
-.container,
+.container-landing,
 .site,
 .container.content-before,
 .site-footer .container-landing {
     max-width: 1540px !important;
 }
 
-.container,
+.container-landing,
 .site,
 .container-fluid.site,
 .site.container-sm,
@@ -130,14 +130,14 @@ header.bh-landing {
 
 @media (min-width: 576px) {
 
-    .container,
+    .container-landing,
     .container-sm-landing {
         max-width: 1540px !important;
     }
 }
 
 .container,
-.container-fluid,
+.contai-landingner-fluid,
 .container-sm,
 .container-md,
 .container-lg,

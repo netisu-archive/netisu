@@ -96,7 +96,7 @@ function onImgErrorSmall(id) {
                 </div>
             </div>
         </nav>
-        <main class="container">
+        <main class="container-landing">
             <div class="justify-center grid-x grid-margin-x align-center grid-padding-y">
                 <div v-if="LandingItems?.['data'] || LandingItems?.['data'].length < 5" class="cell large-12">
                     <div class="align-middle grid-x">
