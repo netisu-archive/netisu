@@ -706,8 +706,6 @@ watch(following, (newValue, oldValue) => {
                                     </div>
                                 </div>
                             </div>
-                            
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -741,8 +739,6 @@ watch(following, (newValue, oldValue) => {
                                                 <div></div>
                                             </div>
                                         </div>
-                                    </div>
-                                    
                                     </div>
                                 </div>
                             </div>
