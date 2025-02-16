@@ -5,7 +5,6 @@ import Footer from "@/Components/LayoutParts/Footer.vue";
 import { computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { route } from 'momentum-trail';
-import "@/Pages/landing.css";
 
 const site = computed<any>(() => usePage<any>().props.site);
 
@@ -13,6 +12,7 @@ defineProps({
     LandingItems: { type: Object },
     LandingPosts: { type: Object },
 });
+
 const Welcome = [
     {
         en: {
@@ -49,6 +49,7 @@ function onImgErrorSmall(id) {
     return true;
 }
 </script>
+<style src="@/Pages/landing.css" />
 <template>
     <AppHead pageTitle="Welcome"
         description="Join in on the action today. Buy &amp; sell items, participate in spaces, make friends, and more."
