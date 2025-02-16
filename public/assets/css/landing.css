@@ -63,7 +63,7 @@ header.bh-landing {
 .card,
 .arcs,
 .row-landing {
-    min-height: 180px;
+    min-height: 180px !important;
 }
 .card.card-item {
     min-height: auto !important;
@@ -72,7 +72,7 @@ header.bh-landing {
     border-image: linear-gradient(to bottom right, var(--upgrade-500) 0%, var(--info-500) 25%, var(--success-500) 50%, var(--warning-600) 75%, var(--love-500) 100%);
     border-image-slice: 1;
     border-radius: var(--rounded-lg) !important;
-    text-size-adjust: 180px;
+    text-size-adjust: 180px !important;
 }
 
 .align-items-center-landing {
@@ -100,7 +100,7 @@ header.bh-landing {
     .site.container-md,
     .site.container-lg,
     .site.container-xl-landing {
-        margin-bottom: 0;
+        margin-bottom: 0 !important;
     }
 }
 
@@ -108,7 +108,7 @@ header.bh-landing {
 .site,
 .container.content-before,
 .site-footer .container-landing {
-    max-width: 1540px;
+    max-width: 1540px !important;
 }
 
 .container,
@@ -118,9 +118,9 @@ header.bh-landing {
 .site.container-md,
 .site.container-lg,
 .site.container-xl-landing {
-    padding-top: 20px;
-    padding-bottom: 20px;
-    flex: 1 0 auto;
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+    flex: 1 0 auto !important;
 }
 
 .mt-4,
@@ -132,7 +132,7 @@ header.bh-landing {
 
     .container,
     .container-sm-landing {
-        max-width: 1540px;
+        max-width: 1540px !important;
     }
 }
 
@@ -142,11 +142,11 @@ header.bh-landing {
 .container-md,
 .container-lg,
 .container-xl-landing {
-    width: 100%;
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
+    width: 100% !important;
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
 }
 
 article,
@@ -159,7 +159,7 @@ hgroup,
 main,
 nav,
 section-landing {
-    display: block;
+    display: block !important;
 }
 
 .row-landing {
