@@ -706,10 +706,7 @@ watch(following, (newValue, oldValue) => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="cell show-for-large small-5 medium-3 flex-container gap-2" v-if="followerUser.staff || followerUser.settings.beta_tester">
-                                <div v-if="followerUser.staff" class="badge badge-danger" style="height:25px;"><i class="fad fa-gavel"></i></div>
-                                <div v-if="followerUser.settings.beta_tester" class="badge badge-success" style="height:25px;"><i class="fad fa-hard-hat"></i>
-                                </div>
+                            
                             </div>
                         </div>
                     </div>
@@ -745,10 +742,7 @@ watch(following, (newValue, oldValue) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="cell show-for-large small-5 medium-3 flex-container gap-2" v-if="followingUser.staff || followingUser.settings.beta_tester">
-                                        <div v-if="followingUser.staff" class="badge badge-danger" style="height:25px;"><i class="fad fa-gavel"></i></div>
-                                        <div v-if="followingUser.settings.beta_tester" class="badge badge-success" style="height:25px;"><i class="fad fa-hard-hat"></i>
-                                        </div>
+                                    
                                     </div>
                                 </div>
                             </div>
