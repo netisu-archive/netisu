@@ -678,7 +678,7 @@ watch(following, (newValue, oldValue) => {
                                     <div class="text-start">
                                         <Link :href="route('user.profile', { username: followerUser.username })"
                                             class="text-md">
-                                        {{ followerUser.dname }}
+                                        {{ followerUser.display_name }}
                                         </Link>
                                         <div></div>
                                         <Link :href="route('user.profile', { username: followerUser.username })"
@@ -692,10 +692,10 @@ watch(following, (newValue, oldValue) => {
                         </div>
                     </div>
                 </div>
-                <div v-if="usePage<any>().props.user.followers.data?.['length']" class="mx-3 my-3 divider"></div>
+            </div>
+            <div v-if="usePage<any>().props.user.followers.data?.['length']" class="mx-3 my-3 divider"></div>
                 <Pagination v-if="usePage<any>().props.user.followers.data?.['length']" v-bind:pagedata="usePage<any>().props.followers">
                 </Pagination>
-            </div>
         </div>
            <div v-if="ActiveCategory === 'Following'" class="my-2">
             <div class="mb-1 text-xl fw-semibold">Following</div>
@@ -729,7 +729,7 @@ watch(following, (newValue, oldValue) => {
                                             <div class="text-start">
                                                 <Link :href="route('user.profile', { username: followingUser.username })"
                                                     class="text-md">
-                                                {{ followingUser.dname }}
+                                                {{ followingUser.display_name }}
                                                 </Link>
                                                 <div></div>
                                                 <Link :href="route('user.profile', { username: followingUser.username })"
@@ -742,10 +742,10 @@ watch(following, (newValue, oldValue) => {
                                     </div>
                                 </div>
                             </div>
-                            <div v-if="usePage<any>().props.user.following.data?.['length']" class="mx-3 my-3 divider"></div>
+                        </div>
+                         <div v-if="usePage<any>().props.user.following.data?.['length']" class="mx-3 my-3 divider"></div>
                             <Pagination v-if="usePage<any>().props.user.following.data?.['length']" v-bind:pagedata="usePage<any>().props.following">
                             </Pagination>
-                        </div>
                     </div>
                 </div>
         </div>
