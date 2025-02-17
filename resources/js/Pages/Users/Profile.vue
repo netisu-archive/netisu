@@ -663,7 +663,7 @@ watch(following, (newValue, oldValue) => {
                     </div>
                 </div>
             <div v-else class="grid-x grid-margin-x">
-                <div class="cell medium-6 mb-2" v-for="(followerUser, index) in usePage<any>().props.user.followers" :key="index">
+                <div class="cell medium-6 mb-2" v-for="(followerUser, index) in usePage<any>().props.user.followers.data" :key="index">
                     <div class="card card-body">
                         <div class="grid-x grid-margin-x">
 
@@ -714,7 +714,7 @@ watch(following, (newValue, oldValue) => {
                 </div>
             </div>
         <div v-else class="grid-x grid-margin-x">
-                        <div class="cell medium-6 mb-2" v-for="(followingUser, index) in usePage<any>().props.user.following" :key="index">
+                        <div class="cell medium-6 mb-2" v-for="(followingUser, index) in usePage<any>().props.user.following.data" :key="index">
                             <div class="card card-body">
                                 <div class="grid-x grid-margin-x">
 
