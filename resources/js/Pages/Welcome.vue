@@ -52,14 +52,11 @@ const lang = computed<any>(() => usePage<any>().props.locale);
                     <div class="row-landing">
                         <div class="text-white">
                             <!-- Page heading-->
-                            <span class="text-5xl fw-semibold">
+                            <div class="text-5xl fw-semibold">
                                 <span v-for="messages in Welcome">
                                     {{ messages[lang].message }}
                                 </span>
-                            </span>
-                            <!--h1 class="mb-5">
-            <v-lazy-image :src="site.logo" width="300px" />
-          </h1-->
+                            </div>
                             <h3 class="p-2 mt-3 text-wrap fw-semibold" v-for="desc in Welcome">
                                 {{ desc[lang].desc }}
                             </h3>
@@ -79,7 +76,7 @@ const lang = computed<any>(() => usePage<any>().props.locale);
             </div>
         </header>
         <nav v-if="usePage<any>().props.site_config.announcement" class="alert alert-danger alert-landing">
-            <div class="py-1 text-center   fw-semibold">
+            <div class="py-1 text-center fw-semibold">
                 <div class="gap-2 text-center align-middle flex-container align-center">
                     <div>
                         {{ usePage<any>().props.site_config.announcement_message }}
