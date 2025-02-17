@@ -7,8 +7,6 @@ defineProps({
     description: { type: String },
     url: { type: String },
     cover: { type: String },
-    landing: { type: Boolean, default: false },
-
     item: { type: Boolean, default: false },
     iid: { type: Number },
     itime: { type: Number, default: null },
@@ -38,7 +36,6 @@ const getFormattedDate = (timeStamp: number) => {
         <link rel="shortcut icon" type="image/x-icon" :href="usePage<any>().props.site.icon" />
         <meta name="msapplication-TileColor" content="#03a9f4" />
         <meta name="robots" content="index,follow" />
-        <link v-if="landing" href="/assets/css/landing.css" rel="stylesheet" />
 
         <!-- Scripts -->
         <meta name="msapplication-config" content="/browserconfig.ae3u4gn3.xml" />
