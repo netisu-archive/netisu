@@ -13,13 +13,13 @@ import VLazyImage from "v-lazy-image";
     <AppHead pageTitle="Users" description="View all users here." :url="route(`user.page`)" />
     <Navbar />
     <Sidebar>
-        <div class="cell small-12 medium-3">
-            <div class="mb-2 text-3xl fw-semibold ">Discover</div>
+        <div class="cell medium-3 small-12">
+            <span class="mb-2 text-3xl fw-semibold">Discover</span>
             <div class="mb-2 text-md text-muted">Find new friends among {{ usePage<any>().props.user_count }} users.</div>
 
             <ul class="tabs flex-dir-column">
                 <li class="tab-item">
-                    <a href="#" class="tab-link squish active">
+                    <a  class="tab-link squish active">
                         All
                     </a>
                 </li>
@@ -55,9 +55,9 @@ import VLazyImage from "v-lazy-image";
                                     </div>
                                 </div>
                             </div>
-                            <div class="cell show-for-large small-5 medium-3 flex-container align-right gap-2" v-if="user.staff || user.settings.beta_tester">
-                                <div v-if="user.staff" class="badge badge-danger" style="height:25px;"><i class="fad fa-gavel"></i></div>
-                                <div v-if="user.settings.beta_tester" class="badge badge-success" style="height:25px;"><i class="fad fa-hard-hat"></i>
+                            <div class="cell show-for-large small-5 medium-3 flex-container align-right gap-2"  v-if="user.staff || user.settings.beta_tester">
+                                <div  v-if="user.staff" :content='"This user works for " + usePage<any>().props.site.name'  v-tippy class="badge badge-danger" style="height:25px;">Staff</div>
+                                <div  v-if="user.settings.beta_tester"  content="This user is a beta tester" v-tippy class="badge badge-success" style="height:25px;">Tester
                                 </div>
                             </div>
                         </div>
@@ -74,4 +74,12 @@ import VLazyImage from "v-lazy-image";
     </Sidebar>
     <Footer />
 </template>
-e
+<script lang="ts">
+import { directive } from "vue-tippy";
+
+export default {
+    directives: {
+        tippy: directive,
+    },
+}
+</script>

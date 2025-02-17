@@ -195,7 +195,7 @@ watch(following, (newValue, oldValue) => {
                         <div class="mb-1 flex-container align-middle gap-1 fw-semibold">
                             {{ usePage<any>().props.user.display_name }}
                                 <i v-if="usePage<any>().props.user.staff" class="fad fa-gavel text-danger"></i>
-                                <i v-else-if="usePage<any>().props.user.settings.beta_tester"
+                                <i v-if="usePage<any>().props.user.settings.beta_tester"
                                     class="fad fa-hard-hat text-success"></i>
                                 <v-lazy-image
                                     :src="'/assets/img/flags/' + usePage<any>().props.user.settings.country_code + '.svg'"
@@ -352,7 +352,7 @@ watch(following, (newValue, oldValue) => {
 
                 </div>
             </div>
-            <div v-else-if="ActiveCategory === 'Posts'">
+            <div v-if="ActiveCategory === 'Posts'">
                 <div class="mb-1 text-xl fw-semibold">Posts</div>
 <div class="mb-3 card card-body">
                 <div v-if="!statuses?.['data']?.['length']" class="section">
@@ -440,69 +440,73 @@ watch(following, (newValue, oldValue) => {
                 <Pagination v-if="statuses?.['data']?.['length']" v-bind:pagedata="statuses" />
             </div>
 
-            <div v-else-if="ActiveCategory === 'Inventory'">
+            <div v-if="ActiveCategory === 'Inventory'">
                 <span class="text-xl fw-semibold">Current Outfit</span>
-                <div class="grid-x">
-                    <div class="text-center cell large-4 align-left">
-                        <div class="text-center flex-container align-left">
-                            <div class="text-center" style="transform:scale(0.6);margin-top:-25px;">
-                                <div style="margin-bottom: 5px">
-                                    <button class="avatar-body-part" id="head" :style="{
-                                        backgroundColor: '#' + userAvatar.color_head,
-                                        padding: '5px',
-                                        borderRadius: '15px',
-                                        marginTop: '-1px',
-                                        width: '60', height: '50',
-                                    }">
-                                        <VLazyImage :src="userAvatar.current_face"
-                                            :src-placeholder="usePage<any>().props.site.production.domains.storage + '/assets/default.png'"
-                                            width="50" height="50" />
-                                    </button>
-                                </div>
-                                <div style="display: flex; margin-bottom: 5px">
-                                    <button class="avatar-body-part" id="left_arm" :style="{
-                                        backgroundColor: '#' + userAvatar.color_left_arm,
-                                        padding: '50px',
-                                        paddingRight: '0px',
-                                    }"></button>
+                <div class="grid-x grid-margin-x">
+                    <div class="text-center cell large-5" >
+                        <div style="max-width: 100vw">
+                            <div class="flex-container align-center-sm">
+                                    <div class="text-center" style="transform: scale(0.6);margin-top:-25px">
+                                        <div style="margin-bottom: 5px">
+                                            <button class="avatar-body-part" id="head" :style="{
+                                                backgroundColor: '#' + userAvatar.color_head,
+                                                padding: '5px',
+                                                borderRadius: '15px',
+                                                marginTop: '-1px',
+                                                width: '60',
+                                                height: '50',
+                                            }">
+                                                <VLazyImage :src="userAvatar.current_face"
+                                                    :src-placeholder="usePage<any>().props.site.production.domains.storage + '/assets/default.png'"
+                                                    width="50" height="50" />
+                                            </button>
+                                        </div>
+                                        <div style="margin-bottom: 5px">
+                                            <button class="avatar-body-part" id="right_arm" :style="{
+                                                backgroundColor: '#' + userAvatar.color_right_arm,
+                                                padding: '45px 20px',
+                                                marginRight: '5px',
+                                            }"></button>
 
-                                    <button class="avatar-body-part" id="torso" :style="{
-                                        backgroundColor: '#' + userAvatar.color_torso,
-                                        padding: '50px',
-                                    }"></button>
 
-                                    <button class="avatar-body-part" id="right_arm" :style="{
-                                        backgroundColor: '#' + userAvatar.color_right_arm,
-                                        padding: '50px',
-                                        paddingRight: '0px',
-                                    }"></button>
-                                </div>
-                                <div class="display: flex; margin-bottom: 5px">
-                                    <button class="avatar-body-part" name="left_leg" :style="{
-                                        backgroundColor: '#' + userAvatar.color_left_leg,
-                                        padding: '50px',
-                                        paddingRight: '0px',
-                                        paddingLeft: '47px',
-                                    }"></button>
+                                            <button class="avatar-body-part" id="torso" :style="{
+                                                backgroundColor: '#' + userAvatar.color_torso,
+                                                padding: '45px',
+                                            }"></button>
 
-                                    <button class="avatar-body-part" name="right_leg" :style="{
-                                        backgroundColor: '#' + userAvatar.color_right_leg,
-                                        padding: '50px',
-                                        paddingRight: '0px',
-                                        borderBottom: '15px',
-                                        paddingLeft: '47px',
-                                    }"></button>
+                                            <button class="avatar-body-part" id="left_arm" :style="{
+                                                backgroundColor: '#' + userAvatar.color_left_arm,
+                                                padding: '45px 20px',
+                                                marginLeft: '5px',
+                                            }"></button>
+
+                                        </div>
+                                        <div>
+                                            <button class="avatar-body-part" name="right_leg" :style="{
+                                                backgroundColor: '#' + userAvatar.color_right_leg,
+                                                marginRight: '5px',
+                                                paddingRight: '18px',
+                                                padding: '45px 20px',
+
+                                            }"></button>
+
+                                            <button class="avatar-body-part" name="left_leg" :style="{
+                                                backgroundColor: '#' + userAvatar.color_left_leg,
+                                                padding: '45px 20px',
+                                                paddingRight: '18px',
+                                            }"></button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
-                    <div class="text-center cell large-8">
+                    <div class="text-center cell large-7">
                         <div
-                            class="flex-container text-start flex-row flex-nowrap overflow-x-scroll px-3 px-lg-0 mb-2 mb-lg-0">
+                            class="flex-container align-center-sm text-start flex-row flex-nowrap overflow-x-scroll px-3 px-lg-0 mb-2 mb-lg-0">
                             <div v-if="ItemLoading || (items && items.length > 0)"
                                 class="grid-x grid-margin-x grid-padding-y">
                                 <template v-if="ItemLoading">
-                                    <ItemCardSkeleton v-for="n in 12" :key="n" />
+                                    <ItemCardSkeleton v-for="n in 6" :key="n" />
                                 </template>
                                 <div v-else class="cell large-4 medium-3 small-6"
                                     v-for="(item, index) in CurentlyWearingItems" :key="index">
@@ -516,7 +520,7 @@ watch(following, (newValue, oldValue) => {
                                             <div v-if="item.in_event" class="mb-1 badge badge-warning fw-semibold">
                                                 <i class="fas fa-calendar-star" style="width: 18px"></i>Event
                                             </div>
-                                            <div v-else-if="item.rare" class="mb-1 badge badge-info fw-semibold">
+                                            <div v-if="item.rare" class="mb-1 badge badge-info fw-semibold">
                                                 <i class="fas fa-star" style="width: 18px"></i>Rare
                                             </div>
                                         </div>
@@ -535,7 +539,7 @@ watch(following, (newValue, oldValue) => {
                                     </div>
                                 </div>
                             </div>
-                            <div v-else-if="items.message" class="">
+                            <div v-if="items.message" class="">
                                 <div class="pb-0 card-body">
                                     <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
                                         <i class="text-5xl fas fa-store-slash text-muted"></i>
@@ -588,10 +592,10 @@ watch(following, (newValue, oldValue) => {
                                     <div v-if="item.in_event" class="mb-1 badge badge-warning fw-semibold">
                                         <i class="fas fa-calendar-star" style="width: 18px"></i>Event
                                     </div>
-                                    <div v-else-if="item.rare" class="mb-1 badge badge-info fw-semibold">
+                                    <div v-if="item.rare" class="mb-1 badge badge-info fw-semibold">
                                         <i class="fas fa-star" style="width: 18px"></i>Rare
                                     </div>
-                                    <div v-else-if="item.sale_ongoing" class="mb-1 badge badge-danger fw-semibold">
+                                    <div v-if="item.sale_ongoing" class="mb-1 badge badge-danger fw-semibold">
                                         <i class="fas fa-badge-percent" style="width: 18px"></i>{{
                                             item.percent_off + "%" }} off
                                     </div>
@@ -611,7 +615,7 @@ watch(following, (newValue, oldValue) => {
                             </div>
                         </div>
                     </div>
-                    <div v-else-if="items.message" class="">
+                    <div v-if="items.message" class="">
                         <div class="pb-0 card-body">
                             <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
                                 <i class="text-5xl fas fa-store-slash text-muted"></i>
@@ -648,7 +652,7 @@ watch(following, (newValue, oldValue) => {
                     </div>
                 </div>
             </div>
-            <div v-else-if="ActiveCategory === 'Spaces'">
+            <div v-if="ActiveCategory === 'Spaces'">
                 <div class="mb-1 text-xl fw-semibold">Spaces</div>
                 <div class="mb-3 card card-body">
                     <div class="gap-3 text-center flex-container flex-dir-column">
@@ -677,9 +681,22 @@ watch(following, (newValue, oldValue) => {
                     </div>
                 </div>
 </div>
-<div v-else-if="ActiveCategory === 'Followers'" class="my-2">
+<div v-if="ActiveCategory === 'Followers'" class="my-2">
     <div class="mb-1 text-xl fw-semibold">Followers</div>
-            <div class="grid-x grid-margin-x">
+    <div v-if="!usePage<any>().props.user.followers?.['data']?.['length']" class="mb-3 card card-body">
+                    <div class="gap-3 text-center flex-container flex-dir-column">
+                        <i class="text-5xl fad fa-face-cry text-muted"></i>
+                        <div style="line-height: 16px">
+                            <div class="text-xs fw-bold text-muted text-uppercase">
+                                No followers
+                            </div>
+                            <div class="text-xs text-muted fw-semibold">
+                                {{ usePage<any>().props.user.username }} has no followers
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div v-else class="grid-x grid-margin-x">
                 <div class="cell medium-6 mb-2" v-for="(followerUser, index) in usePage<any>().props.user.followers" :key="index">
                     <div class="card card-body">
                         <div class="grid-x grid-margin-x">
@@ -709,11 +726,28 @@ watch(following, (newValue, oldValue) => {
                         </div>
                     </div>
                 </div>
+                <div v-if="usePage<any>().props.user.followers.data?.['length']" class="mx-3 my-3 divider"></div>
+                <Pagination v-if="usePage<any>().props.user.followers.data?.['length']" v-bind:pagedata="usePage<any>().props.followers">
+                </Pagination>
             </div>
         </div>
-           <div v-else-if="ActiveCategory === 'Following'" class="my-2">
+           <div v-if="ActiveCategory === 'Following'" class="my-2">
             <div class="mb-1 text-xl fw-semibold">Following</div>
-                    <div class="grid-x grid-margin-x">
+            <div v-if="!usePage<any>().props.user.following?.['data']?.['length']" class="mb-3 card card-body">
+                <div class="gap-3 text-center flex-container flex-dir-column">
+                    <i class="text-5xl fad fa-face-sleeping text-muted"></i>
+                    <div style="line-height: 16px">
+                        <div class="text-xs fw-bold text-muted text-uppercase">
+                            No followers
+                        </div>
+                        <div class="text-xs text-muted fw-semibold">
+                            {{ usePage<any>().props.user.username }} has not posted anything to their
+                                feed.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div v-else class="grid-x grid-margin-x">
                         <div class="cell medium-6 mb-2" v-for="(followingUser, index) in usePage<any>().props.user.following" :key="index">
                             <div class="card card-body">
                                 <div class="grid-x grid-margin-x">
@@ -742,6 +776,9 @@ watch(following, (newValue, oldValue) => {
                                     </div>
                                 </div>
                             </div>
+                            <div v-if="usePage<any>().props.user.following.data?.['length']" class="mx-3 my-3 divider"></div>
+                            <Pagination v-if="usePage<any>().props.user.following.data?.['length']" v-bind:pagedata="usePage<any>().props.following">
+                            </Pagination>
                         </div>
                     </div>
                 </div>

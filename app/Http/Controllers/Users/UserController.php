@@ -96,10 +96,10 @@ class UserController extends Controller
         }
 
         // Load relationships and counts
-        $userFollowing = $user->following()->get();
+        $userFollowing = $user->following()->paginate(6, ['*'], 'Following');
         $FollowingCount = $userFollowing->count();
 
-        $userFollowers = $user->followers()->get();
+        $userFollowers = $user->followers()->paginate(6, ['*'], 'followers');
         $FollowerCount = $userFollowers->count();
 
         // Determine if the authenticated user is following the profile user
@@ -117,7 +117,7 @@ class UserController extends Controller
         $statuses = Cache::remember($statuscacheKey, now()->addMinutes(5), function () use ($user) {
             return Status::where([
                 ['creator_id', '=', $user->id]
-            ])->orderBy('created_at', 'desc')->paginate(6)->through(function ($status) {
+            ])->orderBy('created_at', 'desc')->paginate(6, ['*'], 'posts')->through(function ($status) {
                 return [
                     'name' => $status->creator->username,
                     'headshot' => $status->creator->headshot(),

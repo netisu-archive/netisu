@@ -38,17 +38,8 @@ const Welcome = [
     },
 ];
 const lang = computed<any>(() => usePage<any>().props.locale);
-
-
-
-function onImgErrorSmall(id) {
-    let source = document.getElementById(id) as HTMLImageElement;
-    source.src = "/assets/img/dummy-error.png";
-    source.onerror = null;
-
-    return true;
-}
 </script>
+<style scoped src="@/Pages/landing.css"></style>
 <template>
     <AppHead pageTitle="Welcome"
         description="Join in on the action today. Buy &amp; sell items, participate in spaces, make friends, and more."
@@ -115,12 +106,6 @@ function onImgErrorSmall(id) {
                                 <div class="cell large-2 medium-4 small-6" v-for="item in LandingItems?.['data']">
                                     <Link :href="route(`store.item`, { id: item.id })
                                         " class="d-block">
-                                    <div class="p-2 mb-1 card card-item position-relative">
-                                        <img :src="item.thumbnail" :id="item.name" :alt="item.name" class="img-fluid"
-                                            @error="
-                                                onImgErrorSmall(item.name)
-                                                " />
-                                    </div>
                                     <div class="text-body fw-semibold text-truncate">
                                         {{ item.name }}
                                     </div>

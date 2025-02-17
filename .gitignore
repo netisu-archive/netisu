@@ -6,6 +6,8 @@ yarn-error.log
 /public/build
 /public/cdn/*
 /css-obfuscator/
+/bootstrap/ssr/*
+
 # Laravel 4 specific
 bootstrap/compiled.php
 app/storage/

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Http\Controllers\Endpoints\RenderController;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
 class UserRenderer implements ShouldQueue
 {
@@ -15,12 +16,24 @@ class UserRenderer implements ShouldQueue
 
     public $userID;
 
+
+
     /**
      * Create a new job instance.
      */
     public function __construct($userID)
     {
         $this->userID = $userID;
+    }
+    
+    /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [(new WithoutOverlapping($this->userID))->releaseAfter(60)];
     }
 
     /**

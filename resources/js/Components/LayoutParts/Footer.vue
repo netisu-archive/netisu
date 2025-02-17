@@ -4,11 +4,7 @@ import { usePage } from "@inertiajs/vue3";
 const props = usePage<any>().props;
 
 defineProps({
-    isLanding: {
-        type: Boolean,
-        required: false,
-        default: false,
-    },
+    isLanding: { type: Boolean, default: false },
 });
 </script>
 
@@ -81,7 +77,12 @@ defineProps({
 </template>
 
 <script lang="ts">
+import { directive } from "vue-tippy";
+
 export default {
+    directives: {
+        tippy: directive,
+    },
     methods: {
         showModal(modalId: string): void {
             const modal = document.getElementById(modalId);
