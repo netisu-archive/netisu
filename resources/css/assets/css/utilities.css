@@ -973,6 +973,7 @@ a:hover {
     font-style: italic;
 }
 .text-wrap {
+    -webkit-text-wrap: wrap;
     text-wrap: wrap;
 }
 .flex-wrap {
