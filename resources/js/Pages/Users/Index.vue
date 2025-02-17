@@ -64,11 +64,11 @@ import VLazyImage from "v-lazy-image";
                     </div>
                 </div>
             </div>
-            <div v-if="!usePage<any>().props.users.data?.['length']" class="text-danger fw-semibold">ERR T100: No
+            <div v-if="!usePage<any>().props.users?.['data']?.['length']" class="text-danger fw-semibold">ERR T100: No
                 users
                 found</div>
-            <div v-if="usePage<any>().props.users.data?.['length']" class="mx-3 my-3 divider"></div>
-            <Pagination v-if="usePage<any>().props.users.data?.['length']" v-bind:pagedata="usePage<any>().props.users">
+            <div v-if="usePage<any>().props.users?.['data']?.['length']" class="mx-3 my-3 divider"></div>
+            <Pagination v-if="usePage<any>().props.users?.['data']?.['length']" v-bind:pagedata="usePage<any>().props.users">
             </Pagination>
         </div>
     </Sidebar>
