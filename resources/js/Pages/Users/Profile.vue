@@ -539,24 +539,7 @@ watch(following, (newValue, oldValue) => {
                                     </div>
                                 </div>
                             </div>
-                            <div v-if="items.message" class="">
-                                <div class="pb-0 card-body">
-                                    <div class="gap-3 mb-2 text-center flex-container flex-dir-column">
-                                        <i class="text-5xl fas fa-store-slash text-muted"></i>
-                                        <div style="line-height: 16px">
-                                            <div class="text-xs fw-bold text-muted">
-                                                Looks like a gremlin got into the code again!
-                                                We're sending our best programmers with bug
-                                                spray to fix the issue
-                                            </div>
-                                            <div class="text-muted fw-semibold">
-                                                <p class="text-xs">{{ items.message }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-else class="align-center justify-center text-center flex-container">
+                            <div v-if="!CurentlyWearingItems" class="align-center justify-center text-center flex-container">
                                 <div class="pb-0 card-body">
                                     <div
                                         class="gap-3 mb-2  align-center justify-center text-center flex-container flex-dir-column">
