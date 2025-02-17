@@ -15,7 +15,7 @@ class RenderController extends Controller
 {
     function getAvatarRecord(int $id)
     {
-        return Avatar::where('id', $id)->first();
+        return Avatar::where('user_id', $id)->first();
     }
 
     public function UserRender(int $id)
