@@ -743,10 +743,10 @@ watch(following, (newValue, oldValue) => {
                                 </div>
                             </div>
                         </div>
-                         <div v-if="usePage<any>().props.user.following?.['data']?.['length']" class="mx-3 my-3 divider"></div>
+                    </div>
+                    <div v-if="usePage<any>().props.user.following?.['data']?.['length']" class="mx-3 my-3 divider"></div>
                             <Pagination v-if="usePage<any>().props.user.following?.['data']?.['length']" v-bind:pagedata="usePage<any>().props.user.following">
                             </Pagination>
-                    </div>
                 </div>
         </div>
 
