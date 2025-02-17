@@ -138,10 +138,10 @@ class UserController extends Controller
         }
 
         // Load relationships and counts
-        $userFollowing = $user->following()->get();
+        $userFollowing = $user->following()->all();
         $FollowingCount = $userFollowing->count();
 
-        $userFollowers = $user->followers()->get();
+        $userFollowers = $user->followers()->all();
         $FollowerCount = $userFollowers->count();
 
         // Determine if the authenticated user is following the profile user
