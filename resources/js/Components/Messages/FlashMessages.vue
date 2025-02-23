@@ -75,21 +75,3 @@ const toastIcon = computed(() => {
         </div>
     </nav>
 </template>
-
-<style scoped>
-.toast-menu {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    cursor: pointer;
-}
-
-.toast-menu div {
-    transition: opacity 0.3s ease;
-}
-
-.toast-menu div.hide {
-    opacity: 0;
-}
-</style>

@@ -1,9 +1,9 @@
 .toast-menu {
     position: fixed;
-    top: 0;
-    right: 0;
+    top: 20px;
+    right: 20px;
     bottom: 0;
-    z-index: 999;
+    z-index: 1000;
     width: 260px;
     padding-top: 62px;
     padding-right: 6px;
@@ -15,6 +15,9 @@
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 
+}
+.toast-menu div {
+    transition: opacity 0.3s ease;
 }
 
 .toast-menu-slide-in {
