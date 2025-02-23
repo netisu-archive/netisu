@@ -7,7 +7,7 @@ import { route } from 'momentum-trail';
 </script>
 
 <template>
-    <AppHead pageTitle="Email Sent" description="Email Sent" :url="route('Welcome')" />
+    <AppHead pageTitle="Email Verified" description="Thank you for verifying your email" :url="route('Welcome')" />
     <Navbar :landing="false" />
     <Sidebar>
         <div class="cell medium-7">

@@ -167,6 +167,15 @@ const sidebar = [
     },
 ];
 const lang = computed(() => usePage<any>().props.locale);
+
+// for testing purposes
+const alertData = ref<{ message: string; type: string } | null>(null);
+
+const showAlert = () => {
+    // Simulate a JSON response
+    const response = { message: 'This is a success message!', type: 'success' };
+    alertData.value = response;
+};
 </script>
 <template>
     <nav v-if="props.site.frontend.sidebar_menu" class="sidebar show-for-large" id="sidebar">
@@ -196,14 +205,16 @@ const lang = computed(() => usePage<any>().props.locale);
                 )" :link="sidelink.url" :ActiveLink="sidelink.ActiveLink">
                     <i class="side-icon" :class="sidelink.icon"></i><span>{{ sidelink[lang].title }}</span>
                 </SideLink>
+                <button @click="showAlert">Show Alert</button>
+
             </template>
             <div v-if="usePage<any>().props.auth.user">
-                <div v-if="usePage<any>().props.auth.user.navSpaces.length">
+                <div v-if="usePage<any>().props.auth.user.mainSpaces">
                 <li class="side-item side-title">
                     Main Spaces
                 </li>
-                <li v-if="usePage<any>().props.auth.user.navSpaces.length"
-                    v-for="(space, index) in usePage<any>().props.auth.user.navSpaces" :key="index" class="side-item">
+                <li v-if="usePage<any>().props.auth.user.mainSpaces"
+                    v-for="(space, index) in usePage<any>().props.auth.user.mainSpaces" :key="index" class="side-item">
                     <Link :href="route(`spaces.view`, { id: space.id, slug: space.slug })"
                         class="side-link side-link-has-img">
                     <span class="side-img">
@@ -212,7 +223,7 @@ const lang = computed(() => usePage<any>().props.locale);
                     <span>{{ space.name }}</span>
                     </Link>
                 </li>
-            </div>
+                </div>
                 <li class="side-item side-title">
                     Joined Spaces
                 </li>
@@ -260,7 +271,7 @@ const lang = computed(() => usePage<any>().props.locale);
             backgroundPosition: 'center'
         }" />
     </div>
-    <FlashMessages :ShowJsonAlert="showJsonAlert" :flash="JSONALERT" />
+    <FlashMessages :flash="alertData" />
     <slot name="SuperBanner" v-if="superBanActive" />
     <main :class="{
         'container-navbar': !props.site.frontend.sidebar_menu,

@@ -320,6 +320,38 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
     {
         return $this->spaces()->where('is_favorite', true);
     }
+    
+    public function mainSpaces()
+    {
+        $primarySpace = $this->primarySpace()->first();
+        $secondarySpace = $this->secondarySpace()->first();
+    
+        $spaces = collect();
+    
+        if ($primarySpace) {
+            $spaces->push([
+                'id' => $primarySpace->id,
+                'name' => $primarySpace->name,
+                'slug' => $primarySpace->slug(),
+                'thumbnail' => $primarySpace->thumbnail(),
+            ]);
+        }
+    
+        if ($secondarySpace && $secondarySpace->id !== ($primarySpace ? $primarySpace->id : null)) {
+            $spaces->push([
+                'id' => $secondarySpace->id,
+                'name' => $secondarySpace->name,
+                'slug' => $secondarySpace->slug(),
+                'thumbnail' => $secondarySpace->thumbnail(),
+            ]);
+        }
+    
+        if ($spaces->isEmpty()) {
+            return null;
+        }
+    
+        return $spaces;
+    }
 
     public function primarySpace(): HasOne
     {

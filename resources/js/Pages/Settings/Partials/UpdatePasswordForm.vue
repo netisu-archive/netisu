@@ -9,18 +9,18 @@ const currentPasswordInput = ref(null);
 
 const form = useForm({
     current_password: '',
-    password: '',
-    password_confirmation: '',
+    new_password: '',
+    new_password_confirmation: '',
 });
 
 const updatePassword = () => {
     axios.get(`/sanctum/csrf-cookie`).then(() => {
-        form.post(route('api.settings.resetPassword'), {
+        form.post(route('api.settings.changePassword'), {
             preserveScroll: true,
             onSuccess: () => form.reset(),
             onError: () => {
                 if (form.errors.password) {
-                    form.reset('password', 'password_confirmation');
+                    form.reset('new_password', 'new_password_confirmation');
                     passwordInput.value.focus();
                 }
                 if (form.errors.current_password) {
@@ -54,20 +54,20 @@ const updatePassword = () => {
                     <div class="text-xs fw-bold text-muted text-uppercase">
                         New Password
                     </div>
-                    <input id="password" ref="passwordInput" v-model="form.password" type="password"
+                    <input id="password" ref="passwordInput" v-model="form.new_password" type="password"
                         autocomplete="new-password" class="form form-has-section-color"
                         placeholder="Current Password..." />
-                    <div :message="form.errors.password" class="text-danger fw-semibold mt-2" />
+                    <div :message="form.errors.new_password" class="text-danger fw-semibold mt-2" />
 
                 </div>
                 <div class="mb-2">
                     <div class="text-xs fw-bold text-muted text-uppercase">
                         Confirm Password
                     </div>
-                    <input id="password_confirmation" v-model="form.password_confirmation" type="password"
+                    <input id="password_confirmation" v-model="form.new_password_confirmation" type="password"
                         autocomplete="new-password" class="form form-has-section-color"
                         placeholder="Current Password..." />
-                    <div :message="form.errors.password_confirmation" class="text-danger fw-semibold mt-2" />
+                    <div :message="form.errors.new_password_confirmation" class="text-danger fw-semibold mt-2" />
                 </div>
             </div>
             <button :disabled="form.processing" class="btn btn-success">

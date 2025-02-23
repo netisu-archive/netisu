@@ -118,7 +118,7 @@ Route::group(['as' => 'api.'], function () {
         
         Route::post('/profile-picture/upload', [SettingsController::class, 'uploadProfilePicture'])->name('uploadProfilePicture');
         Route::post('/change-country/{country}', [SettingsController::class, 'changeCountry'])->name('changeCountry');
-        Route::post('/change-password', [SettingsController::class, 'resetPassword'])->name('resetPassword');
+        Route::post('/change-password', [SettingsController::class, 'changePassword'])->name('changePassword');
 
     });
 

@@ -3,27 +3,28 @@ import Navbar from '@/Components/LayoutParts/Navbar.vue';
 import Sidebar from '@/Components/LayoutParts/Sidebar.vue';
 import Footer from '@/Components/LayoutParts/Footer.vue';
 import { route } from 'momentum-trail';
-import axios  from 'axios';
+import axios from 'axios';
 import { ref } from 'vue';
 
-defineProps<{
-    message: string
-}>();
+function getCsrfToken() {
+  return axios.get(`/sanctum/csrf-cookie`);
+}
 
-const message = ref('');
+function postEmail() {
+  return axios.post(route(`verification.send`)).then(
+    setTimeout(function() {window.location.reload()}, 2000)
+  );
+}
+
 
 const sendEmail = () => {
-    axios.get(`/sanctum/csrf-cookie`).then((message) => {
-        axios.post(route(`verification.send`)).then((message) => {
-            message.value = message
-        });
-    });
+    return Promise.all([getCsrfToken(), postEmail()]);
 }
 </script>
 
 <template>
     <AppHead pageTitle="Email Verification" description="Please verify your email to continue."
-        :url="route('Welcome')" />
+        :url="route('verification.notice')" />
     <Navbar :landing="false" />
     <Sidebar>
         <div class="cell medium-7">
@@ -31,9 +32,9 @@ const sendEmail = () => {
                 <div class="card-body">
                     <i class="mb-3 fad fa-envelope-open-text text-muted" style="font-size:80px;"></i>
                     <h3>Email Verification</h3>
-                    <p class="text-muted text-sm">{{ message ? message  : 'This will take less than 5 minutes.'}}</p>
-                    <div class="min-w-0 gap-2 mt-3 flex-container align-center">
-                        <form @submit.prevent="sendEmail">
+                    <p class="text-muted text-sm">This will take less than 5 minutes.</p>
+                                            <form @submit.prevent="sendEmail">
+<div class="min-w-0 gap-1 mt-3 flex-container align-center">
                             <button type="submit" class="btn btn-xs btn-success">
                                 <i class="fad fa-badge-check"></i>
                                 Verify
@@ -42,8 +43,9 @@ const sendEmail = () => {
                                 <i class="fad fa-right-from-bracket"></i>
                                 Logout
                             </button>
-                        </form>
-                    </div>
+                    </div> 
+                                       </form>
+
                 </div>
             </div>
         </div>

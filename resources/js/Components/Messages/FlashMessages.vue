@@ -1,78 +1,95 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 
 const props = defineProps<{
-    ShowJsonAlert?: boolean;
     flash?: {
         message: string;
         type: string;
     };
 }>();
 
-const show = ref<any>(props.ShowJsonAlert);
-// Extracting props
+const show = ref(false); // Initially hide the toast
 const message = computed(() => props.flash?.message);
 const type = computed(() => props.flash?.type);
+const showToastClass = ref(false);
 
 const handleClick = () => {
-    // Toggle animation class
-    document.querySelector(".toast-menu")?.classList.toggle("toast-menu-slide");
-
-    // Hide toast after animation (adjust delay based on animation duration)
-    setTimeout(() => {
-        show.value = false;
-    }, 500); // Adjust delay as needed
+    show.value = false;
 };
 
-// Watchers
 watch(
-    [message, type],
-    () => {
-        show.value = true;
+    () => props.flash,
+    (newFlash, oldFlash) => {
+        if (newFlash && newFlash.message && newFlash.type) {
+            show.value = true;
+            showToastClass.value = true;
+            setTimeout(() => {
+                showToastClass.value = false;
+            }, 6000);
+            setTimeout(() => {
+                show.value = false;
+            }, 7000);
+        }
     },
     { deep: true }
 );
+
+const toastClass = computed(() => {
+    switch (type.value) {
+        case 'success':
+            return 'alert-success';
+        case 'error':
+            return 'alert-danger';
+        case 'warning':
+            return 'alert-warning';
+        case 'info':
+            return 'alert-info';
+        default:
+            return '';
+    }
+});
+
+const toastIcon = computed(() => {
+    switch (type.value) {
+        case 'success':
+            return 'fad fa-check-circle';
+        case 'error':
+            return 'fad fa-circle-xmark';
+        case 'warning':
+            return 'fad fa-exclamation-circle';
+        case 'info':
+            return 'fad fa-info-circle';
+        default:
+            return '';
+    }
+});
 </script>
 
 <template>
-    <nav v-if="message && show" class="toast-menu" :class="{ 'toast-menu-slide': showToast }"  id="ToastNotif"
-        @click="handleClick">
-        <div v-if="type === 'success' && message && show"
-            class="py-2 mb-1 text-center alert alert-toast alert-success fw-semibold">
+    <nav v-if="message && show" class="toast-menu" :class="{ 'toast-menu-slide-in': showToastClass, 'toast-menu-slide-out': !showToastClass }" @click="handleClick">
+        <div :class="['py-2', 'mb-1', 'text-center', 'alert', 'alert-toast', 'fw-semibold', toastClass]">
             <div class="gap-2 align-middle flex-container">
-                <i class="text-lg fad fa-check-circle"></i>
-                {{ message }}
-            </div>
-        </div>
-        <div v-if="type === 'error' && message && show" class="py-2 mb-1 text-center alert alert-danger fw-semibold">
-            <div class="gap-2 align-middle flex-container">
-                <i class="text-lg fad fa-circle-xmark"></i>
-                <div>{{ message }}</div>
-            </div>
-        </div>
-        <div v-if="type === 'warning' && message && show" class="py-2 mb-1 text-center alert alert-warning fw-semibold">
-            <div class="gap-2 align-middle flex-container">
-                <i class="text-lg fad fa-exclamation-circle"></i>
+                <i :class="['text-lg', toastIcon]"></i>
                 <div>{{ message }}</div>
             </div>
         </div>
     </nav>
 </template>
-<script lang="ts">
-export default {
-    data() {
-        return {
-            showToast: false
-        };
-    },
-    mounted() {
-        setTimeout(() => {
-            this.showToast = true;
-        }, 1000);
 
-        setTimeout(() => {
-            this.showToast = false;
-        }, 6000);
-    }
-};
-</script>
+<style scoped>
+.toast-menu {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.toast-menu div {
+    transition: opacity 0.3s ease;
+}
+
+.toast-menu div.hide {
+    opacity: 0;
+}
+</style>

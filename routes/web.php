@@ -255,5 +255,4 @@ Route::post('/email/verification-notification', function (Request $request) {
     } else {
         User::where('id', Auth::id())->update(['email_verified_at' => now()]);
     }
-    return back();
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');

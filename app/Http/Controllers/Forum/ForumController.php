@@ -286,12 +286,16 @@ class ForumController extends Controller
         $parsedBody = $parser->parse($body)->getAsHTML();
 
 
-        $post = new ForumReply;
-        $post->thread_id = $id;
-        $post->creator_id = Auth::user()->id;
-        $post->body = $parsedBody;
+        $post = ForumReply::create([
+        'thread_id' => $id,
+        'creator_id' => Auth::user()->id,
+        'body' => $parsedBody,
+        ]);
+       
         $post->save();
         Auth::user()->addPoints(10);
+
+        Cache::forget('forum_post_' . $id . '_replies');
 
         return redirect()->back()->with('message', 'Your reply has been created.');
     }

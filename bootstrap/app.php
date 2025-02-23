@@ -85,38 +85,47 @@ return Application::configure(basePath: dirname(__DIR__))
             return inertia('App/Error', [
                 'site' => config('Values'),
                 'auth' => function () use ($request,  $pendingItemsAndSpaces) {
-                    return [
+                    $response = [
                         'user' => $request->user() ? [
                             'id' => $request->user()->id,
                             'username' => $request->user()->username,
                             'display_name' => $request->user()->display_name,
-                            'email' => preg_replace('/[^@]+@([^\s]+)/', '' . substr($request->user()->email, 0, 3) . '********@$1', $request->user()->email),
-                            'birthdate' => $request->user()->birthdate,
-                            'email_verified_at' => $request->user()->email_verified_at,
-                            'event_currency' => shortNum($request->user()->event_currency),
                             'next_currency_payout' => Carbon::parse($request->user()->next_reward_payout)->diffForHumans(),
                             'coins' => shortNum($request->user()->coins),
                             'bucks' => shortNum($request->user()->bucks),
-                            'status' => $request->user()->status,
-                            'staff' => $request->user()->isStaff(),
-                            'pendingAssets' => $request->user()->isStaff() ? $pendingItemsAndSpaces->count() : null,
-                            'position' => $request->user()->CurrentPosition(),
-                            'positionID' => $request->user()->CurrentPositionID(),
-                            'about_me' => $request->user()->about_me,
+                            'staff' => $request->user()->isStaff() ?? false,
+                            'position' => $request->user()->CurrentPosition() ?? null,
+                            'positionID' => $request->user()->CurrentPositionID() ?? null,
                             'headshot' => $request->user()->headshot(),
                             'thumbnail' => $request->user()->thumbnail(),
-                            'following' => $request->user()->following(),
                             'settings' => $request->user()->settings,
                             'level' => $request->user()->getLevel(),
                             'xp' => $request->user()->getPoints(),
-                            'navSpaces' => $request->user()->navSpaces(),
                             'nextlevelxp' =>  $request->user()->nextLevelAt(),
+                            'mainSpaces' => $request->user()->mainSpaces(),
+                            'navSpaces' => $request->user()->navSpaces(),
                             'notifications' => $request->user()->unreadNotifications()->limit(5)->get()
                                 ->each(function ($notification) {
                                     $notification->DateHum = $notification->created_at->diffForHumans();
                                 }),
                         ] : null,
                     ];
+    
+                    if ($request->user()->isStaff()) {
+                        $response['user']['pendingAssets'] = $pendingItemsAndSpaces->count();
+                    };
+    
+                    if (config('Values.in_event')) {
+                         $response['user']['event_currency'] = shortNum($request->user()->event_currency);
+                    };
+    
+                    if ($request->route()->named('user.settings.page')){
+                             $response['user']['email'] = preg_replace('/[^@]+@([^\s]+)/', ''.substr($request->user()->email, 0, 3).'********@$1', $request->user()->email);
+                             $response['user']['birthdate'] = $request->user()->birthdate;
+                             $response['user']['email_verified_at'] = $request->user()->email_verified_at;
+                    };
+                    
+                    return $response;
                 },
                 'site_config' => [
                     'announcement_message' => siteSetting('announcement_message') ?? null,
@@ -154,6 +163,7 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__ . '/../routes/channels.php',
         ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
     )->withMiddleware(function (Middleware $middleware) {
+        $middleware->throttleWithRedis();
         $middleware->replace(
             \Illuminate\Http\Middleware\TrustProxies::class,
             \Monicahq\Cloudflare\Http\Middleware\TrustProxies::class
