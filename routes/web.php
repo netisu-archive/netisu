@@ -224,7 +224,7 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
             Route::get('/', [SpaceController::class, 'SpaceCreate'])->name('page');
             Route::post('/create/validate', [SpaceController::class, 'SpaceVal'])->name('validate');
         });
-        Route::post('/join/{id}', [SpaceController::class, 'JoinSpace'])->name('join');
+        Route::post('/membership/{id}', [SpaceController::class, 'SpaceMembership'])->name('membership');
 
         Route::get('/{id}/{slug}', [SpaceController::class, 'SpacesView'])->name('view');
     });

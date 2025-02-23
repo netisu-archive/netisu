@@ -100,7 +100,11 @@ class MarketController extends Controller
                     'thumbnail' => $item->creator->headshot(),
                     'staff' => $item->creator->isStaff(),
                 ],
-                'owners' => $item->owners(),
+                'owners' => [
+                    'list' => $item->owners(),
+                    'count' => $item->owners()->count(),
+                ],
+
             ],
             'itemOwnership' => Auth::check() ? $authenticatedUserModel->ownsItem($item->id) : false,
             'recommendations' => $recommendations,

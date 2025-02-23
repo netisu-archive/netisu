@@ -24,9 +24,9 @@ return [
 
     'production' => [
         'domains' => [
-            'main' => 'http://netisu.test',
-            'storage' => 'http://netisu.test',
-            'api' => 'http://netisu.test/api',
+            'main' => 'http://100.115.92.195',
+            'storage' => 'http://100.115.92.195',
+            'api' => 'http://100.115.92.195/api',
             'careers' => 'https://careers.100.115.92.195',
             'support' => 'support@100.115.92.195'
         ],

@@ -56,6 +56,7 @@ class SpaceController extends Controller
             'search' => $search,
         ]);
     }
+
     public function SpaceCreate()
     {
         return inertia('Spaces/Create', []);
@@ -79,6 +80,7 @@ class SpaceController extends Controller
                 'headshot' => $member->user->headshot(),
             ];
         })->toArray();
+        
         if ($slug != $space->slug()) {
             echo ("Did you mean: " . $space->slug());
             abort(404);
@@ -91,7 +93,10 @@ class SpaceController extends Controller
                 'name' => $space->name,
                 'slug' => $space->slug(),
                 'name' => $space->name,
-                'members' => $members,
+                'members' => [
+                  'list' => $members,
+                  'count' => count($members),
+                ],
                 'creator' => [
                     'id' => $space->creator->id,
                     'username' => $space->creator->username,
@@ -106,7 +111,7 @@ class SpaceController extends Controller
         ]);
     }
 
-    public function JoinSpace(Request $request)
+    public function SpaceMembership(Request $request)
     {
         $space = Space::findOrFail($request->id);
 
@@ -114,26 +119,43 @@ class SpaceController extends Controller
             abort(404);
         }
 
-        $isInSpace = Auth::user()->spaces()->contains($space);
+        $isInSpace = SpaceMembers::where('space_id', $space->id)
+            ->where('user_id', Auth::id())
+            ->exists();
 
         if (!$isInSpace) {
+            // User is not in space, so join them
+            $memberRank = SpaceRanks::where('space_id', $space->id)
+                ->where('rank', 1)
+                ->first();
 
-            $space->members()->create([
-                'user_id' => Auth::id(),
-                'rank' => true,
-            ]);
+            if ($memberRank) {
+                SpaceMembers::create([
+                    'space_id' => $space->id,
+                    'user_id' => Auth::id(),
+                    'rank' => $memberRank->id,
+                ]);
 
-            $message = 'You have joined this space.';
+                $message = 'You have joined this space.';
+            } else {
+                // Handle the case where the member rank is not found
+                $message = 'Error: Member rank not found for this space. Pleaselet the creator know about this.';
+                return back()->with('error', $message);
+            }
         } else {
+            // User is already in the space, so make them leave
             if (Auth::user()->primary_space_id === $space->id) {
                 Auth::user()->update(['primary_space_id' => null]);
             }
 
-            $space->members()->where('user_id', Auth::id())->delete();
+            SpaceMembers::where('space_id', $space->id)
+                ->where('user_id', Auth::id())
+                ->delete();
+
             $message = 'You have left this space.';
         }
 
-        return back()->with('success_message', $message);
+        return back()->with('success', $message);
     }
 
     public function SpaceVal(Request $request)

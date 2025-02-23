@@ -201,6 +201,12 @@ watch(following, (newValue, oldValue) => {
                                     :src="'/assets/img/flags/' + usePage<any>().props.user.settings.country_code + '.svg'"
                                     alt="Country Flag" style="width: auto;height: 20px;"
                                     src-placeholder="/assets/img/flags/other/pirate.svg" />
+                                    <Link v-if="usePage<any>().props.user.settings.primarySpace" :href="route(`spaces.view`, { id: 1, slug: 'test'})">
+                                    <v-lazy-image
+                                    :src="'/assets/img/flags/' + usePage<any>().props.user.settings.primarySpace.thumbnail + '.svg'"
+                                    alt="Country Flag" style="width: auto;height: 20px;"
+                                    src-placeholder="/assets/img/flags/other/pirate.svg" />
+                                    </Link>
                         </div>
                         <div class="text-sm text-muted fw-semibold">
                             {{ "@" + usePage<any>().props.user.username }}

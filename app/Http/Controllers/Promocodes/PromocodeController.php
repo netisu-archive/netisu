@@ -15,7 +15,7 @@ use App\Http\Controllers\Controller;
 class PromocodeController extends Controller
 {
     public function PromocodeIndex(Request $request)
-    {   
+    {
         return inertia('Promocodes/Index', [
             'items' => Promocode::where('code', $request->code)->first(),
         ]);
@@ -28,7 +28,7 @@ class PromocodeController extends Controller
 
         $promocode = Promocode::where('code', $request->code)->first();
 
-        if (!$promocode) {
+        if (!$promocode || $promocode->expires_at <= now()) {
             return back()->with('error', 'Invalid or expired promocode.');
         }
 

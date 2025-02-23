@@ -4,6 +4,7 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    line-height: 1.25;
 }
 .tabs.flex-dir-column .tab-link {
     text-align: left !important;
@@ -22,9 +23,9 @@
 .tabs .tab-link {
     color: var(--body-color);
     text-align: center;
-    padding: 8px 10px;
-    border-radius: var(--rounded-lg);
-    border: 1px solid transparent;
+    border-radius: 2px;
+    display: block;
+    padding: 0.5em 0.75em;
     font-weight: 600;
 }
 .tabs .tab-link:hover {

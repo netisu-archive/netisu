@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+
+use Illuminate\{
+    Database\Eloquent\Factories\HasFactory,
+    Database\Eloquent\Relations\HasOne,
+    Database\Eloquent\Model,
+};
 
 class UserSettings extends Model
 {
@@ -14,7 +18,25 @@ class UserSettings extends Model
 
     protected $table = 'user_settings';
 
+
     protected $fillable = [
-        'user_id'
+        'user_id',
+        'primary_space', // Add primary_space to fillable
+        'secondary_space', // Add secondary_space to fillable
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function primarySpace(): HasOne
+    {
+        return $this->hasOne(Space::class, 'id', 'primary_space');
+    }
+
+    public function secondarySpace(): HasOne
+    {
+        return $this->hasOne(Space::class, 'id', 'secondary_space');
+    }
 }

@@ -90,7 +90,7 @@ class Item extends Model
     {
         return Inventory::where([
             ['item_id', '=', $this->id]
-        ])->count();
+        ]);
     }
 
     public function thumbnail()

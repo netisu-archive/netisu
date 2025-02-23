@@ -4,6 +4,7 @@
 /public/storage
 /public/build
 /bootstrap/ssr/*
+/bootstrap/ssr
 
 /storage/*.key
 /vendor

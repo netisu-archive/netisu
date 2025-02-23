@@ -18,20 +18,20 @@ defineProps({
 
 const JoinSpace = () => {
     axios.get(`/sanctum/csrf-cookie`).then(() => {
-        axios.post(route(`spaces.join`, { id: usePage<any>().props.space.id }), {
+        axios.post(route(`spaces.membership`, { id: usePage<any>().props.space.id }), {
         });
     });
 };
+
 const LeaveSpace = () => {
     axios.get(`/sanctum/csrf-cookie`).then(() => {
-        axios.post(route(`spaces.leave`, { id: usePage<any>().props.space.id }), {
+        axios.post(route(`spaces.membership`, { id: usePage<any>().props.space.id }), {
         });
     });
 };
 </script>
 <template>
     <AppHead pageTitle="Spaces" description="Find a space to join or create one!" :url="route(`spaces.page`)" />
-
     <Navbar />
     <Sidebar :superBanActive="true" :alertsEnabled="true">
         <template #SuperBanner>
@@ -56,7 +56,8 @@ const LeaveSpace = () => {
                         v-tippy="{ placement: 'bottom' }" style="outline: none;">
                     <i class="fad fa-user-plus"></i>
                     </Link>
-                    <Link v-if="usePage<any>().props.auth.user && usePage<any>().props.auth.user.id != usePage<any>().props.space.creator.id  && usePage<any>().props.isInSpace"
+                    <Link
+                        v-if="usePage<any>().props.auth.user && usePage<any>().props.auth.user.id != usePage<any>().props.space.creator.id  && usePage<any>().props.isInSpace"
                         class="text-xl text-danger squish" href="#" @click="LeaveSpace"
                         :content="'Leave ' + usePage<any>().props.space.name" as="button"
                         v-tippy="{ placement: 'bottom' }" style="outline: none;">
@@ -101,7 +102,7 @@ const LeaveSpace = () => {
                     </div>
                     <div class="text-sm w-100">
                         <i class="text-center fas fa-user-group text-muted" style="width: 26px"></i>
-                        10k+ Members
+                        {{ usePage<any>().props.space.members.count + " Members" }}
                     </div>
                     <div class="text-sm w-100">
                         <i class="text-center fas fa-clock text-muted" style="width: 26px"></i>

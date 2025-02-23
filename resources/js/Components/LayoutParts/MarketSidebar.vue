@@ -39,7 +39,7 @@ function setActiveTopCat(categoryName): void {
 
 onMounted(() => {
     if (categories?.["length"] > 0) {
-        selectCategory(categories[0]);
+        selectCategory(categories[1].name);
     }
 });
 </script>
@@ -68,7 +68,7 @@ onMounted(() => {
             <button
                 v-for="(item, index) in category"
                 @click="() => selectCategory(item)"
-                :class="{ active: selectedCategory === item.name }"
+                :class="{ active: selectedCategory === item }"
                 :key="index"
                 class="text-xs market-section-item"
             >

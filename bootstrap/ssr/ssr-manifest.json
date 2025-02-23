@@ -492,10 +492,10 @@
     "/build/assets/Item-CKMHJlO7.js"
   ],
   "resources/js/Pages/Users/Index.vue": [
-    "/build/assets/Index-Ba1wKzOu.js"
+    "/build/assets/Index-DlflNhek.js"
   ],
   "resources/js/Pages/Users/Index.vue?vue&type=script&setup=true&lang.ts": [
-    "/build/assets/Index-Ba1wKzOu.js"
+    "/build/assets/Index-DlflNhek.js"
   ],
   "resources/js/Pages/Users/Profile.vue": [
     "/build/assets/Profile-BRsnoEl-.js"
@@ -504,16 +504,16 @@
     "/build/assets/Profile-BRsnoEl-.js"
   ],
   "resources/js/Pages/Welcome.vue": [
-    "/build/assets/Welcome-QpIq--Lb.js",
-    "/build/assets/Welcome-HH6r4po3.css"
+    "/build/assets/Welcome-BpiiGzzC.js",
+    "/build/assets/Welcome-wzaaqUCY.css"
   ],
   "resources/js/Pages/Welcome.vue?vue&type=script&setup=true&lang.ts": [
-    "/build/assets/Welcome-QpIq--Lb.js",
-    "/build/assets/Welcome-HH6r4po3.css"
+    "/build/assets/Welcome-BpiiGzzC.js",
+    "/build/assets/Welcome-wzaaqUCY.css"
   ],
-  "resources/js/Pages/landing.css?vue&type=style&index=0&src=afd587bf&scoped=afd587bf&lang.css": [
-    "/build/assets/Welcome-QpIq--Lb.js",
-    "/build/assets/Welcome-HH6r4po3.css"
+  "resources/js/Pages/landing.css?vue&type=style&index=0&src=5db2bc4d&scoped=5db2bc4d&lang.css": [
+    "/build/assets/Welcome-BpiiGzzC.js",
+    "/build/assets/Welcome-wzaaqUCY.css"
   ],
   "resources/js/ssr.ts": [],
   "resources/routes/js/routing.json": []

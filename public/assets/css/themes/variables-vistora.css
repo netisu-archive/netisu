@@ -74,7 +74,7 @@
     --rounded-none: 0px;
     --rounded-sm: 4px;
     --rounded-md: 6px;
-    --rounded-lg: 8px;
+    --rounded-lg: 0.25rem;
     --rounded-xl: 10px;
     --rounded-2xl: 12px;
     --rounded-circle: 9999px;

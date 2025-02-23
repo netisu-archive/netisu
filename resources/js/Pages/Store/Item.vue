@@ -183,8 +183,8 @@ function onImgErrorSmall(id) {
                 <i class="fad fa-clock"></i> This item is pending approval.
             </div>
             <div class="grid-x grid-margin-x grid-padding-y">
-                <div class="cell large-4">
-                    <div class="mb-3 overflow-hidden">
+                <div class="cell large-5">
+                    <div class="mb-3 card card-item overflow-hidden" :class="{'card-item-owned': itemOwnership}">
                         <div class="p-4 position-relative">
                             <div style="
                                 position: absolute;
@@ -353,7 +353,7 @@ function onImgErrorSmall(id) {
                         </div>
                     </div>
                 </div>
-                <div class="cell large-8">
+                <div class="cell large-7">
                     <div class="card-body">
                         <div class="gap-2 mb-2 align-middle flex-container align-justify">
                             <div class="text-3xl fw-semibold">
@@ -363,13 +363,10 @@ function onImgErrorSmall(id) {
                                 <Link v-if="usePage<any>().props.auth.user && usePage<any>().props.auth.user.id == usePage<any>().props.item.creator.id" as="button" :href="route(`store.edit`, {id: usePage<any>().props.item.id })" class="btn-circle" data-tooltip-title="More" data-tooltip-placement="bottom">
                                     <i class="fad fa-pen"></i>
                                 </Link>
-                                
+
                             </div>
                         </div>
                         <div class="gap-2 mb-3 align-middle flex-container fw-semibold">
-                            <div class="text-xs text-muted text-uppercase fw-bold">
-                                By
-                            </div>
                             <Link
                                 :href="route('user.profile', { username: usePage<any>().props.item.creator.username })"
                                 class="gap-2 align-middle flex-container"
@@ -421,7 +418,7 @@ function onImgErrorSmall(id) {
                     </div>
                     <div class="p-3 mb-3">
                         <div class="grid-x grid-margin-x">
-                            <div class="mb-2 cell large-6">
+                            <div class="mb-2 cell small-6">
                                 <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
                                     Date Created
                                 </div>
@@ -429,7 +426,7 @@ function onImgErrorSmall(id) {
                                     {{ usePage<any>().props.item.DateHum }}
                                 </div>
                             </div>
-                            <div class="mb-2 cell large-6">
+                            <div class="mb-2 cell small-6">
                                 <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
                                     Last Updated
                                 </div>
@@ -437,7 +434,7 @@ function onImgErrorSmall(id) {
                                     {{ usePage<any>().props.item.UpdateHum }}
                                 </div>
                             </div>
-                            <div class="mb-2 cell large-6 mb-md-0">
+                            <div class="mb-2 cell small-6 mb-md-0">
                                 <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
                                     Type
                                 </div>
@@ -445,12 +442,12 @@ function onImgErrorSmall(id) {
                                     {{ capitalizeFirstLetter(usePage<any>().props.item.item_type) }}
                                 </div>
                             </div>
-                            <div class="cell large-6">
+                            <div class="cell small-6">
                                 <div class="text-xs fw-bold text-uppercase text-muted text-truncate">
                                     Owners
                                 </div>
                                 <div class="fw-semibold text-truncate">
-                                    {{ usePage<any>().props.item.owners }}
+                                    {{ usePage<any>().props.item.owners.count }}
                                 </div>
                             </div>
                         </div>

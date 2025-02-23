@@ -483,7 +483,7 @@ onMounted(() => {
             <div class=" flex-container gap-2">
                 <span class="text-xl fw-semibold">Avatar</span>
             </div>
-            <div class="mb-3 card-body" style="position: relative;">
+            <div class="mb-3 card-body card card-item" style="position: relative;">
                 <div v-if="VrcRequest" id="avatar-loading" style="
   width: auto;
   height: auto;
@@ -519,7 +519,7 @@ onMounted(() => {
 
         </div>
 
-        <div class="cell medium-8">
+        <div class="cell medium-9">
             <div class=" flex-container gap-2">
                 <span class="text-xl fw-semibold">Current Outfit</span>
                 <button @click="AdvancedEditor = !AdvancedEditor" class="btn btn-info btn-xs text-truncate">Advanced

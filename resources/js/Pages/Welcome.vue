@@ -92,7 +92,7 @@ const lang = computed<any>(() => usePage<any>().props.locale);
                 </div>
             </div>
         </nav>
-        <main class="container-landing">
+        <main class="container container-landing">
             <div class="justify-center grid-x grid-margin-x align-center grid-padding-y">
                 <div v-if="LandingItems?.['data'] || LandingItems?.['data'].length < 5" class="cell large-12">
                     <div class="align-middle grid-x">
@@ -175,7 +175,7 @@ const lang = computed<any>(() => usePage<any>().props.locale);
 
                             </div>
                         </div>
-                        <div class="p-5 mt-4 cell large-4">
+                        <div class="p-2 mt-4 cell large-4">
                             <div class="landing-text-landing fw-semibold">
                                 Socialize With Others
                             </div>

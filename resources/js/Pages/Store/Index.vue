@@ -45,6 +45,11 @@ async function fetchItems(selectedcat) {
 
 // Function to handle category selection
 function selectCategory(category) {
+    selectedCategory.value = category;
+    ItemLoading.value = true;
+}
+
+function selectSubCategory(category) {
     selectedSubCategory.value = category;
     ItemLoading.value = true;
 }
@@ -98,7 +103,7 @@ provide("selectedSubCategory", selectedSubCategory);
         </template>
 
         <div class="cell large-2">
-            <MarketSidebar :categories="categories" :selectCategory="selectCategory" @categorySelected="fetchItems" />
+            <MarketSidebar :categories="categories" :selectCategory="selectCategory" :selectSubCategory="selectSubCategory" @categorySelected="fetchItems" />
         </div>
         <div class="cell large-10">
             <MarketSorting :selectedCategory="selectedCategory" :selectedSubCategory="selectedSubCategory" />
@@ -106,7 +111,7 @@ provide("selectedSubCategory", selectedSubCategory);
                 <template v-if="ItemLoading">
                     <ItemCardSkeleton v-for="n in 12" :key="n" />
                 </template>
-                <div v-else class="cell large-2 medium-3 small-6" v-for="(item, index) in items" :key="index">
+                <div v-else class="cell large-3 medium-3 small-6" v-for="(item, index) in items" :key="index">
                     <Link :href="itemRoute(item.id)" class="d-block">
                     <div class="p-2 mb-1 card card-item position-relative">
                         <div style="
