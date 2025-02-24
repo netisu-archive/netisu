@@ -352,7 +352,6 @@ function onImgErrorSmall(id) {
                                 <Link v-if="usePage<any>().props.auth.user && usePage<any>().props.auth.user.id == usePage<any>().props.item.creator.id" as="button" :href="route(`store.edit`, {id: usePage<any>().props.item.id })" class="btn-circle" data-tooltip-title="More" data-tooltip-placement="bottom">
                                     <i class="fad fa-pen"></i>
                                 </Link>
-
                             </div>
                         </div>
                         <div class="gap-2 mb-3 align-middle flex-container fw-semibold">

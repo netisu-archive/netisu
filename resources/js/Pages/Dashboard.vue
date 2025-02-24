@@ -50,8 +50,8 @@ function createStatusUpdate(status: string) {
         thumbnail: usePage<any>().props.auth.user.headshot,
     };
 }
-const JSONALERT = ref<{ message: string; type: string } | null>(null);
 
+const JSONALERT = ref<{ message: string; type: string } | null>(null);
 const addStatus = throttle((status: string): void => {
     const newStatus = createStatusUpdate(status);
     initialData.value.unshift(newStatus); // Push the single StatusObject
@@ -146,7 +146,7 @@ onMounted(() => {
                     </li>
                     <li class="tab-item">
                         <a class="tab-link squish" :class="{ active: 'Stats' === ActiveCategory }" @click="
-                            setActiveCategory('Stats')">Stats</a>
+                            setActiveCategory('Stats')">Statistics</a>
                     </li>
                 </ul>
             </div>
@@ -217,7 +217,7 @@ onMounted(() => {
                 </div>
             </div>
             <div class="section no-divider" v-else-if="ActiveCategory === 'Stats'">
-                <div class="grid-x grid-margin-x grid-padding-y">
+                <div class="grid-x grid-margin-x grid-padding-y mb-2">
 
                     <div class="card card-body cell large-4 medium-6 small-12">
                         <div class="flex-container">
@@ -265,7 +265,7 @@ onMounted(() => {
                     </div>
                 </div>
                     <div class="mb-1 text-xl fw-semibold">
-                        Today's Reccomendations
+                        Today's Recomendations
                     </div>
                     <div class="divider mx-1 my-2" />
                     <div class="text-sm text-muted mt-2">
@@ -283,7 +283,7 @@ onMounted(() => {
                                 </div>
                             </div>
                             <div v-else class="text-sm fw-bold text-muted">
-                                There is no reccomendations.
+                                There is no recomendations.
                             </div>
                         </div>
                     </div>
