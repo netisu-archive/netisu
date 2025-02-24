@@ -22,7 +22,7 @@ usePoll(10000, { only: ['purchases'] })
     <Navbar />
     <Sidebar>
         <div class="cell medium-3">
-            <div class="mb-2 text-xl fw-semibold">Manage Currencies</div>
+            <div class="mb-2 text-xl fw-semibold">Manage Your Finances</div>
             <ul class="tabs flex-dir-column">
                 <li class="tab-item">
                     <a href="#" class="tab-link squish" @click="setActiveCategory('Information')"
@@ -77,8 +77,8 @@ usePoll(10000, { only: ['purchases'] })
                     </div>
                 </div>
                 <div class="mb-2 text-xl fw-semibold">Purchases</div>
-
-                <div class="card card-body" v-for="purchase in usePage<any>().props.purchases.data">
+                <div class="card">
+                <div class="card-body" v-for="purchase in usePage<any>().props.purchases.data">
                     <div class="gap-2 align-middle flex-container">
                         <img :src="purchase.thumbnail" width="70" height="70" />
                         <div class="flex-wrap col-md-4 d-flex justify-content-center align-content-start"
@@ -105,7 +105,12 @@ usePoll(10000, { only: ['purchases'] })
                             </div>
                         </div>
                     </div>
+                    <div class="divider mx-1 my-3"></div>
                 </div>
+            </div>
+                <div :class="{ divider: usePage<any>().props.purchases.data.length > 0 }" class="mx-1 my-3"></div>
+                <Pagination v-if="usePage<any>().props.purchases.data.length" class="mx-1 my-3"
+                    :pagedata="usePage<any>().props.purchases"></Pagination>
             </div>
             <div v-if="ActiveCategory === 'Convert'">
                 <div class="card card-body">

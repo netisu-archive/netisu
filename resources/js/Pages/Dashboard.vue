@@ -50,13 +50,17 @@ function createStatusUpdate(status: string) {
         thumbnail: usePage<any>().props.auth.user.headshot,
     };
 }
+const JSONALERT = ref<{ message: string; type: string } | null>(null);
+
 const addStatus = throttle((status: string): void => {
     const newStatus = createStatusUpdate(status);
     initialData.value.unshift(newStatus); // Push the single StatusObject
     axios.post(route(`my.dashboard.validate`), {
         message: status,
-    }).then((status) => {
-        console.log("Your status " + status + "has been posted successfully.");
+    }).then((response) => {
+        const jsonData = response.data;
+
+        JSONALERT.value = jsonData;
     }).catch((error) => {
         console.error("Error:", error);
     });
@@ -77,7 +81,7 @@ onMounted(() => {
     <AppHead pageTitle="Dashboard" :description="'Login to' + usePage<any>().props.site.name + '.'"
         :url="route('auth.login.page')" />
     <Navbar />
-    <Sidebar>
+    <Sidebar :JSONALERT="JSONALERT">
         <div class="mb-4 cell medium-11">
 
             <div class="gap-3 align-middle flex-container">

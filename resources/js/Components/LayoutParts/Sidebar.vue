@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, reactive } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
-import { route, current } from 'momentum-trail';
+import { route } from 'momentum-trail';
 
 import SideLink from "../SideLink.vue";
 import FlashMessages from "@/Components/Messages/FlashMessages.vue";
@@ -12,8 +12,7 @@ import VLazyImage from "v-lazy-image";
 
 interface Props {
     image?: string;
-    showJsonAlert?: boolean;
-    JSONALERT?: Array<any>;
+    JSONALERT?: { message: string; type: string } | null;
     superBanActive?: boolean;
     alertsEnabled?: boolean;
     OfficialImageBackground?: boolean;
@@ -23,7 +22,6 @@ interface Props {
 withDefaults(defineProps<Props>(), {
     alertsEnabled: true,
     superBanActive: false,
-    showJsonAlert: false,
     OfficialImageBackground: false,
 });
 
@@ -167,15 +165,14 @@ const sidebar = [
     },
 ];
 const lang = computed(() => usePage<any>().props.locale);
+const localJSONALERT = ref(props.JSONALERT);
 
-// for testing purposes
-const alertData = ref<{ message: string; type: string } | null>(null);
-
-const showAlert = () => {
-    // Simulate a JSON response
-    const response = { message: 'This is a success message!', type: 'success' };
-    alertData.value = response;
-};
+watch(
+    () => props.JSONALERT,
+    (newVal) => {
+        localJSONALERT.value = newVal;
+    }
+);
 </script>
 <template>
     <nav v-if="props.site.frontend.sidebar_menu" class="sidebar show-for-large" id="sidebar">
@@ -205,8 +202,6 @@ const showAlert = () => {
                 )" :link="sidelink.url" :ActiveLink="sidelink.ActiveLink">
                     <i class="side-icon" :class="sidelink.icon"></i><span>{{ sidelink[lang].title }}</span>
                 </SideLink>
-                <button @click="showAlert">Show Alert</button>
-
             </template>
             <div v-if="usePage<any>().props.auth.user">
                 <div v-if="usePage<any>().props.auth.user.mainSpaces">
@@ -271,7 +266,7 @@ const showAlert = () => {
             backgroundPosition: 'center'
         }" />
     </div>
-    <FlashMessages :flash="alertData" />
+    <FlashMessages :flash="JSONALERT" />
     <slot name="SuperBanner" v-if="superBanActive" />
     <main :class="{
         'container-navbar': !props.site.frontend.sidebar_menu,

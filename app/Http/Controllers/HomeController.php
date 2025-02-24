@@ -118,12 +118,11 @@ class HomeController extends Controller
             $user = User::find(Auth::id());
             $user->status = $request->message;
             $user->save();
-            return response()->json(
-                [
+
+            return response()->json([
                     'message' => 'Your status has been changed.',
                     'type' => 'success'
-                ]
-            );
+            ], 200);
         }
     }
 }

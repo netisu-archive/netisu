@@ -92,6 +92,9 @@ class MarketController extends Controller
                 'DateHum' => $item->DateHum,
                 'UpdateHum' => $item->UpdateHum,
                 'created_at' => $item->created_at,
+                'rare' => $item->rare,
+                'in_event' => $item->in_event,
+                'sale_ongoing' => $item->sale_ongoing,
 
                 'creator' => [
                     'id' => $item->creator->id,

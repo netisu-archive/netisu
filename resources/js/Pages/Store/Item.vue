@@ -13,13 +13,14 @@ import throttle from 'lodash/throttle';
 defineProps<{
     item?: { type: Object, default: null },
     recommendations?: Array<any>,
-    itemOwnership: Boolean
 }>();
 
-const JSONDATA = Array as any;
+const JSONDATA = ref<{ message: string; type: string } | null>(null);
 const thumbnail = ref<HTMLImageElement>(null);
 
 let isPreview = ref(false);
+
+const itemOwnership = ref(usePage<any>().props.itemOwnership);
 
 function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -32,27 +33,17 @@ function showModal(modalId: string): void {
     }
 }
 
-const purchaseBucks = () => {
-    showModal('purchase-with-bucks-modal')
+const purchaseItem = (currencyType) => {
+    const modalId = `purchase-with-${currencyType}-modal`;
+    showModal(modalId);
+
     axios.get(`/sanctum/csrf-cookie`).then(() => {
-        axios.post(route(`api.store.purchase`, { id: usePage<any>().props.item.id, currencyType: 'bucks' }))
+        axios.post(route(`api.store.purchase`, { id: usePage<any>().props.item.id, currencyType: currencyType }))
             .then(response => {
                 const { message, type } = response.data;
-
-                JSONDATA.value = { message, type };
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    });
-};
-const purchaseCoins = () => {
-    showModal('purchase-with-coins-modal')
-    axios.get(`/sanctum/csrf-cookie`).then(() => {
-        axios.post(route(`api.store.purchase`, { id: usePage<any>().props.item.id, currencyType: 'coins' }))
-            .then(response => {
-                const { message, type } = response.data;
-
+                if (type === 'success') {
+                    itemOwnership.value = true;
+                }
                 JSONDATA.value = { message, type };
             })
             .catch(error => {
@@ -65,9 +56,7 @@ const reRender = throttle(() => {
     axios.get(`/sanctum/csrf-cookie`).then(() => {
         axios.post(route(`api.item.rerender`, { id: usePage<any>().props.item.id }))
             .then(response => {
-                const { message, type } = response.data;
-
-                JSONDATA.value = { message, type };
+                JSONDATA.value = response.data;
             })
             .catch(error => {
                 console.error(error);
@@ -102,7 +91,7 @@ function onImgErrorSmall(id) {
         :iid="usePage<any>().props.item.id" :itime="usePage<any>().props.item.time_off_sale"
         :cover="usePage<any>().props.item.thumbnail" />
     <Navbar />
-    <Sidebar :showJsonAlert="JSONDATA.value ? true : false" :JSONALERT="JSONDATA">
+    <Sidebar :JSONALERT="JSONDATA">
         <div class="modal" id="purchase-with-bucks-modal">
             <div class="modal-card modal-card-body modal-card-sm">
                 <div class="section-borderless">
@@ -129,7 +118,7 @@ function onImgErrorSmall(id) {
 
                 </div>
                 <div class="gap-2 flex-container align-right section-borderless">
-                    <form @submit.prevent="purchaseBucks">
+                    <form @submit.prevent="purchaseItem('bucks')">
                         <button type="submit" class="btn btn-success btn-sm">Buy Now</button>
                         <button type="button" class="btn btn-secondary btn-sm"
                             @click="showModal('purchase-with-bucks-modal')"
@@ -164,7 +153,7 @@ function onImgErrorSmall(id) {
                     </div>
                 </div>
                 <div class="gap-2 flex-container align-right section-borderless">
-                    <form @submit.prevent="purchaseCoins">
+                    <form @submit.prevent="purchaseItem('coins')">
                         <button type="submit" class="btn btn-warning btn-sm">Buy Now</button>
                         <button class="btn btn-secondary btn-sm" type="button"
                             @click="showModal('purchase-with-coins-modal')"

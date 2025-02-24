@@ -5,7 +5,7 @@ use App\Http\Controllers\{
     USController,
     Money\MoneyController,
     AuthController,
-    ChatController,
+    Chat\ChatController,
     Users\UserController,
     Market\MarketController,
     Spaces\SpaceController,
@@ -111,9 +111,9 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
     });
 
     Route::group(['as' => 'chat.', 'prefix' => 'messages'], function () {
-        Route::get('/chat/{id}', [ChatController::class, 'messages'])
+        Route::get('/{userID}', [ChatController::class, 'ChatIndex'])
             ->name('messages');
-        Route::post('/message/validate', [ChatController::class, 'validateMessage'])
+        Route::post('/validate', [ChatController::class, 'sendMessage'])
             ->name('validate');
     });
 

@@ -157,7 +157,7 @@ class ForumController extends Controller
         }
         $cacheKey = 'forum_post_' . $id . '_replies';
         $currentPage = request()->get('page', 1);
-        
+
         // Cache the post
         $post = Cache::remember('forum_post_' . $id, now()->addMinutes(5), fn() => $post);
 
@@ -287,16 +287,19 @@ class ForumController extends Controller
 
 
         $post = ForumReply::create([
-        'thread_id' => $id,
-        'creator_id' => Auth::user()->id,
-        'body' => $parsedBody,
+            'thread_id' => $id,
+            'creator_id' => Auth::user()->id,
+            'body' => $parsedBody,
         ]);
-       
+
         $post->save();
         Auth::user()->addPoints(10);
 
         Cache::forget('forum_post_' . $id . '_replies');
 
-        return redirect()->back()->with('message', 'Your reply has been created.');
+        return response()->json([
+            'message' => 'Your reply has been created.',
+            'type' => 'success'
+        ]);
     }
 }

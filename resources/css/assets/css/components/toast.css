@@ -10,32 +10,34 @@
     overflow-y: auto;
     transition: transform .5s ease-in-out;
     box-sizing: border-box;
-    transform: translateX(-100vw); /* Use viewport width */
     -webkit-transform: translateX(-100vw);
+    transform: translateX(-100vw); /* Use viewport width */
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
-
 }
 .toast-menu div {
     transition: opacity 0.3s ease;
 }
 
 .toast-menu-slide-in {
-    animation: slide-in .5s forwards;
     -webkit-animation: slide-in .5s forwards;
+    animation: slide-in .5s forwards;
 }
 
 .toast-menu-slide-out {
-    animation: slide-out .5s forwards;
     -webkit-animation: slide-out .5s forwards;
+    animation: slide-out .5s forwards;
+
 }
 
 @keyframes slide-in {
+    0% { transform: translateX(100vw); }
     100% { transform: translateX(0%); }
 }
 
 @-webkit-keyframes slide-in {
-    100% { -webkit-transform: translateX(0%); }
+    0% { -webkit-transform: translateX(0%); }
+    100% { -webkit-transform: translateX(100vw); }
 }
 @keyframes slide-out {
     0% { transform: translateX(0%); }
