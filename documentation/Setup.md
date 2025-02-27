@@ -12,7 +12,7 @@ Before proceeding with the installation, make sure you meet the following prereq
 Execute the following commands to install the required packages:
 
 ```bash
-sudo apt install php8.2-{memcache,fpm,mbstring,bcmath,cgi,http,raphf,memcached,common,redis,mysql,mysqli,sodium} zip unzip unrar nginx memcache curl && sudo apt remove apache*
+sudo apt install php8.4-{memcache,fpm,mbstring,bcmath,cgi,http,raphf,memcached,common,redis,mysql,mysqli,sodium} zip unzip unrar nginx memcache curl && sudo apt remove apache*
 ```
 
 ## Nginx Setup
@@ -48,14 +48,29 @@ server {
 
     add_header Strict-Transport-Security "max-age=31536000";
 
-    gzip              on;
-    gzip_buffers      16 8k;
-    gzip_comp_level   4;
-    gzip_http_version 1.0;
-    gzip_min_length   1280;
-    gzip_types        text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript image/x-icon image/bmp;
-    gzip_vary         on;
-
+# Dynamic gzip:
+gzip on;
+gzip_vary on;
+gzip_proxied any;
+gzip_comp_level 6;
+#text/html is always included by default, no need to include explicitely
+gzip_types  text/plain text/xml text/css
+            application/x-javascript application/javascript application/ecmascript text/javascript application/json
+            application/rss+xml
+            application/xml
+            image/svg+xml
+            application/x-font-ttf application/vnd.ms-fontobject image/x-icon;
+ 
+# Dynamic brotli:
+brotli on;
+brotli_comp_level 6;
+#text/html is always included by default, no need to include explicitely
+brotli_types  text/plain text/xml text/css
+              application/x-javascript application/javascript application/ecmascript text/javascript application/json
+              application/rss+xml
+              application/xml
+              image/svg+xml
+              application/x-font-ttf application/vnd.ms-fontobject image/x-icon;
 
     # Add security headers
     add_header X-Frame-Options "SAMEORIGIN";
@@ -71,7 +86,7 @@ server {
     # Other location blocks for specific routes
 
     location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
     }
