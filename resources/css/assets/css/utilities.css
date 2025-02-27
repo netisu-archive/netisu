@@ -1,5 +1,16 @@
 .container {
     flex-grow: 1;
+    padding-top: 80px; /* 100px */
+    margin: 0 auto;
+    position: relative;
+    max-width: 1400px;
+    width: auto;
+    padding-left: 235px;
+    padding-right: 15px;
+}
+
+.container-alert {
+    flex-grow: 1;
     padding-top: 25px; /* 100px */
     margin: 0 auto;
     position: relative;
