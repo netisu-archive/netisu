@@ -10,7 +10,7 @@ return [
     'system_account_id' => 2,
     'in_testing_phase' => true,
 
-    'version' => "supernova",
+    'version' => "melody",
     'frontend' => [
         'page_loader' => false,
         'sidebar_menu' => true,

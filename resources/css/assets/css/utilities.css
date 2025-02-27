@@ -1,6 +1,6 @@
 .container {
     flex-grow: 1;
-    padding-top: 80px; /* 100px */
+    padding-top: 75px; /* 100px */
     margin: 0 auto;
     position: relative;
     max-width: 1400px;

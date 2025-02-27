@@ -269,6 +269,7 @@ watch(
     <FlashMessages :flash="JSONALERT" />
     <slot name="SuperBanner" v-if="superBanActive" />
     <main :class="{
+        'container-alert': props.site_config.announcement,
         'container-navbar': !props.site.frontend.sidebar_menu,
         'container': props.site.frontend.sidebar_menu,
     }">
