@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\{
-    ChatController,
+    Chat\ChatController,
     Endpoints\RssController,
     Endpoints\UserController,
     Endpoints\AdminController,
@@ -30,24 +30,23 @@ use App\Http\Controllers\{
 */
 
 Route::group(['as' => 'api.'], function () {
+    Route::get('/', function () {
+        return redirect()->to(config('Values.production.domains.main'));
+    });
 
     Route::get('/user', function (Request $request) {
         return $request->user();
     })->middleware('auth:sanctum');
 
     Route::group(['as' => 'messaging.', 'prefix' => 'messaging'], function () {
-
-        Route::post("/send-Message/to/{id}", [ChatController::class, "sendMessage"]);
-        Route::get("/previous-messages", [ChatController::class, "previousMessages"]);
+        Route::post("/send-message/to/{id}", [ChatController::class, "sendMessage"]);
+        Route::get("/fetch-messages/to/{id}", [ChatController::class, "fetchMessages"])->name('fetchMessages');
     });
-    Route::group(['as' => 'spaces.', 'prefix' => 'spaces'], function () {
 
+    Route::group(['as' => 'spaces.', 'prefix' => 'spaces'], function () {
         Route::get("/get-members/{spaceId}/{rankId}", [SpacesController::class, "getSpaceMembersByRank"]);
     });
 
-    Route::get('/', function () {
-        return redirect()->to(config('Values.production.domains.main'));
-    });
 
     Route::get('/search', [SearchSiteController::class, 'all'])->name('search');
 

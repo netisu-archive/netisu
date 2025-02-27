@@ -110,21 +110,21 @@ return Application::configure(basePath: dirname(__DIR__))
                                 }),
                         ] : null,
                     ];
-    
+
                     if ($request->user()->isStaff()) {
                         $response['user']['pendingAssets'] = $pendingItemsAndSpaces->count();
                     };
-    
+
                     if (config('Values.in_event')) {
                          $response['user']['event_currency'] = shortNum($request->user()->event_currency);
                     };
-    
+
                     if ($request->route()->named('user.settings.page')){
                              $response['user']['email'] = preg_replace('/[^@]+@([^\s]+)/', ''.substr($request->user()->email, 0, 3).'********@$1', $request->user()->email);
                              $response['user']['birthdate'] = $request->user()->birthdate;
                              $response['user']['email_verified_at'] = $request->user()->email_verified_at;
                     };
-                    
+
                     return $response;
                 },
                 'site_config' => [
@@ -163,7 +163,9 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__ . '/../routes/channels.php',
         ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
     )->withMiddleware(function (Middleware $middleware) {
-        $middleware->throttleWithRedis();
+        if (env("APP_ENV") != 'local') {
+            $middleware->throttleWithRedis();
+        }
         $middleware->replace(
             \Illuminate\Http\Middleware\TrustProxies::class,
             \Monicahq\Cloudflare\Http\Middleware\TrustProxies::class

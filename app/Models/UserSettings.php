@@ -8,6 +8,7 @@ use Illuminate\{
     Database\Eloquent\Factories\HasFactory,
     Database\Eloquent\Relations\HasOne,
     Database\Eloquent\Model,
+    Database\Eloquent\Relations\BelongsTo,
 };
 
 class UserSettings extends Model
@@ -25,7 +26,7 @@ class UserSettings extends Model
         'secondary_space', // Add secondary_space to fillable
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

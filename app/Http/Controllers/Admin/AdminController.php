@@ -31,6 +31,10 @@ class AdminController extends Controller
     public function __construct()
     {
         $this->admin = Admin::where('user_id', Auth::id())->first();
+
+        if(!$this->admin){
+            abort(404);
+        };
     }
 
     public function AdminIndex()
@@ -115,8 +119,13 @@ class AdminController extends Controller
     public function GiftUser(int $userID)
     {
         $user = User::where(['id' => $userID])->first();
+
         if (!$user) {
             abort(404);
+        }
+
+        if ($userID == Auth::id() && !Auth::user()->CurrentPositionID() != 1) {
+            abort(403);
         }
 
         if ($this->admin->rolePermissions('can_gift_users') ?? false != false):

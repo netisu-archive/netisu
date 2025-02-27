@@ -96,11 +96,11 @@ class UserController extends Controller
         }
 
         // Load relationships and counts
-        $userFollowing = $user->following()->paginate(6, ['*'], 'Following');
-        $FollowingCount = $userFollowing->count();
+        $FollowingCount = $user->following()->count();
+        $FollowerCount = $user->followers()->count();
 
+        $userFollowing = $user->following()->paginate(6, ['*'], 'Following');
         $userFollowers = $user->followers()->paginate(6, ['*'], 'followers');
-        $FollowerCount = $userFollowers->count();
 
         // Determine if the authenticated user is following the profile user
         $isFollowing = Auth::check() && Auth::user()->isFollowing($user) ?? false;
@@ -146,6 +146,7 @@ class UserController extends Controller
                 'acheivements' => $user->acheivements,
                 'followers' => $userFollowers,
                 'staff' => $user->isStaff(),
+                'spaces'=> $user->spaces()->take(6),
                 'position' => $user->CurrentPosition(),
                 'followsYou' => $thisFollowing,
                 'followers_count' => $FollowerCount,

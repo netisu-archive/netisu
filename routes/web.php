@@ -113,8 +113,21 @@ Route::domain(config('Values.production.domains.main'))->group(function () {
     Route::group(['as' => 'chat.', 'prefix' => 'messages'], function () {
         Route::get('/{userID}', [ChatController::class, 'ChatIndex'])
             ->name('messages');
-        Route::post('/validate', [ChatController::class, 'sendMessage'])
+        Route::post('/validate/{id}', [ChatController::class, 'sendMessage'])
             ->name('validate');
+    });
+
+    Route::get('/subscription-checkout', function (Request $request) {
+        $checkout = $request->user()
+            ->newSubscription('default', 'price_basic_monthly')
+            ->trialDays(5)
+            ->allowPromotionCodes()
+            ->checkout([
+                'success_url' => route('your-success-route'),
+                'cancel_url' => route('your-cancel-route'),
+            ]);
+        
+        return inertia()->location($checkout->url);
     });
 
     Route::get('/achievements', [AchievementController::class, 'AchievementList'])->name('acheivements');

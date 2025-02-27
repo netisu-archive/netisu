@@ -39,10 +39,10 @@ const messages = ref([
         DateHum: "Just Now",
     },
 ]);
-async function detectAdBlock() {
+async function detectAdBlock(adblock: Ref<boolean, boolean>) {
     try {
         await fetch(new Request(googleAdUrl)).catch(
-            adblock.value = true
+            adblock.value = false
         );
     } catch (e) {
         adblock.value = true;
@@ -50,7 +50,7 @@ async function detectAdBlock() {
 }
 
 onMounted(() => {
-    detectAdBlock(); // Call the function only if adblock status is not already set
+    detectAdBlock(adblock); // Call the function only if adblock status is not already set
 });
 
 const sidebarsections = [

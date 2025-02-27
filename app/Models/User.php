@@ -316,18 +316,13 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         return $this->spaces->contains($space);
     }
 
-    public function favoriteSpaces()
-    {
-        return $this->spaces()->where('is_favorite', true);
-    }
-    
     public function mainSpaces()
     {
-        $primarySpace = $this->primarySpace()->first();
-        $secondarySpace = $this->secondarySpace()->first();
-    
+        $primarySpace = $this->settings->primarySpace()->first();
+        $secondarySpace = $this->settings->secondarySpace()->first();
+
         $spaces = collect();
-    
+
         if ($primarySpace) {
             $spaces->push([
                 'id' => $primarySpace->id,
@@ -336,7 +331,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
                 'thumbnail' => $primarySpace->thumbnail(),
             ]);
         }
-    
+
         if ($secondarySpace && $secondarySpace->id !== ($primarySpace ? $primarySpace->id : null)) {
             $spaces->push([
                 'id' => $secondarySpace->id,
@@ -345,27 +340,25 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
                 'thumbnail' => $secondarySpace->thumbnail(),
             ]);
         }
-    
+
         if ($spaces->isEmpty()) {
             return null;
         }
-    
-        return $spaces;
-    }
 
-    public function primarySpace(): HasOne
-    {
-        return $this->hasOne(Space::class, 'id', $this->settings->primary_space);
-    }
-    
-    public function secondarySpace(): HasOne
-    {
-        return $this->hasOne(Space::class, 'id', $this->settings->primary_space);
+        return $spaces;
     }
 
     public function navSpaces()
     {
-        $spaces = $this->spaces()->take(5)->get();
+        $primarySpace = $this->settings->primarySpace()->first();
+        $secondarySpace = $this->settings->secondarySpace()->first();
+
+        $spaceAmount = $secondarySpace ? 4 : 3;
+        $spaces = $this->spaces()
+            ->orderBy('created_at', 'asc') // Order by created_at in descending order (newest first)
+            ->take($spaceAmount)
+            ->get();
+
         return $spaces->map(function ($space) {
             return [
                 'id' => $space->id,

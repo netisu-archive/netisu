@@ -32,10 +32,15 @@ class SpaceController extends Controller
 
         $spaces = Space::where([
 
-            ['thumbnail_pending', '!=', true],
+            ['thumbnail_pending', '!=', false],
             ['name', 'like', "%$search%"]
 
         ])->orderBy('created_at', 'desc')->paginate(12)->through(function ($space) {
+            $memberQuery = SpaceMembers::where([['space_id', $space->id], ['user_id', Auth::id()]])
+                ->with('user')
+                ->paginate(10);
+
+            $member_count = count($memberQuery);
             return [
                 'name' => $space->name,
                 'id' => $space->id,
@@ -45,10 +50,11 @@ class SpaceController extends Controller
                 'timecreated' => $space->created_at,
                 'description' => $space->description,
                 'DateHum' => $space->DateHum,
-                'member_count' => $space->member_count,
+                'member_count' => $member_count,
                 'thumbnail' => $space->thumbnail(),
             ];
         });
+
 
 
         return inertia('Spaces/Index', [
@@ -80,7 +86,7 @@ class SpaceController extends Controller
                 'headshot' => $member->user->headshot(),
             ];
         })->toArray();
-        
+
         if ($slug != $space->slug()) {
             echo ("Did you mean: " . $space->slug());
             abort(404);
@@ -94,8 +100,8 @@ class SpaceController extends Controller
                 'slug' => $space->slug(),
                 'name' => $space->name,
                 'members' => [
-                  'list' => $members,
-                  'count' => count($members),
+                    'list' => $members,
+                    'count' => count($members),
                 ],
                 'creator' => [
                     'id' => $space->creator->id,

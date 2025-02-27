@@ -20,7 +20,7 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function __construct(public Message $message)
     {
-        //
+        $this->dontBroadcastToCurrentUser();
     }
 
     /**

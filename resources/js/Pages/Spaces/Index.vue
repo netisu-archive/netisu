@@ -11,7 +11,7 @@ import Sidebar from "@/Components/LayoutParts/Sidebar.vue";
 import VLazyImage from "v-lazy-image";
 
 defineProps({
-  spaces: { type: Array, required: true },
+  spaces: { type: Object, required: true },
   search: { type: String, required: false },
 });
 

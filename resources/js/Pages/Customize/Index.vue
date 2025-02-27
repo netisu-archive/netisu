@@ -6,6 +6,7 @@ import AppHead from '@/Components/AppHead.vue';
 import { ref, onMounted, reactive, computed } from "vue";
 import axios from "axios"; // Import Axios
 import { route } from "momentum-trail"
+import JsonPagination from '@/Components/JsonPagination.vue';
 
 import { usePage } from "@inertiajs/vue3";
 import VLazyImage from "v-lazy-image";
@@ -19,7 +20,21 @@ const SelectedItemID = ref<Number>();
 const slotValue = ref<Number>();
 
 const AdvancedEditor = ref(false);
+const getUserList = (page) =>{
+    if (page == undefined) {
+        var pageUrl = '/user/discover';
+    } else {
+        var pageUrl = '/user/discover/?page=' + page;
+    }
 
+    axios.get(pageUrl).then(function (response) {
+        if (response.data.hasOwnProperty('success')) {
+            CategoryItems.value = response.data.users;
+        }
+    }).catch(function (error) {
+        console.log(error);
+    });
+}
 var userAvatar = reactive({
     color_head: computed<any>(
         () => (usePage<any>().props.avatar as Record<string, unknown>)?.["color_head"]
@@ -663,9 +678,9 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
-                <Pagination v-if="CategoryItems.data" v-bind:pagedata="CategoryItems" />
+                <JsonPagination v-if="CategoryItems" v-on:page-clicked="getUserList" v-bind:pagedata="CategoryItems" />
 
-                <div v-else-if="!CategoryItems.data || !CategoryItems.length"
+                <div v-if="!CategoryItems.data || !CategoryItems.data.length"
                     class="gap-3 text-center flex-container flex-dir-column">
                     <i class="text-5xl fad fa-crate-apple text-muted"></i>
                     <div style="line-height: 16px">

@@ -8,14 +8,15 @@ import { VitePWA } from "vite-plugin-pwa";
 import { templateCompilerOptions } from '@tresjs/core'
 import path from "path";
 import basicSsl from '@vitejs/plugin-basic-ssl'
-
+import viteImagemin from 'vite-plugin-imagemin'
+import compression from 'vite-plugin-compression2'
 
 export default {
     server: {
-        host: 'localhost',
+        host: '100.115.92.195',
         cors: true,
         hmr: {
-            host: 'localhost',
+            host: '100.115.92.195',
         },
         watch: {
             usePolling: false,
@@ -54,7 +55,6 @@ export default {
               "public/assets/js/**",
               "public/assets/img/**",
               "routes/**",
-
             ],*/
         }),
         vue({
@@ -67,7 +67,8 @@ export default {
             },
         }),
         basicSsl(),
-
+        viteImagemin({}),
+        compression()
     ],
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
+use App\Notifications\MessageNotification;
 
 class ChatController extends Controller
 {
@@ -53,7 +54,7 @@ class ChatController extends Controller
         if ($toUser->id == Auth::id()) {
             return response()->json(
                 [
-                    "message" => "You cannot send message to yourself.",
+                    "message" => "You cannot send messages to yourself.",
                     "type" => "danger",
                 ],
                 502
@@ -68,6 +69,8 @@ class ChatController extends Controller
         ]);
 
         broadcast(new MessageSent($message));
+
+        $toUser->notify(new MessageNotification(Auth::user()));
 
         return response()->json([
             'type' => 'success',
