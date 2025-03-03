@@ -13,8 +13,6 @@ ENV SUPERVISOR_PHP_COMMAND="/usr/bin/php -d variables_order=EGPCS /var/www/html/
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN useradd sail
-
 RUN apt-get update \
     && mkdir -p /etc/apt/keyrings \
     && apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python3 dnsutils librsvg2-bin fswatch ffmpeg \
@@ -44,9 +42,9 @@ RUN apt-get update \
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.4
 
-RUN groupadd --force -g ${WWWGROUP} sail \
-&& useradd -ms /bin/bash --no-user-group -g ${WWWGROUP} -u ${WWWUSER} sail
-
+RUN useradd sail
+RUN groupadd --force -g ${WWWGROUP} sail
+RUN useradd -ms /bin/bash --no-user-group -g ${WWWGROUP} -u 1337 sail
 RUN chown -R sail:sail /var/www/
 
 COPY ./octane/start-container /usr/local/bin/start-container
