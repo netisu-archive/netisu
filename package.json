@@ -80,6 +80,7 @@
         "v-lazy-image": "^2.1.1",
         "vite-plugin-class-mangler": "^0.0.1-patch",
         "vite-plugin-compression": "^0.5.1",
+        "vite-plugin-compression2": "^1.3.3",
         "vite-plugin-dts": "^4.5.0",
         "vue": "^3.5.13",
         "vue-eslint-parser": "^9.4.3",

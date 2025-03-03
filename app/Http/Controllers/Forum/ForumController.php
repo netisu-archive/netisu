@@ -145,7 +145,7 @@ class ForumController extends Controller
     public function ForumPost($id, $slug, BBCodeService $bbcodeService, MarkdownService $MarkdownService)
     {
         // Find the forum post
-        $post = ForumThread::find($id);
+        $post = Cache::remember('forum_post_' . $id, now()->addMinutes(5), fn() => ForumThread::find($id));
 
         // Handle missing post
         if (!$post->exists()) {
@@ -157,9 +157,6 @@ class ForumController extends Controller
         }
         $cacheKey = 'forum_post_' . $id . '_replies';
         $currentPage = request()->get('page', 1);
-
-        // Cache the post
-        $post = Cache::remember('forum_post_' . $id, now()->addMinutes(5), fn() => $post);
 
         // Parse the post body
         $post->body = $MarkdownService->parse($post->body);
