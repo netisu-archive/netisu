@@ -39,7 +39,7 @@ server {
     listen [::]:443 ssl;
     ssl_certificate         /etc/ssl/cert.pem;
     ssl_certificate_key     /etc/ssl/key.pem;
-    
+
     ssl_session_cache shared:SSL:20m;
     ssl_session_timeout 10m;
     ssl_prefer_server_ciphers       on;
@@ -60,7 +60,7 @@ gzip_types  text/plain text/xml text/css
             application/xml
             image/svg+xml
             application/x-font-ttf application/vnd.ms-fontobject image/x-icon;
- 
+
 # Dynamic brotli:
 brotli on;
 brotli_comp_level 6;
@@ -100,10 +100,13 @@ Then restart the webserver.
 ```bash
 sudo service nginx restart
 ```
+
 Make sure you set the correct permissions!
+
 ```bash
-chmod -R 777 /var/www/* && chmod -R 777 /var/www/html/* 
+chmod -R 777 /var/www/* && chmod -R 777 /var/www/html/*
 ```
+
 ## Node.js Setup
 
 Install the Node.js Version Manager (NVM) by following these steps:
@@ -117,10 +120,12 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 2. Apply fnm configuration to your shell:
 
 ### Run this in your shell:
+
 ```bash
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 ```
+
 ### Then:
 
 ```bash

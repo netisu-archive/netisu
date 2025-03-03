@@ -1,15 +1,29 @@
 <?php
+
 namespace App\Http\Controllers\Endpoints;
 
-use App\Models\Item;
-use App\Models\User;
-use App\Models\Space;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Item;
+use App\Models\Space;
+use App\Models\User;
+use GuzzleHttp\Client;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SearchSiteController extends Controller
 {
+    private $client;
+
+    public function __construct()
+    {
+        $this->client = new Client([
+            'base_uri' => config('scout.meilisearch.host'),
+            'headers' => [
+                'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+            ],
+        ]);
+    }
+
     public function all(Request $request)
     {
         $search = $request->input('search');
@@ -18,49 +32,42 @@ class SearchSiteController extends Controller
             $search = '';
         }
 
-        $users = User::where('username', 'LIKE', "%{$search}%")->get();
-        $items = Item::where('name', 'LIKE', "%{$search}%")->get();
-        $spaces = Space::where('name', 'LIKE', "%{$search}%")->get();
+        // Use Meilisearch Client for search
+        $response = $this->client->get('/indexes/users/search', [
+            'q' => $search,
+        ]);
 
-        $results = $users->merge($items)->merge($spaces);
+        $userResults = json_decode($response->getBody(), true)['hits'];
 
-        if ($results->count() === 0 || !$search) {
+        $response = $this->client->get('/indexes/items/search', [
+            'q' => $search,
+        ]);
+
+        $itemResults = json_decode($response->getBody(), true)['hits'];
+
+        $response = $this->client->get('/indexes/spaces/search', [
+            'q' => $search,
+        ]);
+
+        $spaceResults = json_decode($response->getBody(), true)['hits'];
+
+        $results = array_merge($userResults, $itemResults, $spaceResults);
+
+        if (empty($results) || !$search) {
             return response()->json([]);
         }
 
-        $json['results'] = [];
-
+        $formattedResults = [];
         foreach ($results as $result) {
-            switch ($result->getTable()) {
-                case 'users':
-                    $name = $result->username;
-                    $image = $result->headshot();
-                    $url = route('user.profile', $result->username);
-                    break;
-
-                case 'items':
-                    $name = $result->name;
-                    $image = $result->thumbnail();
-                    $url = route('store.item', $result->id);
-                    break;
-
-                case 'spaces':
-                    $name = $result->name;
-                    $image = $result->thumbnail();
-                    $url = route('spaces.view', [$result->id, $result->slug()]);
-                    break;
-
-                default:
-                    continue 2;
-            }
-
-            $json['results'][] = [
-                'name' => $name,
-                'image' => $image,
-                'url' => $url
+            $formattedResults[] = [
+                'name' => $result['name'],
+                'image' => $result['image'],
+                'url' => route('user.profile', $result['name'] ?? null)
+                    . (isset($result['id']) ? route('store.item', [$result['id'], $result['slug'] ?? null]) : '')
+                    . (isset($result['id']) ? route('spaces.view', [$result['id'], $result['slug'] ?? null]) : ''),
             ];
         }
 
-        return response()->json($json);
+        return response()->json($formattedResults);
     }
 }
