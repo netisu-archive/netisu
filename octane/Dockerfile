@@ -46,7 +46,6 @@ RUN groupadd --force -g ${WWWGROUP} sail
 RUN useradd -ms /bin/bash --no-user-group -g ${WWWGROUP} -u 1337 sail
 
 RUN chown -R sail:sail /var/www/html
-RUN chown -R sail:sail /var/www/html/*
 
 COPY ./octane/start-container /usr/local/bin/start-container
 COPY ./octane/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
