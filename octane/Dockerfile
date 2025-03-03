@@ -42,9 +42,9 @@ RUN apt-get update \
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.4
 
-# RUN groupadd --force -g ${WWWGROUP} sail
-# RUN useradd -ms /bin/bash --no-user-group -g ${WWWGROUP} -u 1337 sail
-# RUN chown -R sail:sail /var/www/
+RUN groupadd --force -g ${WWWGROUP} sail
+RUN useradd -ms /bin/bash --no-user-group -g ${WWWGROUP} -u 1337 sail
+RUN chown -R sail:sail /var/www/
 
 COPY ./octane/start-container /usr/local/bin/start-container
 COPY ./octane/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
