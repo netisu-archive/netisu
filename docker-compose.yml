@@ -3,9 +3,17 @@ services:
         build:
             context: ./
             dockerfile: ./octane/Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+                WWWUSER: '${WWWUSER}'
         ports:
             - '${APP_PORT:-8000}:8000'
             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-debug}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
         volumes:
             - './:${WORKDIR}'
             - './vendor/:${WORKDIR}/vendor'
