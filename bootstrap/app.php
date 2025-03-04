@@ -71,7 +71,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if (!$request->isMethod('GET')) {
                 return response()->json([
                     'type' => 'error',
-                    'message' => $this->messages[$response->getStatusCode()]
+                    'message' => $messages[$response->getStatusCode()]
                 ], $response->getStatusCode());
             }
 
