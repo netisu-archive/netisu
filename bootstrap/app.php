@@ -111,7 +111,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         ] : null,
                     ];
 
-                    if ($request->user()->isStaff()) {
+                    if ($request->user() && $request->user()->isStaff()) {
                         $response['user']['pendingAssets'] = $pendingItemsAndSpaces->count();
                     };
 
