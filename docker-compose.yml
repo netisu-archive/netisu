@@ -1,8 +1,8 @@
 services:
     web:
         build:
-            context: ./octane
-            dockerfile: Dockerfile
+            context: ./
+            dockerfile: ./octane/Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
         ports:
