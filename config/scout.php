@@ -1,5 +1,7 @@
 <?php
 use App\Models\User;
+use App\Models\Item;
+use App\Models\Space;
 
 return [
 
@@ -137,9 +139,21 @@ return [
         'index-settings' => [
             User::class => [
                 // we need to filter based on id and category_id
-                'filterableAttributes'=> ['id', 'category_id'],
+                'filterableAttributes'=> ['id', 'display_name', 'username', 'thumbnail'],
                 // we need to sort based on these columns
-                'sortableAttributes' => ['title', 'category_id', 'created_at', 'updated_at'],
+                'sortableAttributes' => ['display_name', 'username'],
+            ],
+            Item::class => [
+                // we need to filter based on id and category_id
+                'filterableAttributes'=> ['id', 'name'],
+                // we need to sort based on these columns
+                'sortableAttributes' => ['name'],
+            ],
+            Space::class => [
+                // we need to filter based on id and category_id
+                'filterableAttributes'=> ['id', 'name', 'body'],
+                // we need to sort based on these columns
+                'sortableAttributes' => ['name'],
             ],
         ],
     ],
