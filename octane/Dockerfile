@@ -46,9 +46,9 @@ RUN addgroup sail \
 
 RUN chown -R sail:sail /var/www/html
 
-COPY ./octane/start-container /usr/local/bin/start-container
-COPY ./octane/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY ./octane/php.ini /etc/php/8.4/cli/conf.d/99-sail
+COPY ./start-container /usr/local/bin/start-container
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./php.ini /etc/php/8.4/cli/conf.d/99-sail
 
 COPY . .
 
