@@ -41,14 +41,21 @@ RUN apt-get update \
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.4
 
+RUN addgroup sail \
+    && adduser -h /var/www/html -s /bin/bash -G sail -D sail
+
+RUN chown -R sail:sail /var/www/html
+
+COPY ./octane/start-container /usr/local/bin/start-container
+COPY ./octane/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./octane/php.ini /etc/php/8.4/cli/conf.d/99-sail
+
+COPY . .
+
 RUN apt-get install php8.4-memcache \
     php8.4-memcached php8.4-common php8.4-redis php8.4-mysql php8.4-mysqli \
     php8.4-curl php8.4-bcmath
 
-    COPY ./start-container /usr/local/bin/start-container
-    COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-    COPY ./php.ini /etc/php/8.4/cli/conf.d/99-sail
-    COPY . .
 
 RUN composer install --ignore-platform-req=ext-gmp --no-scripts
 RUN cp -a .env.example .env
@@ -63,9 +70,6 @@ RUN bun i
 RUN bun run build
 
 RUN chmod +x /usr/local/bin/start-container
-
-RUN addgroup sail \
-    && adduser -h /var/www/html -s /bin/bash -G sail -D sail
 
 EXPOSE 8000
 
