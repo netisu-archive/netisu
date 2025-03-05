@@ -115,6 +115,10 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         }
     }
 
+    public function searchableAs(): string
+    {
+        return 'users_index';
+    }
     /**
      * Meilisearch search array.
      *
@@ -126,9 +130,10 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
         $array = $this->toArray();
 
         // Then we add some additional fields
-        $array['id'] = $this->getKey();
+        $array['id'] = (int) $this->id;
         $array['username'] = $this->username;
         $array['display_name'] = $this->display_name;
+        $array['status'] = $this->status;
         $array['headshot'] = $this->headshot();
         $array['thumbnail'] = $this->thumbnail();
 
@@ -136,7 +141,7 @@ class User extends AeoAuthenticatable implements MustVerifyEmail, CanResetPasswo
     }
 
     // Classes
-    public function avatar(): Avatar
+    public function avatar()
     {
         return $this->hasOne(Avatar::class)->first() ?? $this->createDefaultAvatar();
     }
