@@ -1,11 +1,10 @@
 FROM ubuntu:24.04
 
-LABEL maintainer="Taylor Otwell"
-
-ARG WWWGROUP
-ARG NODE_VERSION=20
-
 WORKDIR /var/www/html
+
+ENV WWWUSER=sail \
+    WWWGROUP=sail
+ENV NODE_VERSION=20
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV TZ=UTC
@@ -42,17 +41,6 @@ RUN apt-get update \
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.4
 
-RUN groupadd --force -g ${WWWGROUP} sail
-RUN useradd -ms /bin/bash --no-user-group -g ${WWWGROUP} -u 1337 sail
-
-RUN chown -R sail:sail /var/www/html
-
-COPY ./octane/start-container /usr/local/bin/start-container
-COPY ./octane/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY ./octane/php.ini /etc/php/8.4/cli/conf.d/99-sail
-
-COPY . .
-
 RUN apt-get install php8.4-memcache \
     php8.4-memcached php8.4-common php8.4-redis php8.4-mysql php8.4-mysqli \
     php8.4-curl php8.4-bcmath
@@ -70,7 +58,15 @@ RUN bun i
 
 RUN bun run build
 
+COPY ./octane/start-container /usr/local/bin/start-container
+COPY ./octane/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./octane/php.ini /etc/php/8.4/cli/conf.d/99-sail
+COPY . .
+
 RUN chmod +x /usr/local/bin/start-container
+
+RUN addgroup sail \
+    && adduser -h /var/www/html -s /bin/bash -G sail -D sail
 
 EXPOSE 8000
 

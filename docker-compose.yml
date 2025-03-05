@@ -1,11 +1,10 @@
 services:
     web:
         build:
-            context: ./
-            dockerfile: ./octane/Dockerfile
+            context: ./octane
+            dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-                WWWUSER: '${WWWUSER}'
         ports:
             - '${APP_PORT:-8000}:8000'
             - '${REDIS_PORT:-6379}:6379'
