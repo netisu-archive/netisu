@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Navbar from "@/Components/LayoutParts/Navbar.vue";
 import { useForm, usePage } from "@inertiajs/vue3";
-import { ref } from "vue";
 import { route } from "momentum-trail"
 
 import AppHead from "@/Components/AppHead.vue";
@@ -19,8 +18,6 @@ import {
 import { Input } from '@/Components/ui/input'
 import { Label } from '@/Components/ui/label'
 
-const ConfirmingAuth = ref(false);
-
 const form = useForm({
   username: "",
   password: "",
@@ -30,13 +27,9 @@ const form = useForm({
 const submit = () => {
   axios.get(`/sanctum/csrf-cookie`).then(() => {
     form.post(route(`auth.login.validate`), {
-        onFinish: () => { form.reset("password"), ConfirmingAuth.value = false },
+        onFinish: () => { form.reset("password") },
     });
   });
-};
-
-const ConfirmUserAuth = () => {
-  ConfirmingAuth.value = true;
 };
 </script>
 <template>
@@ -50,7 +43,7 @@ const ConfirmUserAuth = () => {
                     Login
                 </CardTitle>
                 <CardDescription>
-                    Welcome back, {{ form.username }}
+                    Welcome back {{ form.username }}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -71,7 +64,7 @@ const ConfirmUserAuth = () => {
                                 <Label :class="{ 'text-red-500': form.errors.password }"
                                     for="password">Password</Label>
                                 <Link :href="route('auth.forgot.page')"
-                                    class="ml-auto inline-block text-sm hover:text-blue-500">
+                                    class="ml-auto inline-block text-sm hover:text-blue-500" :class="{ 'hover:text-red-500': form.errors.password }">
                                 Forgot your password?
                                 </Link>
                             </div>
@@ -81,8 +74,8 @@ const ConfirmUserAuth = () => {
                                 {{ form.errors.password }}
                             </div>
                         </div>
-                        <Button type="submit" @click="ConfirmUserAuth" :disabled="form.processing" class="w-full">
-                            <i v-if="ConfirmingAuth" class="fad fa-spinner fa-spin" />
+                        <Button type="submit" :disabled="form.processing" class="w-full">
+                            <i v-if="form.processing" class="fad fa-spinner fa-spin" />
                             Login
                         </Button>
                         <Button variant="outline" class="w-full">

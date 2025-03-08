@@ -90,7 +90,8 @@ class AuthController extends Controller
                 return $theme['available'];
             }),
             'tester' => [
-                'username' => $tester->username ?? "Aeo",
+                'displayname' => $tester->displayname ?? "azbx",
+                'username' => $tester->username ?? "aeo",
                 'avatar' => $tester ? $tester->thumbnail() : "/assets/img/earl_placeholder.png",
             ]
         ]);

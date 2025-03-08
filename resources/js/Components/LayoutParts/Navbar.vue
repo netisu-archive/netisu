@@ -198,7 +198,7 @@ const props = usePage<any>().props;
 
                         </a>
 
-                        <nav class="flex items-center gap-4 text-sm">
+                        <nav class="flex items-center gap-2 text-sm">
                             <template v-for="topbarlinks in topbar">
                                 <NavLink :landing="landing" :link="topbarlinks.url"
                                     :ActiveLink="topbarlinks.ActiveLink">
@@ -209,7 +209,7 @@ const props = usePage<any>().props;
                         </nav>
                     </div>
 
-                    <div class="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+                    <div class="flex flex-1 items-center justify-between space-x-2 md:justify-end mr-3">
                         <div class="w-full flex-1 md:w-auto md:flex-none">
                             <Button variant="outline"
                                 class="relative h-8 w-full justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-64"
@@ -223,7 +223,7 @@ const props = usePage<any>().props;
                             </Button>
                         </div>
 
-                        <nav class="flex items-center gap-4">
+                        <nav class="flex items-center gap-2">
                             <template v-if="!props.auth.user">
                                 <template v-for="method in AuthenticationMethods">
                                     <NavLink :landing="landing" :link="method.url" :ActiveLink="method.ActiveLink">
