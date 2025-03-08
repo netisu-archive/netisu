@@ -2,6 +2,18 @@
 import { usePage } from "@inertiajs/vue3";
 
 const props = usePage<any>().props;
+import LanguageModal from '@/Components/Modal/LanguageModal.vue';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/Components/ui/alert-dialog'
 
 defineProps({
     isLanding: { type: Boolean, default: false },
@@ -10,70 +22,99 @@ defineProps({
 
 <template>
     <!-- ======= Footer ======= -->
-    <footer class="footer footer-fixed">
-        <main
-        :class="{
-            'container-navbar': !props.site.frontend.sidebar_menu || isLanding,
-            'container': props.site.frontend.sidebar_menu
-        }"
-        class="py-3 mb-5">
-            <div class="align-middle grid-x grid-margin-x">
-                <div class="mx-auto cell show-for-small-only">
-                    <div class="gap-3 flex-container align-right align-center-sm">
-                        <img :src="props.site.icon" width="50" height="50" />
-                    </div>
-                </div>
-                <div class="mx-auto cell small-1 show-for-medium">
-                    <div class="gap-3 flex-container align-right align-center-sm">
-                        <img :src="props.site.icon" width="50" height="50" />
-                    </div>
-                </div>
-                <div class="cell large-6">
-                    <div class="mb-1 text-lg fw-semibold mb-lg-0">
-                        Copyright &copy; {{ new Date().getFullYear() }}
-                        {{ props.site.name }}. All rights reserved.
-                    </div>
-                    <div class="mb-2 flex-container-lg mb-lg-0">
-                        <a href="#" class="text-sm footer-link fw-semibold"><i class="fad fa-scroll"></i> TERMS OF SERVICE</a>
-                        <a href="#" class="text-sm footer-link fw-semibold"><i class="fad fa-lock"></i> PRIVACY POLICY</a>
-                        <a href="#" class="text-sm footer-link fw-semibold"><i class="fad fa-hard-hat"></i> JOBS</a>
-                        <a href="#" class="text-sm footer-link fw-semibold"><i class="fad fa-envelope"></i> CONTACT</a>
-                    </div>
-                    <div class="mb-2 flex-container-lg mb-lg-0">
-                        <div class="text-xs text-muted fw-semibold">{{ usePage<any>().props.site.version }}</div>
-                    </div>
-                </div>
-                <div class="cell large-5">
-                    <div class="gap-3 flex-container align-right align-center-sm">
-                        <button href="#" class="text-2xl footer-media text-muted" content="Language"
-                            @click="showModal('LanguageSettings')" v-tippy>
-                            <i class="fad fa-language"></i>
-                        </button>
-                        <a v-if="props.site.socials.discord" :href="props.site.socials.discord" class="text-2xl footer-media text-muted"
-                            content="Join us on Discord" v-tippy>
+
+    <footer class="border-grid border-t py-6 mt-3 md:py-0">
+        <div class="container  py-4">
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <a :href="props.site.production.domains.main"
+                    class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+                    <img :src="props.site.icon" class="h-10" alt="Site Logo" />
+                </a>
+                <ul
+                    class="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+                    <li>
+                        <a href="#" class="hover:text-blue-400 me-4 md:me-6"><i class="fad fa-scroll"></i> TERMS OF
+                            SERVICE</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-blue-400 me-4 md:me-6"><i class="fad fa-lock"></i> PRIVACY
+                            POLICY</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-blue-400 me-4 md:me-6"><i class="fad fa-hard-hat"></i> JOBS</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-blue-400"><i class="fad fa-envelope"></i> CONTACT</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="container  py-4">
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400"> Copyright &copy; {{ new
+                    Date().getFullYear() }} <span class="text-blue-500 font-semibold"> {{ props.site.name }}</span>. All
+                    rights
+                    reserved.</span>
+                <ul class="flex flex-wrap items-end mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+                    <li>
+                        <AlertDialog>
+                            <AlertDialogTrigger as-child>
+                                <Button class="text-2xl hover:text-yellow-500 me-4 md:me-6" content="Language"
+                                    variant="outline" v-tippy>
+                                    <i class="fad fa-language"></i>
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Change Your Language</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete your
+                                        account and remove your data from our servers.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction>Continue</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </li>
+                    <li>
+                        <a v-if="props.site.socials.discord" :href="props.site.socials.discord"
+                            class="text-2xl hover:text-blue-400 me-4 md:me-6" content="Join us on Discord" v-tippy>
                             <i class="fab fa-discord"></i>
                         </a>
-                        <a v-if="props.site.socials.twitter" :href="props.site.socials.twitter" class="text-2xl footer-media text-muted"
-                            content="Follow us on Twitter" v-tippy>
+                    </li>
+                    <li>
+                        <a v-if="props.site.socials.twitter" :href="props.site.socials.twitter"
+                            class="text-2xl hover:text-blue-400 me-4 md:me-6" content="Follow us on Twitter" v-tippy>
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a v-if="props.site.socials.twitch" :href="props.site.socials.twitch" class="text-2xl footer-media text-muted"
-                            content="Follow us on Twitch" v-tippy>
+                    </li>
+                    <li>
+                        <a v-if="props.site.socials.twitch" :href="props.site.socials.twitch"
+                            class="text-2xl hover:text-blue-400 me-4 md:me-6" content="Follow us on Twitch" v-tippy>
                             <i class="fab fa-twitch"></i>
                         </a>
-                        <a v-if="props.site.socials.tiktok" :href="props.site.socials.tiktok" class="text-2xl footer-media text-muted"
-                            content="Follow us on TikTok" v-tippy>
+                    </li>
+                    <li>
+                        <a v-if="props.site.socials.tiktok" :href="props.site.socials.tiktok"
+                            class="text-2xl hover:text-blue-400 me-4 md:me-6" content="Follow us on TikTok" v-tippy>
                             <i class="fab fa-tiktok"></i>
                         </a>
-                        <a v-if="props.site.socials.facebook" :href="props.site.socials.facebook" class="text-2xl footer-media text-muted"
-                            content="Follow us on Facebook" v-tippy>
+                    </li>
+                    <li>
+                        <a v-if="props.site.socials.facebook" :href="props.site.socials.facebook"
+                            class="text-2xl hover:text-blue-400 me-4 md:me-6" content="Follow us on Facebook" v-tippy>
                             <i class="fab fa-facebook"></i>
                         </a>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
-        </main>
-    </footer><!-- End  Footer -->
+        </div>
+
+    </footer>
+    <!-- End  Footer -->
 </template>
 
 <script lang="ts">

@@ -2,6 +2,8 @@
 import "./bootstrap";
 import "vue-skeletor/dist/vue-skeletor.css";
 import "../css/NProgress.css";
+import '../css/global.css';
+import '../css/app.css';
 
 // アプリの作成
 import { Skeletor } from "vue-skeletor";

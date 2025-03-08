@@ -5,6 +5,19 @@ import Footer from "@/Components/LayoutParts/Footer.vue";
 import { computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { route } from 'momentum-trail';
+import Button from '@/Components/ui/button/Button.vue'
+import { cn } from '@/lib/utils'
+import LandingItem from '@/Components/LandingItem.vue'
+import { ScrollArea, ScrollBar } from '@/Components/ui/scroll-area'
+import { Separator } from '@/Components/ui/separator'
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/Components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar'
 
 const site = computed<any>(() => usePage<any>().props.site);
 
@@ -53,36 +66,42 @@ const lang = computed<any>(() => usePage<any>().props.locale);
         description="Join in on the action today. Buy &amp; sell items, participate in spaces, make friends, and more."
         :url="route(`Welcome`)" />
     <Navbar :landing="true">
-        <header class="masthead-landing p-4 pt-4">
-            <img src="/assets/img/site-banners/stars-bg.png" style="z-index: 1" alt="background" />
-            <div class="cell large-4" style="position: relative; z-index: 3">
-                <div class="min-w-0 gap-4 ml-4 flex-container row-landing">
-                    <div class="row-landing">
-                        <div class="text-white">
-                            <!-- Page heading-->
-                            <div class="text-5xl fw-semibold">
-                                <span v-for="messages in Welcome">
-                                    {{ messages[lang].message }}
-                                </span>
-                            </div>
-                            <h3 class="p-2 mt-3 text-wrap fw-semibold" v-for="desc in Welcome">
-                                {{ desc[lang].desc }}
-                            </h3>
-                            <div class="min-w-0 gap-2 mt-3 flex-container">
-                                <Link :href="route('auth.register.page')" class="btn btn-landing btn-success">
-                                <i class="mr-1 fa-duotone fa-person-to-portal show-for-medium"></i>
-                                Get Started
-                                </Link>
-                                <Link :href="route('auth.login.page')" class="btn btn-landing btn-info">
-                                <i class="mr-1 fa-duotone fa-door-open show-for-medium"></i>
-                                Login
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
+        <div class="bg-blue-400 relative">
+            <section :class="cn('border-grid border-b', $attrs.class ?? '')">
+                <div class="container flex flex-col items-start gap-1 py-8 md:py-10 lg:py-12">
+                    <h1 :class="cn(
+                        'text-3xl text-white font-bold leading-tight tracking-tighter md:text-4xl lg:leading-[1.1]',
+                        $attrs.class ?? '',
+                    )" v-for="messages in Welcome">
+                        {{ messages[lang].message }}
+                    </h1>
+                    <p :class="cn('max-w-2xl text-white font-semibold text-lg font-light', $attrs.class ?? '')"
+                        v-for="desc in Welcome">
+                        {{ desc[lang].desc }}
+                    </p>
+
+                    <section :class="cn(
+                        'flex w-full items-center justify-start gap-2 pt-2',
+                        $attrs.class ?? '',
+                    )">
+                        <Button as-child size="sm">
+                            <Link :href="route('auth.register.page')">
+                            <i class="mr-1 fa-duotone fa-person-to-portal show-for-medium"></i>
+                            Get Started
+                            </Link>
+                        </Button>
+                        <Button as-child size="sm" class="text-white" variant="ghost">
+                            <Link :href="route('auth.login.page')">
+                            <i class="mr-1 fa-duotone fa-door-open show-for-medium"></i>
+                            Login
+                            </Link>
+                        </Button>
+
+                    </section>
                 </div>
-            </div>
-        </header>
+            </section>
+
+        </div>
         <nav v-if="usePage<any>().props.site_config.announcement" class="alert alert-danger alert-landing">
             <div class="py-1 text-center fw-semibold">
                 <div class="gap-2 text-center align-middle flex-container align-center">
@@ -94,102 +113,68 @@ const lang = computed<any>(() => usePage<any>().props.locale);
         </nav>
         <main class="container container-landing">
             <div class="justify-center grid-x grid-margin-x align-center grid-padding-y">
-                <div v-if="LandingItems?.['data'] || LandingItems?.['data'].length < 5" class="cell large-12">
-                    <div class="align-middle grid-x">
-                        <div class="p-2 mb-4 cell large-4">
-                            <div class="landing-text-landing fw-semibold">
-                                Customize your Character
+                <div v-if="LandingItems?.['data'] || LandingItems?.['data'].length < 5">
+                    <div class="mt-6 space-y-1">
+                        <h2 class="text-2xl font-semibold tracking-tight">
+                            Customize your Character
+                        </h2>
+                        <p class="text-sm text-muted-foreground">
+                            Pick and choose from a collection of items
+                            created by the community to create you own
+                            unique character with. </p>
+                    </div>
+                    <Separator class="my-4" />
+                    <div class="relative">
+                        <ScrollArea>
+                            <div class="flex space-x-4 pb-4">
+                                <LandingItem v-for="item in LandingItems?.['data']" :key="item.id" :item="item"
+                                    class="w-[150px]" aspect-ratio="square" :width="150" :height="150" />
                             </div>
-                            <div>
-                                Pick and choose from a collection of items
-                                created by the community to create you own
-                                unique character with.
-                            </div>
-                        </div>
-                        <div class="cell large-8">
-                            <div class="grid-x grid-margin-x grid-padding-y">
-                                <div class="cell large-2 medium-4 small-6" v-for="item in LandingItems?.['data']">
-                                    <Link :href="route(`store.item`, { id: item.id })
-                                    " class="d-block">
-                                <div class="p-2 mb-1 card card-item position-relative">
-                                    <img :src="item.thumbnail" :id="item.name" :alt="item.name" class="img-fluid"
-                                        @error="
-                                            onImgErrorSmall(item.name)
-                                            " />
-                                </div>
-                                <div class="text-body fw-semibold text-truncate">
-                                    {{ item.name }}
-                                </div>
-                                </Link>
-                                    <div class="text-xs fw-semibold">
-                                        <span class="text-muted">By </span>
-                                        <Link :href="route(`user.profile`, {
-                                            username:
-                                                item.creator.username,
-                                        })
-                                            " class="text-info">{{ "@" + item.creator.username }}
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            <ScrollBar orientation="horizontal" />
+                        </ScrollArea>
                     </div>
                 </div>
-                <div class="cell large-12">
-                    <div class="mb-1 align-middle grid-x">
-                        <div class="cell large-8">
-                            <div class="grid-x grid-margin-x grid-padding-y">
+                <div>
+                    <div class="mt-6 space-y-1 text-right">
+                        <h2 class="text-2xl font-semibold tracking-tight">
+                            Socialize With Others
+                        </h2>
+                        <p class="text-sm text-muted-foreground">
+                            Head over to Discussion to socialize with all
+                            kinds of users on
+                            {{ site.name }}, from the funny to the
+                            professional, and find new friends! </p>
+                    </div>
+                    <Separator class="my-4" />
+                    <div dir="rtl" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        <Card dir="ltr" v-for=" post in LandingPosts?.['data']">
+                            <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
+                                <CardTitle class="text-sm font-medium">
+                                    Posted by:
+                                    <Link :href="route(`user.profile`, { username: post.creator.username })"
+                                        class="text-blue-400 hover:text-blue-500">{{ post.creator.username }}</Link>
+                                </CardTitle>
+                                <Avatar class="h-4 w-4 text-muted-foreground">
+                                    <AvatarImage :src="post.creator.thumbnail" alt="Image" />
+                                    <AvatarFallback>
+                                        <AvatarImage src="/assets/img/dummy_headshot.png" alt="Image" />
+                                    </AvatarFallback>
+                                </Avatar>
+                            </CardHeader>
+                            <Link :href="route(`forum.post`, { id: post.id, slug: post.slug })">
+                            <CardContent>
 
-                                <div class="mb-1 cell large-3 medium-6 small-6" v-for="post in LandingPosts?.['data']">
-                                    <div class="gap-2 mb-3 card card-body flex-container flex-dir-column">
-                                        <div class="gap-2 flex-container">
-                                            <div class="gap-2 flex-container">
-                                                <button class="gap-2 align-middle flex-container squish">
-                                                    <img class="headshot" src="/assets/img/dummy_headshot.png"
-                                                        width="50" height="50" alt="Avatar" />
-                                                </button>
-                                                <div>
-                                                    <p class="fw-semibold text-truncate">
-                                                        {{ post.title }}
-                                                    </p>
-                                                    <div class="text-sm fw-semibold text-muted">
-                                                        By:
-                                                        <Link
-                                                            :href="route(`user.profile`, { username: post.creator.username })"
-                                                            class="text-info">{{ post.creator.username }}</Link>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="gap-4 my-3 mb-1 flex-container align-center flex-dir-column">
-                                            <div class="text-sm text-muted fw-semibold text-truncate">
-                                                <span v-html="post.body" />
-                                            </div>
-                                        </div>
-                                        <div class="divider-m0 w-100"></div>
-                                        <Link :href="route(`forum.post`, { id: post.id, slug: post.slug })"
-                                            class="min-w-0 w-100 text-center btn btn-info btn-sm text-truncate">View
-                                        Post</Link>
-                                    </div>
+                                <div class="text-2xl font-bold">
+                                    {{ post.title }}
                                 </div>
-
-                            </div>
-                        </div>
-                        <div class="p-2 mt-4 cell large-4">
-                            <div class="landing-text-landing fw-semibold">
-                                Socialize With Others
-                            </div>
-                            <div>
-                                Head over to Discussion to socialize with all
-                                kinds of users on
-                                {{ site.name }}, from the funny to the
-                                professional, and find new friends!
-                            </div>
-                        </div>
+                                <p v-html="post.body" />
+                            </CardContent>
+                            </Link>
+                        </Card>
                     </div>
                 </div>
             </div>
         </main>
-        <Footer :isLanding="true" />
+        <Footer />
     </Navbar>
 </template>

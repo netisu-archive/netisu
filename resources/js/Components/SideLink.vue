@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { current } from "momentum-trail";
+import { cn } from '@/lib/utils'
+
 
 // Props
 defineProps<{
@@ -8,9 +10,9 @@ defineProps<{
 }>();
 </script>
 <template>
-    <li class="side-item">
-        <Link class="side-link" :href="link" :class="[current(ActiveLink) ? 'active' : '']" prefetch>
-            <slot />
-        </Link>
-    </li>
+    <Link :href="link"
+        :class="cn('group flex h-8 w-full items-center gap-4 rounded-lg px-2 font-normal text-foreground underline-offset-2 hover:bg-accent hover:text-accent-foreground', current(ActiveLink) && 'bg-blue-500 font-medium text-white hover:bg-blue-600')"
+         prefetch>
+    <slot />
+    </Link>
 </template>

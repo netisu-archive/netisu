@@ -1,22 +1,23 @@
-import type { UserConfig } from 'vite'
-import laravel from 'laravel-vite-plugin';
-import vue from '@vitejs/plugin-vue';
+import type { UserConfig } from "vite";
+import laravel from "laravel-vite-plugin";
+import vue from "@vitejs/plugin-vue";
 import autoprefixer from "autoprefixer";
 import postcssNested from "postcss-nested";
 import { watch } from "vite-plugin-watch";
 import { VitePWA } from "vite-plugin-pwa";
-import { templateCompilerOptions } from '@tresjs/core'
+import { templateCompilerOptions } from "@tresjs/core";
 import path from "path";
-import basicSsl from '@vitejs/plugin-basic-ssl'
-import viteImagemin from 'vite-plugin-imagemin'
-import compression from 'vite-plugin-compression2'
+import basicSsl from "@vitejs/plugin-basic-ssl";
+import viteImagemin from "vite-plugin-imagemin";
+import compression from "vite-plugin-compression2";
+import tailwind from "tailwindcss";
 
 export default {
     server: {
-        host: 'localhost',
+        host: "100.115.92.195",
         cors: true,
         hmr: {
-            host: 'localhost',
+            host: "100.115.92.195",
         },
         watch: {
             usePolling: false,
@@ -27,12 +28,8 @@ export default {
             generateScopedName: "[hash:base64:5]",
         },
         postcss: {
-            plugins: [
-                 autoprefixer(),
-                 postcssNested(),
-            ],
+            plugins: [tailwind(), autoprefixer()],
         },
-
     },
     plugins: [
         VitePWA({
@@ -68,7 +65,7 @@ export default {
         }),
         basicSsl(),
         viteImagemin({}),
-        compression()
+        compression(),
     ],
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],

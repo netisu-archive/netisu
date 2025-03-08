@@ -29,7 +29,7 @@ class HomeController extends Controller
         $landingItems = Cache::remember($cacheKeyItems, now()->addHours(1), function () {
             return Item::where([
                 ['status', '!=', 'pending']
-            ])->inRandomOrder()->paginate(6)->through(function ($item) {
+            ])->inRandomOrder()->paginate(7)->through(function ($item) {
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
@@ -50,6 +50,7 @@ class HomeController extends Controller
                     'body' => Purifier::clean($bbcodeService->parse($post->body)),
                     'creator' => [
                         'username' => $post->creator->username,
+                        'thumbnail' => $post->creator->thumbnail(),
                     ],
                     'slug' => $post->slug(),
                 ];

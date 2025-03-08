@@ -4,11 +4,20 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import { ref } from "vue";
 import { route } from "momentum-trail"
 
-import FlashMessages from "@/Components/Messages/FlashMessages.vue";
 import AppHead from "@/Components/AppHead.vue";
 import Sidebar from "@/Components/LayoutParts/Sidebar.vue";
 import axios from "axios";
 import Footer from "@/Components/LayoutParts/Footer.vue";
+import { Button } from '@/Components/ui/button'
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/Components/ui/card'
+import { Input } from '@/Components/ui/input'
+import { Label } from '@/Components/ui/label'
 
 const ConfirmingAuth = ref(false);
 
@@ -21,7 +30,7 @@ const form = useForm({
 const submit = () => {
   axios.get(`/sanctum/csrf-cookie`).then(() => {
     form.post(route(`auth.login.validate`), {
-      onFinish: () => form.reset("password"),
+        onFinish: () => { form.reset("password"), ConfirmingAuth.value = false },
     });
   });
 };
@@ -31,67 +40,66 @@ const ConfirmUserAuth = () => {
 };
 </script>
 <template>
-  <AppHead pageTitle="Login" :description="'Login to ' + usePage<any>().props.site.name + ''"
-    :url="route('auth.login.page')" />
-  <Navbar />
-  <Sidebar>
-    <FlashMessages />
-    <div class="cell medium-4">
-      <div class="mb-2">
-        <div class="text-2xl fw-semibold">Log In</div>
-        <div class="text-sm text-muted fw-semibold">
-          Don't have an account?
-          <a href="#" class="d-inline-block squish">Sign Up</a>
-        </div>
-      </div>
-      <div></div>
-      <div class="card card-body">
-        <form @submit.prevent="submit">
-          <div class="mb-2">
-            <div :class="{ 'text-danger': form.errors.username }" class="text-xs fw-bold text-muted text-uppercase">
-              Username
-            </div>
-            <input type="text" v-model="form.username" class="form" placeholder="Username..." />
-            <div v-if="form.errors.username" class="text-xs text-danger fw-semibold">
-              {{ form.errors.username }}
-            </div>
-          </div>
-          <div class="mb-2">
-            <div :class="{ 'text-danger': form.errors.password }" class="text-xs fw-bold text-muted text-uppercase">
-              Password
-            </div>
-            <input type="password" v-model="form.password" class="mb-2 form" placeholder="Password..." />
-            <div v-if="form.errors.password" class="text-xs text-danger fw-semibold">
-              {{ form.errors.password }}
-            </div>
-          </div>
-          <div class="mx-1 my-3 divider"></div>
+    <AppHead pageTitle="Login" :description="'Login to ' + usePage<any>().props.site.name + ''"
+        :url="route('auth.login.page')" />
+    <Navbar />
+    <Sidebar>
+        <Card class="mx-auto max-w-sm">
+            <CardHeader>
+                <CardTitle class="text-2xl">
+                    Login
+                </CardTitle>
+                <CardDescription>
+                    Welcome back, {{ form.username }}
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form @submit.prevent="submit">
 
-          <div class="align-middle flex-container align-justify">
-            <input type="submit" class="btn btn-success" v-bind:class="{ 'is-loading': ConfirmingAuth }"
-              :disabled="form.processing" @click="ConfirmUserAuth" value="Log In" />
-            <Link :href="route('auth.forgot.page')" class="text-sm fw-semibold squish">Forgot Password?</Link>
-          </div>
-        </form>
-        <div class="gap-2 mx-1 my-3 mb-3 flex-container-lg">
-          <button class="mb-2 btn btn-gray btn-block mb-lg-0">
-            <img src="/assets/img/google.png" width="20" alt="google_logo" class="me-1" style="
-                        margin-top: -3px;
-                        filter: drop-shadow(
-                            0 1px 1px
-                                rgb(0, 0, 0, 0.2)
-                        );
-                    " />
-          </button>
-          <button class="mb-2 btn btn-discord btn-block mb-lg-0">
-            <i class="fab fa-discord me-1"></i>
-          </button>
-          <button class="btn btn-secondary btn-block">
-            <i class="fab fa-github me-1"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  </Sidebar>
-  <Footer />
+                    <div class="grid gap-4">
+                        <div class="grid gap-2">
+                            <Label :class="{ 'text-red-500': form.errors.username }" for="username">Username</Label>
+                            <Input id="username" v-model="form.username"
+                                :class="{ 'border border-red-500': form.errors.username }" type="text"
+                                placeholder="m@example.com" required />
+                            <div v-if="form.errors.username" class="text-xs text-red-500 fw-semibold">
+                                {{ form.errors.username }}
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <div class="flex items-center">
+                                <Label :class="{ 'text-red-500': form.errors.password }"
+                                    for="password">Password</Label>
+                                <Link :href="route('auth.forgot.page')"
+                                    class="ml-auto inline-block text-sm hover:text-blue-500">
+                                Forgot your password?
+                                </Link>
+                            </div>
+                            <Input :class="{ 'border border-red-500': form.errors.password }" id="password"
+                                type="password" v-model="form.password" required />
+                            <div v-if="form.errors.password" class="text-xs text-red-500 fw-semibold">
+                                {{ form.errors.password }}
+                            </div>
+                        </div>
+                        <Button type="submit" @click="ConfirmUserAuth" :disabled="form.processing" class="w-full">
+                            <i v-if="ConfirmingAuth" class="fad fa-spinner fa-spin" />
+                            Login
+                        </Button>
+                        <Button variant="outline" class="w-full">
+                            <i class="fab fa-google" />
+
+                            Login with Google
+                        </Button>
+                    </div>
+                    <div class="mt-4 text-center text-sm">
+                        Don't have an account?
+                        <Link :href="route('auth.register.page')" class="hover:text-blue-500">
+                        Sign up
+                        </Link>
+                    </div>
+                </form>
+            </CardContent>
+        </Card>
+    </Sidebar>
+    <Footer />
 </template>
