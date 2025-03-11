@@ -128,10 +128,10 @@ watch(() => form.birthdate.month, updateDays);
         :url="route('auth.register.page')" />
     <Navbar />
     <Sidebar>
-        <div class="mx-auto max-w-sm flex flex-col gap-6">
+        <div class="flex flex-col max-w-sm gap-6 mx-auto">
             <form @submit.prevent="submit">
                 <div class="flex flex-col gap-6">
-                <div class="flex flex-col items-center text-center gap-2">
+                <div class="flex flex-col items-center gap-2 text-center">
                   <h1 class="text-xl font-bold">
                     Welcome To {{ usePage<any>().props.site.name }}
                   </h1>
@@ -296,8 +296,8 @@ watch(() => form.birthdate.month, updateDays);
                   </Button>
                   </div>
                 </div>
-                <div class="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                  <span class="relative z-10 bg-background px-2 text-muted-foreground">
+                <div class="relative text-sm text-center after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+                  <span class="relative z-10 px-2 bg-background text-muted-foreground">
                     Or
                   </span>
                 </div>
@@ -311,7 +311,7 @@ watch(() => form.birthdate.month, updateDays);
                 </div>
               </div>
             </form>
-            <div class="text-center text-sm">
+            <div class="text-sm text-center">
                 Already have an account?
                 <Link :href="route('auth.login.page')" class="hover:text-blue-500">
                   Login
