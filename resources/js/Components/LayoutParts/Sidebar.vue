@@ -4,6 +4,7 @@ import { usePage } from "@inertiajs/vue3";
 import { route } from 'momentum-trail';
 
 import SideLink from "../SideLink.vue";
+import JoinedSpaces from "../JoinedSpaces.vue";
 
 import VLazyImage from "v-lazy-image";
 
@@ -174,8 +175,7 @@ watch(
     <div class="flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[240px_minmax(0,1fr)]">
         <aside
             class="border-grid fixed top-14 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 border-r md:sticky md:block">
-            <div class="no-scrollbar h-full overflow-auto">
-
+            <div class="flex flex-col no-scrollbar h-full overflow-auto">
                 <SidebarContent>
                     <SidebarGroup>
                         <SidebarGroupLabel>Account</SidebarGroupLabel>
@@ -196,11 +196,9 @@ watch(
                                 </SideLink>
                             </template>
                         </SidebarMenu>
-
                     </SidebarGroup>
                     <template v-for="sidesections in sidebarsections" class="hide-for-large">
                         <SidebarGroup>
-
                             <SidebarGroupLabel>
                                 {{ sidesections[lang].name }}
                             </SidebarGroupLabel>
@@ -213,12 +211,14 @@ watch(
                                     <span>{{ sidelink[lang].title }}</span>
                                 </SideLink>
                             </SidebarMenu>
-
                         </SidebarGroup>
-
                     </template>
                 </SidebarContent>
-            </div>
+                <!-- Footer -->
+                <div class="flex flex-col gap-2 p-2">
+                    <JoinedSpaces :spaces="usePage<any>().props.auth.user.navSpaces" />
+                </div>
+                </div>
         </aside>
         <main class="md:relative md:py-6">
             <div class="container mx-auto w-full min-w-0 max-w-3xl">
