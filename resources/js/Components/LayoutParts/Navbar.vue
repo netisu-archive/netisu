@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import axios from "axios";
 import { route,  current } from "momentum-trail";
 import { cn } from '@/lib/utils'
+import { useMagicKeys, useToggle } from '@vueuse/core'
 
-import LanguageModal from "../Modal/LanguageModal.vue";
+import MobileNav from "@/Components/LayoutParts/MobileNav.vue";
 import SearchResult from "../SearchResult.vue";
 import NavLink from "../NavLink.vue";
 import SearchResultSkeleton from "../SearchResultSkeleton.vue";
@@ -21,6 +22,13 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/Components/ui/dropdown-menu'
+
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from '@/Components/ui/drawer'
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar"
 
 import {
@@ -51,6 +59,21 @@ withDefaults(defineProps<Props>(), {
     landing: false,
 });
 const SearchLoading = ref(false);
+const isOpen = ref(false);
+const SmallNavOpen = ref(false);
+
+const { Meta_K, Ctrl_K } = useMagicKeys({
+  passive: false,
+  onEventFired(e) {
+    if (e.key === 'k' && (e.metaKey || e.ctrlKey))
+      e.preventDefault()
+  },
+})
+
+watch([Meta_K, Ctrl_K], (v) => {
+  if (v[0] || v[1])
+    isOpen.value = true
+})
 
 const search = ref("");
 // Update the type of results to be an array of SearchResult
@@ -138,47 +161,6 @@ const topbar = [
         ja: { title: "スペース" },
     },
 ];
-const left = [
-    {
-        url: "#",
-        ActiveLink: "develop.*",
-        icon: "fad fa-code",
-        en: { title: "Develop" },
-        es: { title: "Desarrollar" },
-        ru: { title: "Мои создания" },
-        ja: { title: "発展" },
-    },
-    {
-        url: route(`user.page`),
-        ActiveLink: "user.*",
-        section: "SOCIAL",
-        icon: "fad fa-users",
-        en: { title: "Players" },
-        es: { title: "Jugadoras" },
-        ru: { title: "Игроки" },
-        ja: { title: "発展" },
-    },
-];
-const right = [
-    {
-        url: route(`leaderboard.page`),
-        ActiveLink: route(`leaderboard.page`),
-        icon: "fad fa-list-ol",
-        en: { title: "Leaderboard" },
-        es: { title: "Tabla de clasificación" },
-        ru: { title: "Таблица лидеров" },
-        ja: { title: "リーダーボード" },
-    },
-    {
-        url: "#",
-        icon: "fad fa-rocket-launch",
-        ActiveLink: "upgade.*",
-        en: { title: "Upgrade" },
-        es: { title: "Mejora" },
-        ru: { title: "Подписки" },
-        ja: { title: "アップグレード" },
-    },
-];
 const lang = computed<any>(() => props.locale);
 
 const props = usePage<any>().props;
@@ -189,14 +171,14 @@ const props = usePage<any>().props;
 
         <div vaul-drawer-wrapper>
 
-            <header class="border-grid top-0 z-50 w-full border-b"
+            <header class="top-0 z-50 w-full border-b border-grid"
                 :class="landing ? 'bg-blue-400 text-white' : 'sticky bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'">
-                <div class="flex h-14 items-center">
-                    <div class="mr-2 md:mr-1 hidden md:flex">
-                        <a href="/" class="mr-1 md:mr-2 lg:mr-6 flex items-center lg:space-x1 xl:space-x-2">
+                <div class="container flex items-center h-14">
+                    <div class="hidden mr-4 md:mr-1 md:flex">
+                        <Link :href="route(`Welcome`)" class="flex items-center mr-1 md:mr-2 lg:mr-6 lg:space-x1 xl:space-x-2">
                             <v-lazy-image :src="props.site.logo" class="show-for-medium" width="150" />
 
-                        </a>
+                        </Link>
 
                         <nav class="flex items-center gap-2 text-sm">
                             <template v-for="topbarlinks in topbar">
@@ -208,9 +190,10 @@ const props = usePage<any>().props;
                             </template>
                         </nav>
                     </div>
+                    <MobileNav :topbarLinks="topbar"/>
 
-                    <div class="flex flex-1 items-center justify-between space-x-2 md:justify-end mr-3">
-                        <div class="w-full flex-1 md:w-auto md:flex-none">
+                    <div class="flex items-center justify-between flex-1 mr-3 space-x-2 md:justify-end">
+                        <div class="flex-1 w-full md:w-auto md:flex-none">
                             <Button variant="outline"
                                 class="relative h-8 w-full justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-64"
                                 @click="isOpen = true">
@@ -235,17 +218,17 @@ const props = usePage<any>().props;
                             </template>
                             <template v-else>
                                 <nav class="flex items-center gap-1">
-                                    <div class="w-full flex-1 md:w-auto md:flex-none">
-                                        <div class="grid flex-1 text-left text-sm leading-tight">
+                                    <div class="flex-1 w-full md:w-auto md:flex-none">
+                                        <div class="grid flex-1 text-sm leading-tight text-left">
 
-                                            <span class="truncate font-semibold">
+                                            <span class="font-semibold truncate">
                                                 <i class="fad fa-sack-dollar text-emerald-500"></i>
 
                                                 {{
                                                 props.auth.user.bucks
                                                 }}</span>
-                                            <span class="truncate text-xs">
-                                                <i class="fad fa-coin text-yellow-500"></i>
+                                            <span class="text-xs truncate">
+                                                <i class="text-yellow-500 fad fa-coin"></i>
                                                 {{
                                                 props.auth.user.coins }}</span>
                                         </div>
@@ -254,7 +237,7 @@ const props = usePage<any>().props;
                                         <DropdownMenuTrigger as-child>
                                             <Button varient="ghost"
                                                 :class="cn('group flex h-9 w-full items-center gap-4 rounded-lg px-2 font-normal text-foreground underline-offset-2 bg-base hover:bg-base')">
-                                                <Avatar class="h-8 w-8 rounded-lg">
+                                                <Avatar class="w-8 h-8 rounded-lg">
                                                     <AvatarImage :src="props.auth.user.thumbnail"
                                                         :alt="props.auth.user.username" />
                                                     <AvatarFallback class="rounded-lg">
@@ -262,11 +245,11 @@ const props = usePage<any>().props;
                                                             :alt="props.auth.user.username" />
                                                     </AvatarFallback>
                                                 </Avatar>
-                                                <div class="grid flex-1 text-left text-sm leading-tight">
-                                                    <span class="truncate font-semibold">{{
+                                                <div class="grid flex-1 text-sm leading-tight text-left">
+                                                    <span class="font-semibold truncate">{{
                                                         props.auth.user.display_name
                                                         }}</span>
-                                                    <span class="truncate text-xs">{{ '@' +
+                                                    <span class="text-xs truncate">{{ '@' +
                                                         props.auth.user.username }}</span>
                                                 </div>
                                                 <ChevronDown class="ml-auto size-4" />
@@ -277,7 +260,7 @@ const props = usePage<any>().props;
                                             side="bottom" align="end" :side-offset="4">
                                             <DropdownMenuLabel class="p-0 font-normal">
                                                 <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                                    <Avatar class="h-8 w-8 rounded-lg">
+                                                    <Avatar class="w-8 h-8 rounded-lg">
                                                         <AvatarImage :src="props.auth.user.headshot"
                                                             :alt="props.auth.user.username" />
                                                         <AvatarFallback class="rounded-lg">
@@ -285,10 +268,10 @@ const props = usePage<any>().props;
                                                                 :alt="props.auth.user.username" />
                                                         </AvatarFallback>
                                                     </Avatar>
-                                                    <div class="grid flex-1 text-left text-sm leading-tight">
-                                                        <span class="truncate font-semibold">{{
+                                                    <div class="grid flex-1 text-sm leading-tight text-left">
+                                                        <span class="font-semibold truncate">{{
                                                             props.auth.user.display_name }}</span>
-                                                        <span class="truncate text-xs">{{ '@' + props.auth.user.username
+                                                        <span class="text-xs truncate">{{ '@' + props.auth.user.username
                                                             }}</span>
                                                     </div>
                                                 </div>
@@ -331,7 +314,7 @@ const props = usePage<any>().props;
                 </div>
             </header>
 
-            <main class="flex flex-1 flex-col">
+            <main class="flex flex-col flex-1">
                 <slot />
             </main>
 

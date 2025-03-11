@@ -6,8 +6,6 @@ import { route } from 'momentum-trail';
 import SideLink from "../SideLink.vue";
 import JoinedSpaces from "../JoinedSpaces.vue";
 
-import VLazyImage from "v-lazy-image";
-
 import {
     SidebarContent,
     SidebarGroup,
@@ -175,7 +173,7 @@ watch(
     <div class="flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[240px_minmax(0,1fr)]">
         <aside
             class="border-grid fixed top-14 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 border-r md:sticky md:block">
-            <div class="flex flex-col no-scrollbar h-full overflow-auto">
+            <div class="flex flex-col h-full overflow-auto no-scrollbar">
                 <SidebarContent>
                     <SidebarGroup>
                         <SidebarGroupLabel>Account</SidebarGroupLabel>
@@ -185,16 +183,6 @@ watch(
                                 <i class="fad fa-home side-icon"></i>
                                 <span> {{ props.auth.user ? "Dashboard" : "Welcome" }} </span>
                             </SideLink>
-                            <template v-if="!props.auth.user">
-                                <SideLink :link="route('auth.register.page')" :ActiveLink="route('auth.register.page')">
-                                    <i class="fad fa-user-plus side-icon"></i>
-                                    <span>Get Started</span>
-                                </SideLink>
-                                <SideLink :link="route('auth.login.page')" :ActiveLink="route('auth.login.page')">
-                                    <i class="fad fa-sign-in side-icon"></i>
-                                    <span>Log In</span>
-                                </SideLink>
-                            </template>
                         </SidebarMenu>
                     </SidebarGroup>
                     <template v-for="sidesections in sidebarsections" class="hide-for-large">
@@ -216,69 +204,26 @@ watch(
                 </SidebarContent>
                 <!-- Footer -->
                 <div class="flex flex-col gap-2 p-2">
-                    <JoinedSpaces :spaces="usePage<any>().props.auth.user.navSpaces" />
+                    <template v-if="!props.auth.user">
+                        <SideLink :link="route('auth.login.page')" :ActiveLink="route('auth.login.page')">
+                            <i class="fad fa-sign-in side-icon"></i>
+                            <span>Log In</span>
+                        </SideLink>
+                        <SideLink :link="route('auth.register.page')" :ActiveLink="route('auth.register.page')">
+                            <i class="fad fa-user-plus side-icon"></i>
+                            <span>Get Started</span>
+                        </SideLink>
+                    </template>
+                    <JoinedSpaces v-else :spaces="props.auth.user.navSpaces" />
                 </div>
                 </div>
         </aside>
         <main class="md:relative md:py-6">
-            <div class="container mx-auto w-full min-w-0 max-w-3xl">
+            <div class="container w-full max-w-3xl min-w-0 mx-auto">
                 <div class="py-8">
                     <slot />
                 </div>
             </div>
         </main>
     </div>
-
-
-
-
-
 </template>
-<style scoped>
-.msg {
-    border-radius: 10px;
-}
-
-.msg.right {
-    background-color: var(--info-600);
-}
-
-.msg.left {
-    background-color: var(--gray-500);
-    color: white;
-}
-</style>
-<script lang="ts">
-export default {
-    methods: {
-        showModal(modalId: string): void {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.toggle("active");
-            }
-        },
-        addActiveClass(elementId: string): void {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.classList.toggle("active");
-            }
-        },
-        addActiveClassSSInput(elementId: string): void {
-            const element = document.getElementById(
-                elementId
-            ) as HTMLInputElement;
-            const isEmpty = (str: string): boolean => !str.trim().length;
-
-            if (element) {
-                element.addEventListener("input", function () {
-                    if (isEmpty(this.value)) {
-                        return;
-                    } else {
-                        element.classList.toggle("hide");
-                    }
-                });
-            }
-        },
-    },
-};
-</script>
