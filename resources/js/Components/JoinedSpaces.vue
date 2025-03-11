@@ -9,11 +9,8 @@ import {
     DropdownMenuTrigger,
 } from '@/Components/ui/dropdown-menu'
 
-import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from '@/Components/ui/sidebar'
+import { route } from "momentum-trail";
+
 import { ChevronsUpDown, Plus } from 'lucide-vue-next'
 import { ref } from 'vue'
 const props = defineProps<{
@@ -26,12 +23,12 @@ const props = defineProps<{
 const activeSpace = ref(props.spaces[0])
 </script>
 <template>
-    <SidebarMenu>
-        <SidebarMenuItem>
+    <div class="flex w-full min-w-0 flex-col gap-1">
+        <div class="group/menu-item relative">
             <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                    <SidebarMenuButton size="lg"
-                        class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+                <DropdownMenuTrigger>
+                    <div
+                        class="group flex h-8 w-full items-center gap-4 rounded-lg px-2 font-normal text-foreground underline-offset-2 hover:bg-accent hover:text-accent-foreground">
                         <div
                             class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                             <img :src="activeSpace.thumbnail" class="size-4" />
@@ -43,20 +40,22 @@ const activeSpace = ref(props.spaces[0])
                             <span class="truncate text-xs">{{ activeSpace.rank }}</span>
                         </div>
                         <ChevronsUpDown class="ml-auto" />
-                    </SidebarMenuButton>
+                    </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent class="w-[--reka-dropdown-menu-trigger-width] min-w-56 rounded-lg" align="start"
-                    :side="isMobile ? 'bottom' : 'right'" :side-offset="4">
+                    side="bottom" :side-offset="4">
                     <DropdownMenuLabel class="text-xs text-muted-foreground">
                         Joined Spaces
                     </DropdownMenuLabel>
                     <DropdownMenuItem v-for="(Space, index) in spaces" :key="Space.name" class="gap-2 p-2"
-                        @click="activeSpace = Space">
+                        @click="activeSpace = Space">                    <Link  :href="route(`spaces.view`, {id: 1, slug: 'test-space-2000'})">
+
                         <div class="flex size-6 items-center justify-center rounded-sm border">
                             <img :src="Space.thumbnail" class="size-4 shrink-0" />
                         </div>
                         {{ Space.name }}
                         <DropdownMenuShortcut>⌘{{ index + 1 }}</DropdownMenuShortcut>
+                        </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem class="gap-2 p-2">
@@ -69,6 +68,6 @@ const activeSpace = ref(props.spaces[0])
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-        </SidebarMenuItem>
-    </SidebarMenu>
+        </div>
+    </div>
 </template>

@@ -223,107 +223,111 @@ const props = usePage<any>().props;
                             </Button>
                         </div>
 
-                        <nav class="flex items-center gap-4">
                             <template v-if="!props.auth.user">
-                                <template v-for="method in AuthenticationMethods">
-                                    <NavLink :landing="landing" :link="method.url" :ActiveLink="method.ActiveLink">
-                                        <i :class="method.icon"></i> &nbsp;
-                                        <span>{{ method[lang].title }}</span>
-                                    </NavLink>
-                                </template>
+                                <nav class="flex items-center gap-4">
+
+                                    <template v-for="method in AuthenticationMethods">
+                                        <NavLink :landing="landing" :link="method.url" :ActiveLink="method.ActiveLink">
+                                            <i :class="method.icon"></i> &nbsp;
+                                            <span>{{ method[lang].title }}</span>
+                                        </NavLink>
+                                    </template>
+                                </nav>
                             </template>
                             <template v-else>
-                                <div class="w-full flex-1 md:w-auto md:flex-none">
-                                    <div class="grid flex-1 text-left text-sm leading-tight">
+                                <nav class="flex items-center gap-1">
+                                    <div class="w-full flex-1 md:w-auto md:flex-none">
+                                        <div class="grid flex-1 text-left text-sm leading-tight">
 
-                                        <span class="truncate font-semibold">
-                                            <i class="fad fa-sack-dollar text-emerald-500"></i>
+                                            <span class="truncate font-semibold">
+                                                <i class="fad fa-sack-dollar text-emerald-500"></i>
 
-                                            {{
-                                            props.auth.user.bucks
-                                            }}</span>
-                                        <span class="truncate text-xs">
-                                            <i class="fad fa-coin text-yellow-500"></i>
-                                            {{
-                                            props.auth.user.coins }}</span>
+                                                {{
+                                                props.auth.user.bucks
+                                                }}</span>
+                                            <span class="truncate text-xs">
+                                                <i class="fad fa-coin text-yellow-500"></i>
+                                                {{
+                                                props.auth.user.coins }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger as-child>
-                                        <Button size="lg"
-                                            :class="cn('group flex h-9 w-full items-center gap-4 rounded-lg px-2 font-normal text-foreground underline-offset-2 bg-base hover:bg-base')">
-                                            <Avatar class="h-8 w-8 rounded-lg">
-                                                <AvatarImage :src="props.auth.user.thumbnail"
-                                                    :alt="props.auth.user.username" />
-                                                <AvatarFallback class="rounded-lg">
-                                                    <img src="/assets/img/dummy_headshot.png"
-                                                        :alt="props.auth.user.username" />
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <div class="grid flex-1 text-left text-sm leading-tight">
-                                                <span class="truncate font-semibold">{{
-                                                    props.auth.user.display_name
-                                                    }}</span>
-                                                <span class="truncate text-xs">{{ '@' +
-                                                    props.auth.user.username }}</span>
-                                            </div>
-                                            <ChevronDown class="ml-auto size-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent
-                                        class="w-[--reka-dropdown-menu-trigger-width] min-w-56 rounded-lg" side="bottom"
-                                        align="end" :side-offset="4">
-                                        <DropdownMenuLabel class="p-0 font-normal">
-                                            <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger as-child>
+                                            <Button varient="ghost"
+                                                :class="cn('group flex h-9 w-full items-center gap-4 rounded-lg px-2 font-normal text-foreground underline-offset-2 bg-base hover:bg-base')">
                                                 <Avatar class="h-8 w-8 rounded-lg">
-                                                    <AvatarImage :src="props.auth.user.headshot"
+                                                    <AvatarImage :src="props.auth.user.thumbnail"
                                                         :alt="props.auth.user.username" />
                                                     <AvatarFallback class="rounded-lg">
-                                                        CN
+                                                        <img src="/assets/img/dummy_headshot.png"
+                                                            :alt="props.auth.user.username" />
                                                     </AvatarFallback>
                                                 </Avatar>
                                                 <div class="grid flex-1 text-left text-sm leading-tight">
                                                     <span class="truncate font-semibold">{{
-                                                        props.auth.user.username
+                                                        props.auth.user.display_name
                                                         }}</span>
-                                                    <span class="truncate text-xs">{{ props.auth.user.email
-                                                        }}</span>
+                                                    <span class="truncate text-xs">{{ '@' +
+                                                        props.auth.user.username }}</span>
                                                 </div>
-                                            </div>
-                                        </DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuGroup>
+                                                <ChevronDown class="ml-auto size-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent
+                                            class="w-[--reka-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                                            side="bottom" align="end" :side-offset="4">
+                                            <DropdownMenuLabel class="p-0 font-normal">
+                                                <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                                                    <Avatar class="h-8 w-8 rounded-lg">
+                                                        <AvatarImage :src="props.auth.user.headshot"
+                                                            :alt="props.auth.user.username" />
+                                                        <AvatarFallback class="rounded-lg">
+                                                            <img src="/assets/img/dummy_headshot.png"
+                                                                :alt="props.auth.user.username" />
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                    <div class="grid flex-1 text-left text-sm leading-tight">
+                                                        <span class="truncate font-semibold">{{
+                                                            props.auth.user.display_name }}</span>
+                                                        <span class="truncate text-xs">{{ '@' + props.auth.user.username
+                                                            }}</span>
+                                                    </div>
+                                                </div>
+                                            </DropdownMenuLabel>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuGroup>
+                                                <DropdownMenuItem>
+                                                    <Sparkles />
+                                                    Upgrade to Pro
+                                                </DropdownMenuItem>
+                                            </DropdownMenuGroup>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuGroup>
+                                                <DropdownMenuItem>
+                                                    <BadgeCheck />
+                                                    Account
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    <CreditCard />
+                                                    Billing
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    <Bell />
+                                                    Notifications
+                                                </DropdownMenuItem>
+                                            </DropdownMenuGroup>
+                                            <DropdownMenuSeparator />
+                                            <Link as="button" :href="route('auth.logout')" class="w-full" method="post">
                                             <DropdownMenuItem>
-                                                <Sparkles />
-                                                Upgrade to Pro
+                                                <LogOut />
+                                                Log out
                                             </DropdownMenuItem>
-                                        </DropdownMenuGroup>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuGroup>
-                                            <DropdownMenuItem>
-                                                <BadgeCheck />
-                                                Account
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <CreditCard />
-                                                Billing
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <Bell />
-                                                Notifications
-                                            </DropdownMenuItem>
-                                        </DropdownMenuGroup>
-                                        <DropdownMenuSeparator />
-                                        <Link as="button" :href="route('auth.logout')" class="w-full" method="post">
-                                        <DropdownMenuItem>
-                                            <LogOut />
-                                            Log out
-                                        </DropdownMenuItem>
-                                        </Link>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                            </Link>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </nav>
                             </template>
-                        </nav>
+                        
                     </div>
                 </div>
             </header>
