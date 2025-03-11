@@ -8,20 +8,25 @@ import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import Upload from '@/Components/Upload.vue';
 import { usePage } from '@inertiajs/vue3';
 import { route } from 'momentum-trail'
-import { computed, ref } from 'vue';
+import { computed, ref, h } from 'vue';
 import type { Ref } from 'vue';
 import axios from "axios";
 import AppHead from '@/Components/AppHead.vue';
 import VLazyImage from 'v-lazy-image';
 import SuperBanner from '@/Components/LayoutParts/SuperBanner.vue';
+import { toTypedSchema } from '@vee-validate/zod'
+import { FieldArray, useForm } from 'vee-validate'
+import * as z from 'zod'
+
 import {
     Button
 } from '@/Components/ui/button'
-
 import { Separator } from '@/Components/ui/separator'
 import { Textarea } from '@/Components/ui/textarea'
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/Components/ui/form'
 import { Input } from '@/Components/ui/input'
+import { toast } from '@/Components/ui/toast'
+
 import {
     Select,
     SelectContent,
@@ -47,11 +52,57 @@ function showModal(modalId: string): void {
 
 
 const bannerVisible = ref(usePage<any>().props.auth.user.settings.profile_banner_enabled);
-const ActiveCategory: Ref<string> = ref("General");
+const ActiveCategory: Ref<string> = ref("Profile");
 
 function setActiveCategory(category): void {
     ActiveCategory.value = category;
 };
+
+const profileFormSchema = toTypedSchema(z.object({
+  username: z
+    .string()
+    .min(2, {
+      message: 'Username must be at least 2 characters.',
+    })
+    .max(30, {
+      message: 'Username must not be longer than 30 characters.',
+    }).optional(),
+    country: z
+    .string({
+      required_error: 'Please select an country to display.',
+    }).optional(),
+  email: z
+    .string({
+      required_error: 'Please select an email to display.',
+    })
+    .email().optional(),
+  bio: z.string().max(160, { message: 'Bio must not be longer than 160 characters.' }).min(4, { message: 'Bio must be at least 2 characters.' }),
+  urls: z
+    .array(
+      z.object({
+        value: z.string().url({ message: 'Please enter a valid URL.' }),
+      }),
+    )
+    .optional(),
+}))
+
+const { handleSubmit, resetForm } = useForm({
+  validationSchema: profileFormSchema,
+  initialValues: {
+    bio: 'I own a computer.',
+    urls: [
+      { value: 'https://shadcn.com' },
+      { value: 'http://twitter.com/shadcn' },
+    ],
+  },
+})
+
+const onSubmit = handleSubmit((values) => {
+  toast({
+    title: 'You submitted the following values:',
+    description: h('pre', { class: 'mt-2 w-[340px] rounded-md bg-slate-950 p-4' }, h('code', { class: 'text-white' }, JSON.stringify(values, null, 2))),
+  })
+})
 function changeCountry(country): void {
     axios.post(route(`api.settings.changeCountry`, { country: country }))
         .then(response => {
@@ -204,9 +255,10 @@ const isVerifiedEmail = computed(() => {
 
                             </div>
                         </template>
+                        <form @submit="onSubmit">
 
                         <div v-if="ActiveCategory === 'Profile'">
-                            <FormField name="country">
+                            <FormField v-slot="{ componentField }" name="country"  class="mb-4">
                                 <FormItem>
                                     <FormLabel>Country</FormLabel>
 
@@ -231,6 +283,32 @@ const isVerifiedEmail = computed(() => {
                                     <FormMessage />
                                 </FormItem>
                             </FormField>
+                            <FormField v-slot="{ componentField }" name="displayname">
+                                <FormItem>
+                                  <FormLabel>Display Name</FormLabel>
+                                  <FormControl>
+                                    <Input type="text" placeholder="@username" v-bind="componentField" />
+                                  </FormControl>
+                                  <FormDescription>
+                                    This is your public display name. It can be your real name or a pseudonym. You can only change this once every 14 days.
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              </FormField>
+
+                            <FormField v-slot="{ componentField }" name="username">
+                                <FormItem>
+                                  <FormLabel>Username</FormLabel>
+                                  <FormControl>
+                                    <Input type="text" placeholder="username" v-bind="componentField" />
+                                  </FormControl>
+                                  <FormDescription>
+                                    This is your public username. It only uses(alpha-numeric characters). You can only change this once every 60 days.
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              </FormField>
+
 
                             <div class="section-borderless">
                                 <div class="card card-body">
@@ -481,62 +559,6 @@ const isVerifiedEmail = computed(() => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!--
-                    <div class="section">
-                    <div class="align-middle flex-container align-justify">
-                      <a href="#" class="gap-2 align-middle flex-container">
-                        <img
-                          src="/assets/img/dummy_headshot.png"
-                          class="headshot"
-                          width="50"
-                        />
-                        <div style="line-height: 18px">
-                          <div class="text-body fw-semibold">Nabrious</div>
-                          <div class="text-xs fw-semibold text-muted">
-                            @Nabrious
-                          </div>
-                        </div>
-                      </a>
-                      <button class="btn btn-info btn-sm">Unblock</button>
-                    </div>
-                  </div>
-                  <div class="section">
-                    <div class="align-middle flex-container align-justify">
-                      <a href="#" class="gap-2 align-middle flex-container">
-                        <img
-                          src="/assets/img/dummy_headshot.png"
-                          class="headshot"
-                          width="50"
-                        />
-                        <div style="line-height: 18px">
-                          <div class="text-body fw-semibold">Nabrious</div>
-                          <div class="text-xs fw-semibold text-muted">
-                            @Nabrious
-                          </div>
-                        </div>
-                      </a>
-                      <button class="btn btn-info btn-sm">Unblock</button>
-                    </div>
-                  </div>
-                  <div class="section">
-                    <div class="align-middle flex-container align-justify">
-                      <a href="#" class="gap-2 align-middle flex-container">
-                        <img
-                          src="/assets/img/dummy_headshot.png"
-                          class="headshot"
-                          width="50"
-                        />
-                        <div style="line-height: 18px">
-                          <div class="text-body fw-semibold">Nabrious</div>
-                          <div class="text-xs fw-semibold text-muted">
-                            @Nabrious
-                          </div>
-                        </div>
-                      </a>
-                      <button class="btn btn-info btn-sm">Unblock</button>
-                    </div>
-                  </div>
-                  -->
                                         </div>
                                     </div>
                                 </div>
@@ -571,110 +593,6 @@ const isVerifiedEmail = computed(() => {
                                 <div class="mb-2 text-xl fw-semibold">
                                     Previous Purchases
                                 </div>
-                                <!--
-              <div class="table">
-              <div class="table-header">
-                <div class="align-middle grid-x flex-nowrap">
-                  <div class="cell medium-4">Product</div>
-                  <div class="cell medium-4">Price</div>
-                  <div class="cell medium-4">Payment Method</div>
-                </div>
-              </div>
-              <div class="table-body">
-                <div class="align-middle grid-x flex-nowrap">
-                  <div class="cell medium-4">
-                    <div class="gap-2 align-middle flex-container text-warning">
-                      <i
-                        class="text-xl text-center fad fa-coins"
-                        style="width: 30px"
-                      ></i>
-                      <div class="fw-semibold">5000 Coins</div>
-                    </div>
-                  </div>
-                  <div class="cell medium-4">
-                    <div class="fw-semibold">
-                      <span class="text-muted">$</span> 4.99
-                    </div>
-                  </div>
-                  <div class="cell medium-4">
-                    <div class="fw-semibold">
-                      <i class="fab fa-paypal text-muted me-2"></i>PayPal
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="table-body table-body-darker">
-                <div class="align-middle grid-x flex-nowrap">
-                  <div class="cell medium-4">
-                    <div class="gap-2 align-middle flex-container text-success">
-                      <i
-                        class="text-xl text-center fad fa-money-bill-1-wave"
-                        style="width: 30px"
-                      ></i>
-                      <div class="fw-semibold">1000 Bucks</div>
-                    </div>
-                  </div>
-                  <div class="cell medium-4">
-                    <div class="fw-semibold">
-                      <span class="text-muted">$</span> 9.99
-                    </div>
-                  </div>
-                  <div class="cell medium-4">
-                    <div class="fw-semibold">
-                      <i class="fad fa-credit-card text-muted me-2"></i>Credit
-                      Card
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="table-body">
-                <div class="align-middle grid-x flex-nowrap">
-                  <div class="cell medium-4">
-                    <div
-                      class="gap-2 align-middle flex-container text-membership"
-                    >
-                      <img src="/assets/img/membership_dummy.png" width="30" />
-                      <div class="fw-semibold">Membership</div>
-                    </div>
-                  </div>
-                  <div class="cell medium-4">
-                    <div class="gap-2 align-middle flex-container text-success">
-                      <i class="text-center fad fa-money-bill-1-wave"></i>
-                      <div class="fw-semibold">500 Bucks</div>
-                    </div>
-                  </div>
-                  <div class="cell medium-4">
-                    <div class="fw-semibold">
-                      <i class="fad fa-money-bill-1-wave text-muted me-2"></i
-                      >Bucks
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="table-body table-body-darker">
-                <div class="align-middle grid-x flex-nowrap">
-                  <div class="cell medium-4">
-                    <div
-                      class="gap-2 align-middle flex-container text-membership"
-                    >
-                      <img src="/assets/img/membership_dummy.png" width="30" />
-                      <div class="fw-semibold">Membership</div>
-                    </div>
-                  </div>
-                  <div class="cell medium-4">
-                    <div class="fw-semibold">
-                      <span class="text-muted">$</span> 9.99
-                    </div>
-                  </div>
-                  <div class="cell medium-4">
-                    <div class="fw-semibold">
-                      <i class="fab fa-bitcoin text-muted me-2"></i>Crypto
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            -->
 
                                 <div class="card card-inner card-body">
                                     <div class="gap-3 text-center flex-container flex-dir-column">
@@ -691,6 +609,20 @@ const isVerifiedEmail = computed(() => {
                                 </div>
                             </div>
                         </div>
+                        <div class="flex gap-2 justify-start">
+                            <Button type="submit">
+                              Update {{ ActiveCategory }}
+                            </Button>
+
+                            <Button
+                              type="button"
+                              variant="outline"
+                              @click="resetForm"
+                            >
+                              Reset form
+                            </Button>
+                          </div>
+                        </form>
                     </div>
                 </div>
             </div>
