@@ -222,11 +222,6 @@ const props = usePage<any>().props;
                                 </Kbd>
                             </Button>
                         </div>
-
-<<<<<<< HEAD
-=======
-                        <nav class="flex items-center gap-2">
->>>>>>> 2caaf9013555b4c3a006e1969f0fc743342c1863
                             <template v-if="!props.auth.user">
                                 <nav class="flex items-center gap-4">
 
@@ -331,7 +326,7 @@ const props = usePage<any>().props;
                                     </DropdownMenu>
                                 </nav>
                             </template>
-                        
+
                     </div>
                 </div>
             </header>
