@@ -14,10 +14,10 @@ import tailwind from "tailwindcss";
 
 export default {
     server: {
-        host: "localhost",
+        host: "100.115.92.195",
         cors: true,
         hmr: {
-            host: "localhost",
+            host: "100.115.92.195",
         },
         watch: {
             usePolling: false,
